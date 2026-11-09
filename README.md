@@ -1,99 +1,129 @@
-# CRM Deal Desk Agent
+# Deal Desk Agent
 
-**An AI-assisted revenue workflow that helps a cloud sales team decide which deals to pursue, price them with discipline, size what the customer will really consume, and make sure the customer actually adopts what they bought.**
+*Or: how to stop believing the 90% in the CRM.*
 
-Built for a B2B team selling Azure-aligned data and cloud products. The AI proposes and explains; deterministic engines calculate and enforce; people decide.
+Every sales team has a deal that was "definitely closing this quarter." It's on the forecast. It's in the CRM. It has a green bar next to it. And somewhere around week eleven it quietly stops answering emails.
 
----
+This project is about that deal, and about the three other things that go wrong before and after it. It's a set of AI helpers for a cloud sales team, built around the one thing every seller already has: the deal.
 
-## The problem
-
-Enterprise cloud deals don't fail in one place. They leak value at every stage: reps qualify from memory, discounts get negotiated without seeing the financial or approval consequences, the signed amount turns out to be unrelated to what the customer will run, and licensed users never get trained so consumption stalls and renewals wobble. Each of those problems lives in a different tool, owned by a different team, and none of them talks to the others. This project connects them into one workflow around a single thing every seller already has: **the deal**.
+![The CRM says 90 percent likely to close. Reality says the champion left in March.](docs/images/meme-crm-vs-reality.svg)
 
 ---
 
-## Four problems, one sales journey
+## Meet Sam
 
-```mermaid
-flowchart LR
-    A[1 Deal Desk<br/>Should we pursue this deal?] --> B[2 Consumption Analysis<br/>What will it really be worth?]
-    B --> C[3 Commercial<br/>How do we structure and price it?]
-    C --> D[4 Enablement<br/>Will the customer adopt it?]
-    D -. adoption and consumption signals .-> A
-```
+Sam is an account executive at Nexus Solutions, a made-up company that sells Azure data and cloud products to large enterprises. Sam and Nexus are fictional. The problems are painfully real.
 
-| Stage | The problem a seller or leader feels | What we built | Deep dive |
-|---|---|---|---|
-| **1. Deal Desk** | Qualification is inconsistent, notes are scattered, optimism goes unchallenged, memos take hours. | A committee of AI agents (data fetch, risk, opportunity, devil's advocate, arbitrator, enablement, memo writer) that scores every deal against **MEDDPICC** and produces an auditable recommendation. | [docs/deal-desk](docs/deal-desk/README.md) |
-| **2. Consumption Analysis** | The signed amount says nothing about what the customer will run on Azure, so forecasts and business cases are guesses. | Turns workload requirements into an Azure architecture proposal, resolves pricing, forecasts consumption over 36 months, and evaluates commitment economics and customer ROI. | [docs/consumption-analysis](docs/consumption-analysis/README.md) |
-| **3. Commercial** | Negotiation is improvised: discounts, terms and commitments are conceded without seeing NPV impact or who must approve. | Scenario comparison (ask / working / floor), a policy and approval engine, comparable-deal benchmarks, and an AI strategy agent whose proposals are re-validated by the deterministic engines. | [docs/commercial](docs/commercial/README.md) |
-| **4. Enablement** | Customers buy licences but few users are trained, so adoption, consumption and renewals are at risk, and nobody sees it until late. | Trigger rules flag skills-gap risk, then a recommendation agent prescribes a course path, personas and a call to action, gated by groundedness and SKU-match checks. | [docs/enablement](docs/enablement/README.md) |
+Sam has a big deal going with Brightwell Bank, which is also made up. On Friday Sam's manager asks how it's looking. Sam says "good, I think," which is the sales version of "the check engine light is probably fine."
 
-A fifth surface, **GTM Intelligence**, closes the loop: it shows an account's journey over time, records whether a seller accepted, modified or rejected each AI recommendation, and feeds that back as context.
+Over the next four chapters, Sam's deal runs into everything that can go wrong. Each chapter is one piece of this project.
 
 ---
 
-## How the pieces connect to sales
+## Chapter 1: The deal that was definitely closing
 
-The stages are not separate tools; they share data through the deal.
+**The problem.** Sam's qualification lives in Sam's head. The notes are spread across a call recording, two emails and a notebook. The rep down the hall would score the same deal completely differently, because everyone qualifies in their own style. Managers mostly hear the optimistic version. And when a deal needs approval, the memo takes an afternoon to write, which is an afternoon not spent selling.
 
-- **Deal Desk → Consumption Analysis.** The qualification evidence (pain, metrics, economic buyer) supplies the inputs for the business case. A deal that is weak on MEDDPICC also produces a low-confidence model, and the model says so.
-- **Consumption Analysis → Commercial.** The forecast of what the customer will consume is what makes a commitment level, ramp or discount defensible. Commercial scenarios reuse the same deterministic financial engine, so there is one source of truth for NPV, ROI and payback.
-- **Commercial → Enablement.** The commitment you negotiate is a promise to consume. Enablement asks whether the customer has the skills to deliver that consumption.
-- **Enablement → Deal Desk.** Adoption risk appears as step 6 of the deal workspace, before the memo is written, and healthy trained customers become the expansion deals the next review wants to see.
+**What got built: Deal Desk.** Instead of one AI that says yes to everything, there's a small panel, a bit like a deal review meeting where nobody is checking their phone. One member pulls the facts. One worries. One makes the best case for the deal. One is paid to disagree with everybody else. One breaks the tie, and one writes the memo.
 
-Technically this is one join key: `deal_id` links the canonical commercial input, workload profile, architecture, financial output, policy result, recommendation and generated deal package. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Every deal is scored against MEDDPICC, which sounds like a sneeze but is just eight questions any serious deal should be able to answer. What's the measurable win? Who holds the budget? How will they decide? What's the process to get there? What does the paperwork look like? How bad is the pain? Who is our champion inside? Who else are they talking to?
 
----
+![A group chat where the devil's advocate asks who signs the contract.](docs/images/meme-group-chat.svg)
 
-## How this helps an organization
-
-These are the outcomes the design targets. They are goals to measure in your own environment, not results this repository claims.
-
-| For | Intended benefit |
-|---|---|
-| **Account executives** | Hours of memo, business-case and approval-prep work compressed to minutes, with an honest second opinion before committing. |
-| **Sales managers** | One consistent qualification language across reps, so coaching and forecast reviews compare like with like. |
-| **Finance and deal desk** | Discount, term and commitment exceptions arrive with their financial impact and approval path attached, instead of being reviewed from scratch. |
-| **Customer success and enablement** | Scarce training capacity goes to the accounts where a skills gap threatens renewal or consumption. |
-| **Leadership** | Pipeline health, consumption at risk and recommendation quality are visible, and every AI-assisted decision has an audit trail. |
+**What changes for Sam.** By Tuesday, Sam learns that the "champion" at Brightwell is also the only person Sam has talked to. Awkward, and very useful. Much better on Tuesday than in week eleven.
 
 ---
 
-## AI principles behind every module
+## Chapter 2: The number that wasn't real
 
-1. **The LLM proposes; deterministic engines decide.** Financial metrics, policy results, approvals and enablement numbers come from code. LLM text is a proposal or interpretation.
-2. **Constrained, then verified.** The commercial strategy agent may only choose from a fixed set of actions and structural levers, and every proposal is re-run through the financial and policy engines.
-3. **Grounded.** Agents retrieve from operator-owned notes, profiles and knowledge before reasoning; enablement output must pass groundedness and SKU-match gates.
-4. **Adversarial by design.** A dedicated devil's advocate stops the system from simply agreeing with the seller.
-5. **Human in the loop.** Sellers accept, modify or reject; approvals and feedback are recorded.
-6. **Honest about uncertainty.** Inputs carry confidence labels, and scenarios widen when evidence is weak. Gross margin is reported as not modeled rather than invented.
-7. **Measured.** Agent output is scored by an LLM judge against a golden dataset and traced with LangSmith.
+Sam gets a signature. High fives all round. But the number on the contract is what the customer agreed to pay, which is a different thing from what they'll actually run on Azure. If they use half of what they committed to, the next conversation is a sad one, and so is the forecast.
 
----
+**The problem.** The dollar amount on a contract says very little about what a customer will consume over the next three years. Business cases get built in spreadsheets that were born in 2019 and have seen things.
 
-## What is in this repository (and what is not)
+**What got built: Consumption Analysis.** Describe the customer's workload and the system drafts an Azure setup using only services the company really sells. It prices that setup, projects how usage should grow over three years, and checks whether the commitment on the table makes sense and what return the customer can expect. The AI drafts the architecture. Plain, predictable, boring code does the math. The AI is not allowed anywhere near the calculator.
 
-This is a **source-and-contract release**: application code, schemas, field definitions, illustrative rules and the five web interfaces. It contains **no datasets or populated records, including synthetic examples**. You supply your own CRM data and inputs, then run the workflows against them. The commercial policies included are illustrative demonstration logic, not any organization's real policy.
+Every input is labeled as stated by the customer, inferred from the notes, or assumed. So the buyer can see which numbers are facts and which are guesses, and change them.
 
-Read the design: [Scope and limitations](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) · [Schemas](docs/SCHEMAS.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Business rules](docs/RULES.md) · [Runtime inputs](docs/RUNTIME_INPUTS.md) · [Setup](docs/SETUP.md)
-
-Looking for the original engineering overview, workflow table and publication checks? It now lives in [TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md).
+**What changes for Sam.** The commitment Brightwell is being asked for is now tied to something believable, and Sam can defend it in front of a CFO.
 
 ---
 
-## Quick start
+## Chapter 3: 4:58 PM on the last day of the quarter
 
-Python 3.12 or later.
+![The customer asks for 40 percent off, no commitment and 120 day payment terms. The deal desk lists the four teams who must approve.](docs/images/meme-discount-ask.svg)
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt -r requirements-dev.txt
-cp .env.example .env        # add your own Together API key and Twenty CRM token
+**The problem.** Brightwell wants a huge discount, no commitment and very long payment terms, all in one email. In most companies the reply is to improvise, promise something, and learn on day nine which four teams had to approve it. By then the customer has a competing quote.
 
-python scripts/check_runtime_inputs.py   # see which inputs each workflow needs
-python server.py                          # interface at http://localhost:5001
-```
+**What got built: Commercial.** Sam sees the customer's ask, Sam's current offer and the lowest acceptable floor, side by side. Change a term and the effect on value and payback updates. The rulebook is checked automatically, and Sam is told up front which approvals are needed and in what order.
 
-The app connects to a separately run Twenty CRM GraphQL service at `http://localhost:3000/graphql`. Details are in [docs/SETUP.md](docs/SETUP.md) and [docs/RUNTIME_INPUTS.md](docs/RUNTIME_INPUTS.md).
+Similar past deals show up as evidence, never as the rule. There's also an AI strategist that suggests a counter-offer, but every suggestion goes straight back through the same boring checks, so it can't talk itself into a discount nobody is allowed to approve. When the deal is agreed, a deal package gets put together.
+
+**What changes for Sam.** Sam knows who has to say yes before promising anything, and replies to Brightwell the same day.
+
+---
+
+## Chapter 4: The silent churn
+
+![500 licenses bought, 12 people logged in, 3 people know what it does.](docs/images/meme-renewal-call.svg)
+
+**The problem.** Brightwell bought 500 licenses. Twelve people use them. Nobody noticed until the renewal call, because nobody gets an alert titled "this customer is quietly drifting away." Customer success is stretched thin, and training goes out to everyone, which means it helps nobody in particular.
+
+**What got built: Enablement.** It watches for the warning signs. Very few trained users. Learners who stopped showing up. A renewal coming up while skills are low. Big spend on a team that isn't ready for it. When it spots a risk, it recommends which course, for which roles, and what the account team should say, tied to the products that customer actually runs.
+
+The numbers come from code and the wording comes from AI. A quality check blocks any recommendation that isn't grounded in the account's real facts. Sam can accept, edit or reject each suggestion, and that choice is recorded and used as context next time.
+
+**What changes for Sam.** Sam hears about the adoption problem in month two, while it's still fixable, instead of at renewal, when it's a negotiation.
+
+---
+
+## The loop
+
+Customers who are trained use more, renew, and buy more. Those expansions become the next deals. And those deals walk back into Deal Desk looking healthy, which makes the devil's advocate bored.
+
+Deal Desk, then Consumption Analysis, then Commercial, then Enablement, then back to Deal Desk with a happier customer.
+
+Each stage hands its answer to the next one through the deal itself, so nobody has to retype or re-explain anything.
+
+---
+
+## The scoreboard
+
+A story is nice. A scoreboard is how you find out whether it worked. These are the numbers this project is meant to move.
+
+| KPI | The question behind it | Where this project helps |
+|---|---|---|
+| Win rate on qualified deals | Are we spending time on deals that can actually close? | Deal Desk asks every rep the same eight questions and argues against optimism. |
+| Forecast accuracy | Does what we say will close actually close? | Deal Desk risk scores, and consumption projections that reflect reality. |
+| Sales cycle length | How long from first meeting to signature? | Memos, business cases and counter-offers drop from days to minutes. |
+| Seller prep time | How many hours go into memos, spreadsheets and approval packets? | All four stages take work off the seller's plate. |
+| Discount leakage | How far do final discounts drift from what policy allows? | Commercial shows the cost of every concession before it's made. |
+| Approval turnaround | How many rounds before we get a yes? | Commercial lists the needed approvals and their order on day one. |
+| Commitment attainment | Do customers consume what they committed to? | Consumption Analysis ties the commitment to a believable forecast. |
+| Trained-user coverage | What share of licensed users know how to use the product? | Enablement flags the gaps and says who should learn what. |
+| Renewal and expansion | Do customers stay, and do they grow? | Enablement, plus the loop back into Deal Desk. |
+| Trust in the AI | How often do sellers accept, edit or reject suggestions? | Every response is recorded. A healthy mix beats a 100% accept rate. |
+
+**How to use it.** Write down last quarter's numbers first. Run this on a slice of your pipeline for one quarter. Compare. This repository doesn't claim any results of its own. It gives you the machinery and the scoreboard.
+
+---
+
+## What this is, and what it isn't
+
+- The AI recommends and people decide. Nothing gets sent, signed or approved on its own.
+- The AI writes the words and the math is done by code, on purpose, so the numbers can always be traced.
+- This repository includes no data at all. No accounts, no deals, no customers, not even fake ones. You bring your own CRM and your own inputs.
+- The example policies in the repo are demonstration rules, not any real company's policy.
+- Sam, Nexus Solutions and Brightwell Bank are made up. Any resemblance to your last quarter is a coincidence.
+
+---
+
+## Want to look under the hood?
+
+Each chapter has its own deeper write-up, in the same story-first style.
+
+- [Deal Desk](docs/deal-desk/README.md)
+- [Consumption Analysis](docs/consumption-analysis/README.md)
+- [Commercial](docs/commercial/README.md)
+- [Enablement](docs/enablement/README.md)
+
+For the engineering side, see the [architecture](docs/ARCHITECTURE.md), the [scope and limitations](docs/SCOPE.md), the [setup guide](docs/SETUP.md) and the [original technical overview](TECHNICAL_REFERENCE.md).
