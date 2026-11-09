@@ -60,7 +60,7 @@ flowchart TD
 
 | Phase | What we built | Why it came in this order |
 |---|---|---|
-| **1. Data** | Canonical `DealInput` schema, field mapping from CRM, 37 canonical records (36 active + 1 golden deal), customer asks, seller offers, guardrails, approval matrix, 50 historical precedents. | You can't automate negotiation without a clean, shared definition of "a deal." |
+| **1. Data** | Canonical `DealInput` schema, field mapping from CRM, and schemas for customer asks, seller offers, guardrails, approval matrix and historical precedents. | You can't automate negotiation without a clean, shared definition of "a deal." |
 | **2. Financial adapter** | Translates `DealInput` into the existing financial model. Supports scenario overrides (discount, term, commitment, billing, credits, list value) and compares *customer ask / recommended test / commercial floor*. Reports commitment coverage, shortfall, overage. | Reuses the one financial engine from [Consumption Analysis](../consumption-analysis/README.md) so there is a single source of truth. |
 | **3. UI** | `commercial_analysis.html`: pick a deal, compare scenarios, edit the working scenario, inspect economics, guardrails, notes and calculation trace. | Sellers must *see* the trade-offs before trusting any AI on top. |
 | **4. Policy engine** | Rule-driven evaluation across Pricing, Deal Size, Contract Term, Payment Terms, Consumption Commitment, Financial Return and Legal Terms. Consolidates duplicate approvers, orders them deterministically, returns remediation and a trace. **No LLM.** | Approvals must be predictable and explainable. |
@@ -68,18 +68,18 @@ flowchart TD
 
 ### 3.3 The seller's workflow
 
-1. **Select a deal.** Pick an active negotiation (defaults to the golden deal `GOLDEN-DEAL-1001` for demos).
+1. **Select a deal.** Pick an active negotiation.
 2. **See the gap.** Customer ask vs. working scenario vs. commercial floor, side by side, with commercial health.
 3. **Reshape.** Edit the working scenario; everything recalculates through the backend (the browser calculates nothing).
 4. **Check policy.** See `REQUIRES_APPROVAL` or not, which approver groups, in what order, and how to remediate.
 5. **Ask for a strategy (optional).** Click **Analyze Deal**. The AI proposes a structure; the engines validate it.
 6. **Apply.** The validated structure is copied into the workbench and re-run through the same APIs.
 
-On the golden deal the three scenarios illustrate why this matters: the **customer ask** needs 4 approver groups, the **working scenario** needs 2, and the **commercial floor test** needs 3. The seller sees the approval cost of each concession *before* making it.
+Each scenario carries its own approval burden, so the seller sees the approval cost of each concession *before* making it.
 
 ### 3.4 The negotiation problems we deliberately covered
 
-The synthetic data spans seven distinct commercial situations, so the tooling is tested against variety, not a single happy path: discount negotiation, commitment/ramp negotiation, payment-term negotiation, credits vs. recurring discount, strategic multi-product expansion, complex multi-exception deals, and restructure-or-reject.
+The data model covers seven distinct commercial situations, so the tooling is built for variety, not a single happy path: discount negotiation, commitment/ramp negotiation, payment-term negotiation, credits vs. recurring discount, strategic multi-product expansion, complex multi-exception deals, and restructure-or-reject.
 
 ---
 
@@ -99,7 +99,7 @@ The synthetic data spans seven distinct commercial situations, so the tooling is
 
 ## 5. How we'll know it's working (proposed success metrics)
 
-Baselines must come from real usage; this repo contains demonstration data.
+Baselines must come from your own usage; this repository ships no data.
 
 | Outcome | Metric | Direction |
 |---|---|---|
@@ -113,24 +113,24 @@ Baselines must come from real usage; this repo contains demonstration data.
 
 ## 6. Honest limitations
 
-- **Everything here is synthetic.** Asks, offers, guardrails, approval thresholds and historical precedents are demonstration data. They are **not Microsoft internal policy**, not real Microsoft deal data, and not legal or pricing advice.
+- **Policies are illustrative.** The included guardrails, approval ordering and thresholds are synthetic demonstration logic. They are **not Microsoft internal policy** and not legal or pricing advice. The repository ships no deal data; you supply your own.
 - Gross margin is **not modeled**.
-- The strategy agent **does not yet use historical comparable deals or RAG**, even though the 50 precedents and normalized comparables are already prepared for it.
-- This module does not yet include a deal builder or contract/agreement generation.
+- Historical comparable deals are **evidence only**. `tools/comparable_deal_intelligence.py` benchmarks a deal against your own history deterministically (no LLM), and those precedents never set policy or current-deal financial metrics.
+- A deal builder (`tools/deal_package_builder.py`) turns a validated working scenario into a deal and agreement package. Legal review of anything generated stays with your team.
 
-### Roadmap, in the order the data foundations make possible
+### What to calibrate next
 
-1. Comparable-deal retrieval (RAG) over the 50 precedents, so recommendations cite "deals like this."
-2. Approval routing and submission.
-3. Deal builder and agreement generation.
-4. A gross margin model, so the one `NOT_MODELED` category can be switched on.
+1. Replace the illustrative policy thresholds and approval ordering with your organization's own.
+2. Supply historical deals so comparable benchmarks reflect your market.
+3. Add a gross margin model, so the one `NOT_MODELED` policy category can be switched on.
+4. Add approval routing and submission to your existing systems.
 
 ---
 
 ## 7. Run it
 
 ```bash
-python generate_commercial_negotiation_data.py   # deterministic synthetic data
+python scripts/check_runtime_inputs.py   # supply the commercial inputs first
 python server.py
 # open http://localhost:5001/commercial-analysis
 ```
