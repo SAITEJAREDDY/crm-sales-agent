@@ -1,4 +1,4 @@
-# Deal Desk Agent
+# Sales Agent
 
 *Or: how to stop believing the 90% in the CRM.*
 
