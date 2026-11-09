@@ -73,17 +73,13 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    CRM[(Twenty CRM<br/>GraphQL)] --> P[generate_personas.py<br/>10 rep personas]
-    P --> N[note_generator.py<br/>up to 5 notes per deal, stage-aware]
-    N --> M[meddpicc_scorer.py<br/>8-element scorecard per deal]
-    M --> C[company_profile_generator.py<br/>account profiles]
-    N --> K[(ChromaDB<br/>4 collections)]
-    C --> K
-    M --> K
-    K --> Agents[7-step workspace]
+    CRM[(Twenty CRM<br/>GraphQL)] --> Agents[7-step workspace]
+    N[Operator-supplied notes,<br/>profiles, knowledge docs] --> K[(Local vector store<br/>ChromaDB)]
+    S[MEDDPICC scorecards<br/>from meddpicc_scorer.py] --> K
+    K --> Agents
 ```
 
-The four ChromaDB collections (`deal_notes`, `kb_documents`, `company_profiles`, `meddpicc_scores`) are kept separate on purpose so each agent retrieves targeted context instead of noise. Notes are voiced by assigned **rep personas** so the data reads like real selling, not a template.
+The four ChromaDB collections (`deal_notes`, `kb_documents`, `company_profiles`, `meddpicc_scores`) are kept separate on purpose so each agent retrieves targeted context instead of noise. You supply the notes and knowledge content; this repository ships none.
 
 ### 3.4 Where the seller and manager actually work
 
@@ -108,7 +104,7 @@ The four ChromaDB collections (`deal_notes`, `kb_documents`, `company_profiles`,
 
 ### How we know it works: the eval system
 
-A golden dataset (`deal-desk-golden-v1`: 2 real CRM deals per stage, with stage-specific rubrics) is scored by an LLM judge on four criteria per agent, each `0 / 2.5 / 5`. Each agent maxes at 20 with a pass at ≥ 10; the pipeline is scored on coherence, contradiction detection, data thread and memo quality. **Final score is 0–100; pass at ≥ 70.** Results appear in the **Evals** tab and as a LangSmith experiment.
+A golden dataset (`deal-desk-golden-v1`: 2 CRM deals per stage, with stage-specific rubrics) is scored by an LLM judge on four criteria per agent, each `0 / 2.5 / 5`. Each agent maxes at 20 with a pass at ≥ 10; the pipeline is scored on coherence, contradiction detection, data thread and memo quality. **Final score is 0–100; pass at ≥ 70.** Results appear in the **Evals** tab and as a LangSmith experiment.
 
 Failures taught us things too — e.g. the judge model returning integer `2` instead of `2.5` zeroed every score until we added value-snapping. Evals found it; that's what they're for.
 
@@ -116,7 +112,7 @@ Failures taught us things too — e.g. the judge model returning integer `2` ins
 
 ## 5. How we'll know it's working (proposed success metrics)
 
-These are the outcomes this module is meant to move. Baselines need to be captured from real usage — the dataset in this repo is demonstration data.
+These are the outcomes this module is meant to move. Baselines need to be captured from your own usage; this repository ships no data.
 
 | Outcome | Metric | Direction |
 |---|---|---|
@@ -130,7 +126,7 @@ These are the outcomes this module is meant to move. Baselines need to be captur
 
 ## 6. Honest limitations
 
-- All 380 deals and the closed-deal history are **synthetic demonstration data**, seeded into a local Twenty CRM.
+- This repository is a **source-and-contract release with no data**. You supply your own CRM records, notes and knowledge content; see [Scope](../SCOPE.md).
 - MEDDPICC scores are **LLM-judged from notes**, so they are only as good as the notes. They are a prioritisation aid, not ground truth.
 - The recommendation is advisory. Approval remains a human decision.
 
@@ -139,10 +135,11 @@ These are the outcomes this module is meant to move. Baselines need to be captur
 ## 7. Run it
 
 ```bash
-python generate_personas.py && python note_generator.py && python meddpicc_scorer.py
-python company_profile_generator.py && python phase2_kb_builder.py
-python server.py          # then open http://localhost:5001
+python scripts/check_runtime_inputs.py   # which inputs the workflows need
+python server.py                          # then open http://localhost:5001
 ```
+
+Full setup: [docs/SETUP.md](../SETUP.md) and [docs/RUNTIME_INPUTS.md](../RUNTIME_INPUTS.md).
 
 Or from the terminal for one deal: `python run.py` (interactive) · `python run_pipeline_batch.py` (all open deals).
 
