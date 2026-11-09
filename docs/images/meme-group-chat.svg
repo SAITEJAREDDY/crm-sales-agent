@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Meme: group chat where the devil's advocate asks who signs the contract">
+  <rect width="800" height="500" rx="18" fill="#14181f"/>
+  <text x="400" y="56" text-anchor="middle" font-family="Impact, 'Arial Black', Arial, sans-serif" font-size="36" fill="#ffffff" letter-spacing="1">DEAL DESK GROUP CHAT</text>
+
+  <rect x="40" y="80" width="560" height="82" rx="14" fill="#1f3d2e"/>
+  <text x="60" y="104" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#7be0a6">Opportunity Analyst</text>
+  <text x="60" y="140" font-family="Arial, sans-serif" font-size="21" fill="#ffffff">This deal is a lock. Big pain, great champion.</text>
+
+  <rect x="200" y="176" width="560" height="82" rx="14" fill="#5b2430"/>
+  <text x="220" y="200" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#ff9aa8">Devil's Advocate</text>
+  <text x="220" y="236" font-family="Arial, sans-serif" font-size="21" fill="#ffffff">Cool. Who signs the contract?</text>
+
+  <rect x="40" y="272" width="300" height="76" rx="14" fill="#1f3d2e"/>
+  <text x="60" y="296" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#7be0a6">Opportunity Analyst</text>
+  <text x="60" y="330" font-family="Arial, sans-serif" font-size="21" fill="#ffffff">...the champion?</text>
+
+  <rect x="200" y="362" width="560" height="92" rx="14" fill="#5b2430"/>
+  <text x="220" y="386" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#ff9aa8">Devil's Advocate</text>
+  <text x="220" y="418" font-family="Arial, sans-serif" font-size="21" fill="#ffffff">The champion's boss's boss, whom you</text>
+  <text x="220" y="444" font-family="Arial, sans-serif" font-size="21" fill="#ffffff">have never met.</text>
+
+  <text x="400" y="486" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#9aa4b2">Arbitrator: noted. Moving this one to NEEDS ATTENTION.</text>
+</svg>
