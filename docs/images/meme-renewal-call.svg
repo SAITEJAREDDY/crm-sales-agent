@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" width="800" height="440" role="img" aria-label="Meme: 500 licenses bought, 12 people logged in, 3 know what it does, at the renewal call">
+  <rect width="800" height="440" rx="18" fill="#14181f"/>
+  <text x="400" y="58" text-anchor="middle" font-family="Impact, 'Arial Black', Arial, sans-serif" font-size="38" fill="#ffffff" letter-spacing="1">THE RENEWAL CALL</text>
+
+  <g font-family="Arial, sans-serif" font-size="20" fill="#ffffff">
+    <text x="30" y="143">Licenses bought</text>
+    <text x="30" y="223">People who logged in</text>
+    <text x="30" y="303">People who know what it does</text>
+  </g>
+
+  <rect x="330" y="122" width="440" height="30" rx="4" fill="#3b82f6"/>
+  <text x="760" y="144" text-anchor="end" font-family="Arial, sans-serif" font-weight="700" font-size="20" fill="#ffffff">500</text>
+
+  <rect x="330" y="202" width="12" height="30" rx="2" fill="#ef4444"/>
+  <text x="356" y="225" font-family="Arial, sans-serif" font-weight="700" font-size="20" fill="#ffffff">12</text>
+
+  <rect x="330" y="282" width="4" height="30" rx="1" fill="#ef4444"/>
+  <text x="348" y="305" font-family="Arial, sans-serif" font-weight="700" font-size="20" fill="#ffffff">3 (we think)</text>
+
+  <text x="400" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#ffffff">Customer success, 90 days before renewal:</text>
+  <text x="400" y="394" text-anchor="middle" font-family="Arial, sans-serif" font-style="italic" font-size="22" fill="#fbbf24">"Why is nobody using it?"</text>
+  <text x="400" y="424" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#9aa4b2">The enablement agent, since month two: "Hi."</text>
+</svg>
