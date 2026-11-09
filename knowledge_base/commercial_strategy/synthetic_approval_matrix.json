@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "dataset_name": "Synthetic Demo Commercial Approval Matrix",
+    "provenance": "synthetic_demo_data",
+    "disclaimer": "Synthetic demonstration approval routing only. Not Microsoft internal policy."
+  },
+  "approval_categories": [
+    {
+      "issue_type": "discount_exception",
+      "primary_review_function": "Finance",
+      "additional_stakeholders": [
+        "Sales Leadership"
+      ],
+      "reason_approval_required": "Discount exceeds standard recurring range",
+      "severity": "medium"
+    },
+    {
+      "issue_type": "deep_discount_exception",
+      "primary_review_function": "Finance",
+      "additional_stakeholders": [
+        "Sales Leadership",
+        "Commercial Deal Making"
+      ],
+      "reason_approval_required": "Discount materially changes recurring economics",
+      "severity": "high"
+    },
+    {
+      "issue_type": "non_standard_payment_terms",
+      "primary_review_function": "Finance",
+      "additional_stakeholders": [
+        "Legal"
+      ],
+      "reason_approval_required": "Payment timing creates billing or collections risk",
+      "severity": "medium"
+    },
+    {
+      "issue_type": "price_protection_exception",
+      "primary_review_function": "Finance",
+      "additional_stakeholders": [
+        "Legal",
+        "Business Planning"
+      ],
+      "reason_approval_required": "Protection extends beyond standard committed scope",
+      "severity": "medium"
+    },
+    {
+      "issue_type": "strategic_investment",
+      "primary_review_function": "Business Planning",
+      "additional_stakeholders": [
+        "Finance",
+        "Product"
+      ],
+      "reason_approval_required": "Credits or investments require business case and adoption milestones",
+      "severity": "medium"
+    },
+    {
+      "issue_type": "licensing_program_exception",
+      "primary_review_function": "Commercial Deal Making",
+      "additional_stakeholders": [
+        "Legal",
+        "Product"
+      ],
+      "reason_approval_required": "Commercial structure deviates from standard program assumptions",
+      "severity": "high"
+    },
+    {
+      "issue_type": "non_standard_contractual_term",
+      "primary_review_function": "Legal",
+      "additional_stakeholders": [
+        "Finance"
+      ],
+      "reason_approval_required": "Custom term may affect obligations, billing, or enforceability",
+      "severity": "high"
+    },
+    {
+      "issue_type": "low_commitment_high_discount",
+      "primary_review_function": "Commercial Deal Making",
+      "additional_stakeholders": [
+        "Finance",
+        "Sales Leadership"
+      ],
+      "reason_approval_required": "Customer asks for both low commitment and elevated discount",
+      "severity": "high"
+    },
+    {
+      "issue_type": "material_deviation_from_approved_economics",
+      "primary_review_function": "Finance",
+      "additional_stakeholders": [
+        "Sales Leadership",
+        "Business Planning"
+      ],
+      "reason_approval_required": "Aggregate concessions fall below target economics",
+      "severity": "critical"
+    }
+  ]
+}

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Consumption Analysis — Deal Desk</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#f3f2f1; --bg2:#fff; --bg3:#faf9f8; --border:#edebe9; --border2:#d2d0ce;
+  --text:#201f1e; --text-dim:#484644; --text-muted:#68655f; --accent:#0078d4; --accent2:#106ebe;
+  --accent-bg:#eff6fc; --green:#107c10; --green-bg:#dff6dd; --yellow:#ca5010; --yellow-bg:#fff4ce;
+  --red:#a4262c; --red-bg:#fde7e9; --purple:#5c2d91; --purple-bg:#f3f2f8;
+  --accent-ink:#005a9e; --green-ink:#0b6a0b; --yellow-ink:#8a3c06; --purple-ink:#4b2482;
+  --mono:'Cascadia Mono','Consolas','Courier New',monospace; --sans:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --radius:4px; --shadow-sm:0 1.6px 3.6px rgba(0,0,0,.13),0 .3px .9px rgba(0,0,0,.11);
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh}
+.header{height:48px;background:var(--accent);border-bottom:1px solid var(--accent2);display:flex;align-items:center;padding:0 20px;gap:16px;box-shadow:0 2px 8px rgba(0,120,212,.24);position:sticky;top:0;z-index:10}
+.header-logo{font-size:18px;font-weight:800;color:#fff}.header-logo span{color:#c7e0f4}
+.header-link{margin-left:auto;color:#deecf9;text-decoration:none;font-size:12px;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:var(--radius);background:rgba(255,255,255,.12)}
+.shell{max-width:1440px;margin:0 auto;padding:20px 24px 40px}
+.topbar{display:grid;grid-template-columns:1fr minmax(320px,440px);gap:16px;margin-bottom:16px}
+.hero,.selector,.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+.hero{padding:18px 20px}.selector{padding:14px}
+.eyebrow,.label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.title{font-size:28px;font-weight:700;letter-spacing:0;margin-top:4px}.subtitle{color:var(--text-dim);margin-top:2px;max-width:78ch}
+select,input{width:100%;border:1px solid var(--border2);background:#fff;color:var(--text);border-radius:var(--radius);padding:8px 10px;font-family:var(--sans);font-size:13px}
+input:disabled{background:var(--bg3);color:var(--text-muted)}
+.selector-meta{font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.6}
+.section{margin-top:16px}.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}.section-title{font-size:16px;font-weight:700}
+.panel{padding:16px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:11px;min-height:68px}
+.metric:nth-child(4n+1){background:var(--accent-bg);border-color:#c7e0f4}.metric:nth-child(4n+1) .label{color:var(--accent-ink)}
+.metric:nth-child(4n+2){background:var(--green-bg);border-color:#badfba}.metric:nth-child(4n+2) .label{color:var(--green-ink)}
+.metric:nth-child(4n+3){background:var(--yellow-bg);border-color:#f7d78a}.metric:nth-child(4n+3) .label{color:var(--yellow-ink)}
+.metric:nth-child(4n+4){background:var(--purple-bg);border-color:#d9cdee}.metric:nth-child(4n+4) .label{color:var(--purple-ink)}
+.metric strong{display:block;font-family:var(--mono);font-size:18px;margin-top:4px;color:var(--text);overflow-wrap:anywhere}
+.assumptions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.assumption{display:grid;gap:6px}
+.btn{border:none;border-radius:var(--radius);background:var(--accent);color:#fff;padding:9px 14px;font-family:var(--mono);font-size:11px;font-weight:700;white-space:nowrap}.btn:disabled{opacity:.55;cursor:not-allowed}
+.muted{color:var(--text-muted);font-size:12px;margin-top:8px}.empty{border:1px dashed var(--border2);background:var(--bg3);border-radius:var(--radius);padding:28px;text-align:center;color:var(--text-dim)}
+.forecast{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.forecast .metric strong{font-size:24px}
+.comparison{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.comparison .metric:nth-child(2){background:var(--accent-bg);border-color:#c7e0f4}
+table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);margin-top:10px}th,td{padding:8px 9px;border-bottom:1px solid var(--border);text-align:left;font-size:12px;vertical-align:top}th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);background:var(--bg3)}td.num{text-align:right;font-family:var(--mono)}
+.architecture-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.architecture-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.architecture-error{display:none;color:var(--red);margin-top:8px}.architecture-error.visible{display:block}.edit-input{min-width:80px;padding:6px 7px;font-size:12px}.save-row{background:#fff;color:var(--accent);border:1px solid var(--accent);padding:7px 10px}.price-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.status-pill{font-family:var(--mono);font-size:10px;font-weight:800;border-radius:100px;padding:3px 8px;border:1px solid var(--border2)}.RESOLVED,.COMPLETE,.MANUAL_OVERRIDE{background:var(--green-bg);color:var(--green)}.AMBIGUOUS,.INCOMPLETE,.STALE{background:var(--yellow-bg);color:var(--yellow)}.NOT_FOUND,.API_ERROR{background:var(--red-bg);color:var(--red)}
+.forecast-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.scenario-tabs{display:flex;gap:6px;flex-wrap:wrap}.scenario-tab{background:#fff;color:var(--accent);border:1px solid var(--accent)}.scenario-tab.active{background:var(--accent);color:#fff}.forecast-chart{width:100%;height:220px;border:1px solid var(--border);background:#fff;border-radius:var(--radius);margin-top:12px}.warning{background:var(--yellow-bg);border:1px solid #f7d78a;color:var(--yellow);border-radius:var(--radius);padding:8px 10px;margin-top:10px}.assumption-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px}
+@media(max-width:1000px){.topbar,.grid-2{grid-template-columns:1fr}.metric-grid,.assumptions,.forecast,.comparison{grid-template-columns:1fr 1fr}}@media(max-width:640px){.metric-grid,.assumptions,.forecast,.comparison{grid-template-columns:1fr}.shell{padding:14px}.title{font-size:22px}.header{padding:0 14px}.header-link{display:none}}
+@keyframes flashUpdatePulse{0%{background-color:rgba(255,140,0,.30);box-shadow:0 0 0 2px rgba(255,140,0,.75) inset}100%{background-color:rgba(255,140,0,0);box-shadow:0 0 0 2px rgba(255,140,0,0) inset}}
+.flash-update{animation:flashUpdatePulse 2.2s ease-out;border-radius:var(--radius)}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-logo">Nexus <span>/</span> Consumption Analysis</div>
+  <a class="header-link" href="/">Deal Desk</a>
+</header>
+<main class="shell">
+  <div id="loading" class="card empty">Loading consumption analysis…</div>
+  <div id="app" style="display:none">
+    <div class="topbar">
+      <section class="hero">
+        <div class="eyebrow">Consumption Analysis</div>
+        <div class="title">Consumption Analysis</div>
+        <div class="subtitle">Model projected Azure workload consumption and compare it against commercial deal commitments.</div>
+      </section>
+      <section class="selector">
+        <label class="label" for="dealSelect">Commercial deal</label>
+        <select id="dealSelect" onchange="loadDeal(this.value)"></select>
+        <div class="selector-meta" id="selectorMeta">Existing commercial deal dataset.</div>
+      </section>
+    </div>
+
+    <section class="section card panel">
+      <div class="section-head"><div class="section-title">Deal Context</div></div>
+      <div class="metric-grid" id="dealContext"></div>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Workload Assumptions</div>
+          <div class="muted">Architecture generation uses the selected workload profile and does not calculate pricing.</div>
+        </div>
+        <div class="architecture-actions"><button class="btn save-row" id="editAssumptionsBtn" onclick="toggleAssumptions(true)">Edit Assumptions</button><button class="btn" id="saveAssumptionsBtn" onclick="saveAssumptions()" style="display:none">Save Assumptions</button><button class="btn" id="generateArchitectureBtn" onclick="generateArchitecture()" disabled>Generate Azure Architecture</button></div>
+      </div>
+      <div class="assumptions" id="assumptions"></div>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-head">
+        <div class="section-title">Generated Architecture</div>
+        <div class="architecture-actions">
+          <button class="btn save-row" id="addServiceBtn" onclick="addArchitectureService()" style="display:none">+ Add Service</button>
+          <button class="btn save-row" id="saveArchitectureBtn" onclick="saveArchitectureEdits()" style="display:none">Save Overrides</button>
+        </div>
+      </div>
+      <div class="architecture-error" id="architectureError"></div>
+      <div id="architectureEmpty" class="empty">
+        <strong>No architecture generated yet.</strong>
+        <div class="muted">Azure services, SKUs, quantities, and estimated usage will appear here once architecture generation is enabled.</div>
+      </div>
+      <div id="architecturePanel" style="display:none"></div>
+    </section>
+    <section class="section card panel">
+      <div class="section-head"><div class="section-title">Inferred Enterprise Requirements</div></div>
+      <div id="inferredRequirements" class="empty">No inferred requirements available.</div>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Azure Pricing</div>
+          <div class="muted">Primary Region East US uses the Azure Retail Prices snapshot. Secondary Region West US is a modeled assumption, not real West US retail pricing.</div>
+        </div>
+        <button class="btn" id="priceArchitectureBtn" onclick="priceArchitecture()" disabled>Calculate Azure Pricing</button>
+      </div>
+      <div class="architecture-error" id="pricingError"></div>
+      <div id="pricingEmpty" class="empty">
+        <strong>No Azure pricing calculated yet.</strong>
+        <div class="muted">Generate an architecture, then calculate Azure pricing to resolve unit prices and baseline monthly cost.</div>
+      </div>
+      <div id="pricingPanel" style="display:none"></div>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-head">
+        <div class="section-title">36-Month Consumption Forecast</div>
+        <div class="forecast-actions">
+          <button class="btn" id="generateForecastBtn" onclick="generateForecast()" disabled>Generate 36-Month Forecast</button>
+          <div class="scenario-tabs" id="scenarioTabs" style="display:none">
+            <button class="btn scenario-tab" onclick="selectScenario('CONSERVATIVE')">Conservative</button>
+            <button class="btn scenario-tab active" onclick="selectScenario('EXPECTED')">Expected</button>
+            <button class="btn scenario-tab" onclick="selectScenario('HIGH_GROWTH')">High Growth</button>
+          </div>
+        </div>
+      </div>
+      <div class="architecture-error" id="forecastError"></div>
+      <div class="forecast" id="forecastSummary">
+        <div class="metric"><div class="label">Year 1</div><strong>—</strong></div>
+        <div class="metric"><div class="label">Year 2</div><strong>—</strong></div>
+        <div class="metric"><div class="label">Year 3</div><strong>—</strong></div>
+        <div class="metric"><div class="label">3-Year Consumption</div><strong>—</strong></div>
+      </div>
+      <div id="forecastPanel"></div>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Commercial Commitment</div>
+          <div class="muted">Microsoft/deal perspective. Uses the selected forecast scenario and the canonical Azure commitment.</div>
+        </div>
+        <button class="btn" id="calculateCommercialBtn" onclick="calculateCommercialIntelligence()" disabled>Calculate Commitment Alignment</button>
+      </div>
+      <div class="architecture-error" id="commercialError"></div>
+      <div class="comparison" id="comparison"></div>
+      <div id="commercialPanel"></div>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Customer Business Case</div>
+          <div class="muted">Customer economic perspective. ROI uses explicit avoided-cost and benefit assumptions, not Azure consumption alone.</div>
+        </div>
+        <button class="btn" id="calculateBusinessCaseBtn" onclick="calculateBusinessCase()" disabled>Calculate Business Case</button>
+      </div>
+      <div class="architecture-error" id="businessCaseError"></div>
+      <div class="metric-grid" id="businessCaseSummary"></div>
+      <div id="businessCasePanel"></div>
+      <details class="section">
+        <summary class="section-title">Business Case Assumptions</summary>
+        <div class="assumptions" id="businessCaseAssumptions"></div>
+        <div class="assumption-actions"><button class="btn save-row" onclick="saveBusinessCaseAssumptions()">Save Assumptions</button></div>
+      </details>
+    </section>
+  </div>
+</main>
+<script>
+const API = window.location.origin;
+let dealInput = null;
+let consumptionProfile = null;
+let architectureRecord = null;
+let pricingRecord = null;
+let forecastRecord = null;
+let commercialIntelligence = null;
+let businessCase = null;
+let businessCaseAssumptions = null;
+let selectedScenario = 'EXPECTED';
+let editingAssumptions = false;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dash = v => (v === null || v === undefined || v === '') ? '—' : v;
+const money = (v, currency='USD') => {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return '—';
+  return new Intl.NumberFormat('en-US', {style:'currency', currency, maximumFractionDigits:0}).format(Number(v));
+};
+const pct = v => (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : `${Number(v).toFixed(Number(v)%1?1:0)}%`;
+
+async function init(){
+  const res = await fetch(`${API}/api/consumption-analysis/deals`);
+  const data = await res.json();
+  const sel = document.getElementById('dealSelect');
+  sel.innerHTML = (data.deals || []).map(d => {
+    const label = d.account ? `${d.deal_id} — ${d.account}` : d.deal_id;
+    return `<option value="${esc(d.deal_id)}">${esc(label)}</option>`;
+  }).join('');
+  const defaultDealId = data.default_deal_id || data.deals?.[0]?.deal_id;
+  if(defaultDealId){
+    sel.value = defaultDealId;
+    await loadDeal(defaultDealId);
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+async function loadDeal(dealId){
+  const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealId)}`);
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.message || data.error);
+  dealInput = data.deal || data.deal_input;
+  consumptionProfile = data.consumption_profile || null;
+  window.enterpriseProfile = data.enterprise_profile || null;
+  await loadArchitecture(dealId);
+  render();
+}
+
+async function loadArchitecture(dealId){
+  architectureRecord = null;
+  pricingRecord = null;
+  forecastRecord = null;
+  commercialIntelligence = null;
+  businessCase = null;
+  businessCaseAssumptions = null;
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealId)}/architecture`);
+    const data = await res.json();
+    architectureRecord = res.ok ? data.architecture_record : null;
+    await loadPricing(dealId);
+    await loadForecast(dealId);
+    await loadCommercialIntelligence(dealId);
+    await loadBusinessCase(dealId);
+  }catch(err){ architectureRecord = null; }
+}
+
+async function loadPricing(dealId){
+  pricingRecord = null;
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealId)}/pricing`);
+    const data = await res.json();
+    pricingRecord = res.ok ? data.pricing : null;
+  }catch(err){ pricingRecord = null; }
+}
+
+async function loadForecast(dealId){
+  forecastRecord = null;
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealId)}/forecast`);
+    const data = await res.json();
+    forecastRecord = res.ok ? data.forecast : null;
+  }catch(err){ forecastRecord = null; }
+}
+
+async function loadCommercialIntelligence(dealId){
+  commercialIntelligence = null;
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealId)}/commercial-intelligence`);
+    const data = await res.json();
+    commercialIntelligence = res.ok ? data.commercial_intelligence : null;
+  }catch(err){ commercialIntelligence = null; }
+}
+
+async function loadBusinessCase(dealId){
+  businessCase = null;
+  businessCaseAssumptions = null;
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealId)}/business-case`);
+    const data = await res.json();
+    businessCase = res.ok ? data.business_case : null;
+    businessCaseAssumptions = res.ok ? data.assumptions : null;
+  }catch(err){ businessCase = null; businessCaseAssumptions = null; }
+}
+
+function field(label, value){
+  return `<div class="metric"><div class="label">${esc(label)}</div><strong>${esc(dash(value))}</strong></div>`;
+}
+
+// Briefly flashes an orange highlight over one or more elements so the user
+// can see exactly what just changed as a result of a button click.
+function flashUpdate(ids){
+  (Array.isArray(ids) ? ids : [ids]).forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.classList.remove('flash-update');
+    void el.offsetWidth; // restart the animation even if it just ran
+    el.classList.add('flash-update');
+  });
+}
+
+function render(){
+const a = dealInput.account || {};
+  const o = dealInput.opportunity || {};
+  const c = dealInput.commercial || {};
+  const comp = dealInput.competitive_context || {};
+  const strategy = dealInput.strategic_context || {};
+  const currency = c.currency || o.currency || 'USD';
+  const products = (dealInput.products || []).map(p => p.product).filter(Boolean).join(', ');
+  document.getElementById('selectorMeta').textContent = `${dealInput.deal_id} · ${dash(o.stage)} · ${dash(a.name)}`;
+  document.getElementById('generateArchitectureBtn').disabled = !consumptionProfile;
+  document.getElementById('dealContext').innerHTML = [
+    field('Deal ID', dealInput.deal_id),
+    field('Customer / Account', a.name),
+    field('Industry', a.industry),
+    field('Customer Segment', a.segment),
+    field('Region / Geography', a.region),
+    field('Deal Term', c.contract_term_months ? `${c.contract_term_months} months` : null),
+    field('TCV', money(c.tcv ?? c.proposed_net_value, currency)),
+    field('Discount', pct(c.proposed_discount_pct)),
+    field('Gross Margin', pct(c.gross_margin_pct)),
+    field('Product / Solution', products),
+    field('Deal Status', o.stage),
+    field('Approval Status', dealInput.approval_status),
+    field('Confidence', o.probability ? `${o.probability}%` : null),
+    field('Assigned Rep', o.assigned_rep),
+    field('Competitive Context', comp.primary_competitor),
+    field('Expansion Potential', strategy.expansion_potential)
+  ].join('');
+  renderAssumptions();
+  renderInferredRequirements();
+  renderArchitecture();
+  renderPricing();
+  renderForecast();
+  renderCommercialIntelligence();
+  renderBusinessCase();
+  renderBusinessCaseAssumptions();
+}
+
+function canForecast(){
+  return pricingRecord && !pricingRecord.stale && pricingRecord.pricing_status !== 'STALE' && Number(pricingRecord.resolved_services || 0) > 0;
+}
+
+async function generateForecast(){
+  const btn = document.getElementById('generateForecastBtn');
+  const err = document.getElementById('forecastError');
+  btn.disabled = true;
+  btn.textContent = 'Forecasting…';
+  err.classList.remove('visible');
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/generate-forecast`, {method:'POST'});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    forecastRecord = data;
+    selectedScenario = 'EXPECTED';
+    renderForecast();
+    await loadCommercialIntelligence(dealInput.deal_id);
+    await loadBusinessCase(dealInput.deal_id);
+    renderCommercialIntelligence();
+    renderBusinessCase();
+    flashUpdate(['forecastSummary', 'forecastPanel']);
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }finally{
+    btn.textContent = 'Generate 36-Month Forecast';
+    btn.disabled = !canForecast();
+  }
+}
+
+function selectScenario(name){
+  selectedScenario = name;
+  renderForecast();
+  renderCommercialIntelligence();
+  renderBusinessCase();
+}
+
+function renderForecast(){
+  const btn = document.getElementById('generateForecastBtn');
+  const tabs = document.getElementById('scenarioTabs');
+  const summary = document.getElementById('forecastSummary');
+  const panel = document.getElementById('forecastPanel');
+  btn.disabled = !canForecast();
+  if(!canForecast() && pricingRecord?.pricing_status === 'STALE'){
+    panel.innerHTML = '<div class="muted">Refresh Azure pricing before generating a forecast.</div>';
+  }
+  if(!forecastRecord?.scenarios){
+    tabs.style.display = 'none';
+    summary.innerHTML = [
+      field('Year 1', '—'), field('Year 2', '—'), field('Year 3', '—'), field('3-Year Consumption', '—')
+    ].join('');
+    if(!panel.innerHTML) panel.innerHTML = '<div class="muted">Generate a forecast after Azure pricing is available.</div>';
+    return;
+  }
+  tabs.style.display = 'flex';
+  [...tabs.querySelectorAll('button')].forEach(b => b.classList.toggle('active', b.textContent.replace(' ', '_').toUpperCase() === selectedScenario));
+  const scenario = forecastRecord.scenarios[selectedScenario] || forecastRecord.scenarios.EXPECTED;
+  const totalLabel = forecastRecord.forecast_status === 'COMPLETE' ? '3-Year Consumption' : '3-Year Resolved Consumption';
+  summary.innerHTML = [
+    field('Year 1', money(scenario.year_1, forecastRecord.currency)),
+    field('Year 2', money(scenario.year_2, forecastRecord.currency)),
+    field('Year 3', money(scenario.year_3, forecastRecord.currency)),
+    field(totalLabel, money(scenario.total_36_month, forecastRecord.currency))
+  ].join('');
+  const categories = Object.entries(scenario.by_category || {}).map(([cat, row]) => `<tr><td>${esc(cat)}</td><td class="num">${money(row.year_1, forecastRecord.currency)}</td><td class="num">${money(row.year_2, forecastRecord.currency)}</td><td class="num">${money(row.year_3, forecastRecord.currency)}</td><td class="num">${money(row.total_36_month, forecastRecord.currency)}</td></tr>`).join('');
+  const g = scenario.growth_assumptions || {};
+  panel.innerHTML = `
+    <div class="price-summary">
+      ${field('Forecast Status', forecastRecord.forecast_status)}
+      ${field('Services Forecast', `${forecastRecord.services_forecast} / ${forecastRecord.total_services}`)}
+      ${field('Scenario', selectedScenario)}
+      ${field('Workload Y2', g.workload_y2_multiplier ? `${((Number(g.workload_y2_multiplier)-1)*100).toFixed(1)}%` : '—')}
+      ${field('Workload Y3', g.workload_y3_multiplier ? `${((Number(g.workload_y3_multiplier)-1)*100).toFixed(1)}%` : '—')}
+    </div>
+    ${forecastRecord.forecast_status === 'INCOMPLETE' ? `<div class="muted">${forecastRecord.unresolved_services.length} services excluded due to unresolved pricing.</div>` : ''}
+    ${drawForecastChart(scenario.monthly_totals || [])}
+    <div class="muted">${esc(g.data_growth_precedence || '')}</div>
+    <div style="overflow:auto"><table><thead><tr><th>Category</th><th>Y1</th><th>Y2</th><th>Y3</th><th>36-Month</th></tr></thead><tbody>${categories}</tbody></table></div>`;
+}
+
+function canCalculateIntelligence(){
+  return forecastRecord?.scenarios && forecastRecord.forecast_status !== 'STALE' && !forecastRecord.stale;
+}
+
+async function calculateCommercialIntelligence(){
+  const btn = document.getElementById('calculateCommercialBtn');
+  const err = document.getElementById('commercialError');
+  btn.disabled = true;
+  btn.textContent = 'Calculating…';
+  err.classList.remove('visible');
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/commercial-intelligence`, {method:'POST'});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    commercialIntelligence = data;
+    renderCommercialIntelligence();
+    flashUpdate(['comparison', 'commercialPanel']);
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }finally{
+    btn.textContent = 'Calculate Commitment Alignment';
+    btn.disabled = !canCalculateIntelligence();
+  }
+}
+
+function renderCommercialIntelligence(){
+  const btn = document.getElementById('calculateCommercialBtn');
+  const summary = document.getElementById('comparison');
+  const panel = document.getElementById('commercialPanel');
+  btn.disabled = !canCalculateIntelligence();
+  const currency = dealInput?.commercial?.currency || 'USD';
+  if(!commercialIntelligence?.scenarios){
+    summary.innerHTML = [
+      field('Azure Commitment', '—'),
+      field('Projected Consumption', '—'),
+      field('Commitment Coverage', '—'),
+      field('Headroom', '—'),
+      field('Assessment', '—')
+    ].join('');
+    panel.innerHTML = '<div class="muted">Generate a forecast, then calculate commitment alignment.</div>';
+    return;
+  }
+  const scenario = commercialIntelligence.scenarios[selectedScenario] || commercialIntelligence.scenarios.EXPECTED;
+  summary.innerHTML = [
+    field('Azure Commitment', money(commercialIntelligence.commitment_value, commercialIntelligence.currency)),
+    field('Projected Consumption', money(scenario.projected_consumption, commercialIntelligence.currency)),
+    field('Commitment Coverage', pct(scenario.commitment_coverage_pct)),
+    field('Headroom', money(scenario.headroom, commercialIntelligence.currency)),
+    field('Assessment', scenario.assessment)
+  ].join('');
+  const rows = Object.entries(commercialIntelligence.scenarios).map(([name, row]) => `<tr><td>${esc(name.replace('_',' '))}</td><td class="num">${money(row.projected_consumption, currency)}</td><td class="num">${pct(row.commitment_coverage_pct)}</td><td class="num">${money(row.headroom, currency)}</td><td class="num">${money(row.expansion_potential, currency)}</td><td>${esc(row.assessment)}</td></tr>`).join('');
+  panel.innerHTML = `
+    ${commercialIntelligence.commitment_warning ? `<div class="warning">${esc(commercialIntelligence.commitment_warning)}</div>` : ''}
+    <div class="muted">Commitment source: ${esc(commercialIntelligence.commitment_source)} · ${esc(scenario.recommendation || '')}</div>
+    <div style="overflow:auto"><table><thead><tr><th>Scenario</th><th>36M Consumption</th><th>Coverage</th><th>Headroom</th><th>Expansion</th><th>Assessment</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+async function calculateBusinessCase(){
+  const btn = document.getElementById('calculateBusinessCaseBtn');
+  const err = document.getElementById('businessCaseError');
+  btn.disabled = true;
+  btn.textContent = 'Calculating…';
+  err.classList.remove('visible');
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/calculate-business-case`, {method:'POST'});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    businessCase = data;
+    businessCaseAssumptions = data.assumptions;
+    renderBusinessCase();
+    renderBusinessCaseAssumptions();
+    flashUpdate(['businessCaseSummary', 'businessCasePanel']);
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }finally{
+    btn.textContent = 'Calculate Business Case';
+    btn.disabled = !canCalculateIntelligence();
+  }
+}
+
+function renderBusinessCase(){
+  const btn = document.getElementById('calculateBusinessCaseBtn');
+  const summary = document.getElementById('businessCaseSummary');
+  const panel = document.getElementById('businessCasePanel');
+  btn.disabled = !canCalculateIntelligence();
+  if(!businessCase?.scenarios){
+    summary.innerHTML = [
+      field('Current-State 3-Year TCO', '—'),
+      field('Proposed Azure 3-Year TCO', '—'),
+      field('3-Year TCO Savings', '—'),
+      field('ROI', '—')
+    ].join('');
+    panel.innerHTML = '<div class="muted">Calculate the business case after a current forecast is available.</div>';
+    return;
+  }
+  const scenario = businessCase.scenarios[selectedScenario] || businessCase.scenarios.EXPECTED;
+  summary.innerHTML = [
+    field('Current-State 3-Year TCO', money(scenario.current_state_3yr_tco, businessCase.currency)),
+    field('Proposed Azure 3-Year TCO', money(scenario.proposed_azure_3yr_tco, businessCase.currency)),
+    field('3-Year TCO Savings', money(scenario.tco_savings, businessCase.currency)),
+    field('ROI', pct(scenario.roi_pct)),
+    field('Net Benefit', money(scenario.net_benefit, businessCase.currency)),
+    field('NPV', money(scenario.npv, businessCase.currency)),
+    field('Payback', scenario.payback_label),
+    field('Confidence', businessCase.confidence)
+  ].join('');
+  const rows = Object.entries(businessCase.scenarios).map(([name, row]) => `<tr><td>${esc(name.replace('_',' '))}</td><td class="num">${money(row.azure_consumption_3yr, businessCase.currency)}</td><td class="num">${money(row.proposed_azure_3yr_tco, businessCase.currency)}</td><td class="num">${money(row.net_benefit, businessCase.currency)}</td><td class="num">${pct(row.roi_pct)}</td><td class="num">${money(row.npv, businessCase.currency)}</td><td>${esc(row.payback_label)}</td></tr>`).join('');
+  panel.innerHTML = `
+    <div class="price-summary">
+      ${field('Azure Consumption', money(scenario.azure_consumption_3yr, businessCase.currency))}
+      ${field('Migration', money(scenario.migration_cost, businessCase.currency))}
+      ${field('Implementation', money(scenario.implementation_cost, businessCase.currency))}
+      ${field('Training / Change', money(scenario.training_change_management_cost, businessCase.currency))}
+      ${field('Additional Benefits', money(scenario.additional_benefits, businessCase.currency))}
+    </div>
+    <div class="muted">Assumption source: ${esc(businessCase.assumption_source)}. ${esc(businessCase.methodology?.proposed_azure_tco || '')}</div>
+    <div style="overflow:auto"><table><thead><tr><th>Scenario</th><th>Azure Consumption</th><th>Azure TCO</th><th>Net Benefit</th><th>ROI</th><th>NPV</th><th>Payback</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function assumptionEditor(fieldName, label, value, source){
+  const step = fieldName === 'discount_rate' ? '0.01' : '1000';
+  return `<div class="assumption"><label class="label" for="bc_${esc(fieldName)}">${esc(label)}</label><input id="bc_${esc(fieldName)}" data-bc-field="${esc(fieldName)}" type="number" min="0" step="${step}" value="${esc(value ?? 0)}"/><div class="muted">Source: ${esc(source || 'SYNTHETIC_DEMO')}</div></div>`;
+}
+
+function renderBusinessCaseAssumptions(){
+  const panel = document.getElementById('businessCaseAssumptions');
+  const a = businessCaseAssumptions;
+  if(!a){
+    panel.innerHTML = '<div class="empty" style="grid-column:1/-1">No business-case assumptions are available for this deal.</div>';
+    return;
+  }
+  const src = a.provenance || a.assumption_source;
+  panel.innerHTML = [
+    assumptionEditor('current_state_annual_infrastructure_cost', 'Infrastructure Cost / Year', a.current_state_annual_infrastructure_cost, src),
+    assumptionEditor('current_state_annual_operations_cost', 'Operations Cost / Year', a.current_state_annual_operations_cost, src),
+    assumptionEditor('current_state_annual_software_cost', 'Software Cost / Year', a.current_state_annual_software_cost, src),
+    assumptionEditor('migration_cost', 'Migration Cost', a.migration_cost, src),
+    assumptionEditor('implementation_cost', 'Implementation Cost', a.implementation_cost, src),
+    assumptionEditor('training_change_management_cost', 'Training / Change Cost', a.training_change_management_cost, src),
+    assumptionEditor('annual_operations_savings', 'Operations Savings / Year', a.annual_operations_savings, src),
+    assumptionEditor('annual_productivity_benefit', 'Productivity Benefit / Year', a.annual_productivity_benefit, src),
+    assumptionEditor('discount_rate', 'Discount Rate', a.discount_rate, src)
+  ].join('');
+}
+
+async function saveBusinessCaseAssumptions(){
+  const assumptions = {...businessCaseAssumptions, deal_id: dealInput.deal_id, currency: dealInput.commercial?.currency || 'USD'};
+  document.querySelectorAll('[data-bc-field]').forEach(input => { assumptions[input.dataset.bcField] = Number(input.value); });
+  const err = document.getElementById('businessCaseError');
+  err.classList.remove('visible');
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/business-case`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({assumptions})});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    businessCaseAssumptions = data;
+    await calculateBusinessCase();
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }
+}
+
+function drawForecastChart(months){
+  const vals = months.map(m => Number(m.monthly_cost || 0));
+  const max = Math.max(...vals, 1);
+  const pts = vals.map((v, i) => `${30 + i * (700 / 35)},${190 - (v / max) * 150}`).join(' ');
+  return `<svg class="forecast-chart" viewBox="0 0 760 220" role="img" aria-label="Monthly Azure Consumption"><line x1="30" y1="190" x2="730" y2="190" stroke="#d2d0ce"/><line x1="30" y1="40" x2="30" y2="190" stroke="#d2d0ce"/><polyline points="${pts}" fill="none" stroke="#0078d4" stroke-width="3"/><text x="30" y="210" font-size="11" fill="#68655f">Month 1</text><text x="680" y="210" font-size="11" fill="#68655f">Month 36</text></svg>`;
+}
+
+async function generateArchitecture(){
+  if(!consumptionProfile) return;
+  if(architectureRecord?.user_modified && !confirm('Replace the user-modified architecture for this deal?')) return;
+  const btn = document.getElementById('generateArchitectureBtn');
+  const err = document.getElementById('architectureError');
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+  err.classList.remove('visible');
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/generate-architecture`, {method:'POST'});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    architectureRecord = data;
+    pricingRecord = null;
+    renderArchitecture();
+    renderPricing();
+    flashUpdate('architecturePanel');
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }finally{
+    btn.textContent = 'Generate Azure Architecture';
+    btn.disabled = !consumptionProfile;
+  }
+}
+
+function domainsCoveredLabel(completeness){
+  if(!completeness) return '—';
+  return `${completeness.covered_domains} / ${completeness.required_domains}`;
+}
+
+// Must stay in sync with ALLOWED_CATEGORIES in tools/consumption_architecture_planner.py
+const ARCHITECTURE_CATEGORIES = ['compute', 'database', 'storage', 'networking', 'monitoring', 'backup', 'security', 'analytics', 'integration', 'ai', 'container', 'messaging', 'identity', 'cache', 'dr', 'hpc', 'hybrid', 'iot', 'streaming', 'vdi', 'web'];
+
+function nextServiceId(services){
+  const used = new Set((services || []).map(s => s.service_id));
+  let n = (services || []).length + 1;
+  while(used.has(`svc-${String(n).padStart(3, '0')}`)) n++;
+  return `svc-${String(n).padStart(3, '0')}`;
+}
+
+function addArchitectureService(){
+  if(!architectureRecord?.architecture) return;
+  const services = architectureRecord.architecture.services || (architectureRecord.architecture.services = []);
+  services.push({
+    service_id: nextServiceId(services),
+    service_category: 'compute',
+    azure_service: '',
+    sku: '',
+    tier: '',
+    region: 'eastus',
+    environment: 'production',
+    quantity: 1,
+    usage_type: 'hours',
+    monthly_usage_per_unit: 730,
+    unit: 'hour',
+    dr_replication: false,
+    rationale: 'Manually added service.',
+    confidence: 'MEDIUM',
+  });
+  renderArchitecture();
+}
+
+function removeArchitectureService(index){
+  if(!architectureRecord?.architecture?.services) return;
+  architectureRecord.architecture.services.splice(index, 1);
+  renderArchitecture();
+}
+
+function renderArchitecture(){
+  const empty = document.getElementById('architectureEmpty');
+  const panel = document.getElementById('architecturePanel');
+  const saveBtn = document.getElementById('saveArchitectureBtn');
+  const addBtn = document.getElementById('addServiceBtn');
+  const priceBtn = document.getElementById('priceArchitectureBtn');
+  if(!architectureRecord?.architecture){
+    empty.style.display = 'block';
+    panel.style.display = 'none';
+    saveBtn.style.display = 'none';
+    addBtn.style.display = 'none';
+    priceBtn.disabled = true;
+    return;
+  }
+  const arch = architectureRecord.architecture;
+  empty.style.display = 'none';
+  panel.style.display = 'block';
+  saveBtn.style.display = 'inline-block';
+  addBtn.style.display = 'inline-block';
+  priceBtn.disabled = architectureRecord.validation_status === 'validation_failed';
+  const assumptions = (arch.assumptions || []).map(a => `<li>${esc(a)}</li>`).join('');
+  const categoryOptions = ARCHITECTURE_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+  const confidenceOptions = ['LOW', 'MEDIUM', 'HIGH'].map(c => `<option value="${c}">${c}</option>`).join('');
+  const rows = (arch.services || []).map((s, i) => `
+    <tr data-index="${i}">
+      <td><select class="edit-input" data-field="service_category">${categoryOptions.replace(`value="${s.service_category}"`, `value="${s.service_category}" selected`)}</select></td>
+      <td><input class="edit-input" data-field="azure_service" value="${esc(s.azure_service || '')}" placeholder="Azure service"/><div class="muted">${esc(s.rationale || '')}</div></td>
+      <td><input class="edit-input" data-field="sku" value="${esc(s.sku || '')}"/><input class="edit-input" data-field="tier" value="${esc(s.tier || '')}" placeholder="Tier"/></td>
+      <td><input class="edit-input" data-field="region" value="${esc(s.region || '')}"/></td>
+      <td><input class="edit-input" data-field="environment" value="${esc(s.environment || '')}"/></td>
+      <td class="num"><input class="edit-input" type="number" min="0.01" step="1" data-field="quantity" value="${esc(s.quantity)}"/></td>
+      <td class="num"><input class="edit-input" type="number" min="0" step="1" data-field="monthly_usage_per_unit" value="${esc(s.monthly_usage_per_unit)}"/></td>
+      <td><input class="edit-input" data-field="unit" value="${esc(s.unit || '')}" placeholder="hour"/></td>
+      <td><select class="edit-input" data-field="confidence">${confidenceOptions.replace(`value="${s.confidence}"`, `value="${s.confidence}" selected`)}</select></td>
+      <td><button class="btn save-row" onclick="removeArchitectureService(${i})">Remove</button></td>
+    </tr>`).join('');
+  const domains = new Set((arch.services || []).map(s => s.service_category)).size;
+  const summaryBlock = `
+    <div class="architecture-meta">
+      ${field('Mode', arch.architecture_mode || 'EXPECTED')}
+      ${field('Enterprise Scale', window.enterpriseProfile?.enterprise_scale)}
+      ${field('Primary Region', 'East US')}
+      ${field('Secondary Region', 'West US')}
+      ${field('Services', (arch.services || []).length)}
+      ${field('Domains Covered', domainsCoveredLabel(arch.completeness))}
+      ${field('Completeness', arch.completeness ? `${arch.completeness.coverage_percent}%` : '—')}
+    </div>`;
+  panel.innerHTML = `
+    ${summaryBlock}
+    <div class="architecture-meta">
+      ${field('Status', architectureRecord.validation_status)}
+      ${field('Version', arch.architecture_version)}
+      ${field('Generated', architectureRecord.generated_at)}
+      ${field('Modified', architectureRecord.user_modified ? 'Yes' : 'No')}
+    </div>
+    <div class="muted">${esc(arch.summary || '')}</div>
+    ${assumptions ? `<ul class="muted" style="margin:8px 0 0 18px">${assumptions}</ul>` : ''}
+    <div style="overflow:auto"><table>
+      <thead><tr><th>Category</th><th>Azure Service</th><th>SKU / Tier</th><th>Region</th><th>Environment</th><th>Qty</th><th>Monthly Usage</th><th>Unit</th><th>Confidence</th><th>Actions</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <div class="muted" style="margin-top:8px">
+      <strong>Feeds into:</strong> this bill of materials (service, SKU, region, quantity, and usage) is the input to the
+      <em>Azure Pricing</em> section below, which resolves each row to a unit price and baseline monthly cost.
+      That priced output then drives the <em>36-Month Consumption Forecast</em> and, from there, the
+      <em>Commercial Commitment</em> / <em>Customer Business Case</em> comparisons further down the page.
+      No pricing or cost figures are calculated on this table — only the technical architecture.
+    </div>`;
+}
+
+function pricingSourceLabel(source){
+  return {LOCAL_SNAPSHOT: 'Local Snapshot', LIVE_AZURE_API: 'Live Azure API', MANUAL_OVERRIDE: 'Manual Override'}[source] || dash(source);
+}
+
+function renderPricing(){
+  const empty = document.getElementById('pricingEmpty');
+  const panel = document.getElementById('pricingPanel');
+  if(!pricingRecord || !architectureRecord?.architecture){
+    empty.style.display = 'block';
+    panel.style.display = 'none';
+    return;
+  }
+  const arch = architectureRecord.architecture;
+  empty.style.display = 'none';
+  panel.style.display = 'block';
+  const pricingById = Object.fromEntries((pricingRecord.services || []).map(p => [p.service_id, p]));
+  const pricedRows = (arch.services || []).map((s, i) => {
+    const p = pricingById[s.service_id] || {};
+    const isSecondary = p.pricing_method === 'MODEL_MULTIPLIER';
+    const yearly = p.monthly_cost ? Number(p.monthly_cost) * 12 : null;
+    return `
+      <tr data-index="${i}" data-service-id="${esc(s.service_id)}">
+        <td>${esc(s.azure_service)}</td>
+        <td>${esc([s.sku, s.tier].filter(Boolean).join(' / '))}</td>
+        <td>${esc(s.region)}${isSecondary ? ' <span class="muted">(modeled)</span>' : ''}</td>
+        <td class="num">${esc(s.quantity)}</td>
+        <td class="num">${esc(s.monthly_usage_per_unit)}</td>
+        <td><input class="edit-input" data-pfield="meter_name" value="${esc(p.meter_name || '')}" placeholder="Meter name"/></td>
+        <td><input class="edit-input" data-pfield="unit_of_measure" value="${esc(p.unit_of_measure || '')}" placeholder="e.g. 1 Hour"/></td>
+        <td class="num"><input class="edit-input" type="number" step="0.000001" min="0" data-pfield="unit_price" value="${p.unit_price === null || p.unit_price === undefined ? '' : esc(p.unit_price)}"/></td>
+        <td class="num">${p.monthly_cost ? money(p.monthly_cost, p.currency || 'USD') : '—'}</td>
+        <td class="num">${yearly !== null ? money(yearly, p.currency || 'USD') : '—'}</td>
+        <td>${pricingSourceLabel(p.pricing_source)}</td>
+        <td><span class="status-pill ${esc(p.pricing_status || 'NOT_PRICED')}">${esc(p.pricing_status || 'NOT_PRICED')}</span></td>
+        <td><button class="btn save-row" onclick="savePricingRow(${i})">Save</button></td>
+      </tr>`;
+  }).join('');
+  const pricedLabel = pricingRecord.pricing_complete ? 'Baseline Monthly Azure Cost' : 'Resolved Monthly Cost';
+  const annualLabel = pricingRecord.pricing_complete ? 'Baseline Annual Azure Cost' : 'Resolved Annual Cost';
+  const annualCost = pricingRecord.baseline_monthly_cost ? Number(pricingRecord.baseline_monthly_cost) * 12 : 0;
+  const snapshotDate = pricingRecord.snapshot_timestamp ? new Date(pricingRecord.snapshot_timestamp).toLocaleString() : null;
+  panel.innerHTML = `
+    <div class="price-summary">
+      ${field('Services Priced', `${pricingRecord.resolved_services} / ${pricingRecord.total_services}`)}
+      ${field('Currency', pricingRecord.currency)}
+      ${field('Pricing Status', pricingRecord.pricing_status)}
+      ${field(pricedLabel, money(pricingRecord.baseline_monthly_cost, pricingRecord.currency))}
+      ${field(annualLabel, money(annualCost, pricingRecord.currency))}
+    </div>
+    <div class="price-summary">
+      ${field('Primary Region', 'East US')}
+      ${field('Primary Pricing', 'Azure Retail Snapshot')}
+      ${field('Secondary Region', 'West US')}
+      ${field('Secondary Pricing', `Modeled at ${(Number(pricingRecord.secondary_region_multiplier || 0.95) * 100).toFixed(0)}% of East US`)}
+      ${field('Snapshot Timestamp', snapshotDate)}
+      ${field('Snapshot Status', pricingRecord.snapshot_status)}
+    </div>
+    <div class="muted">West US pricing is a synthetic project modeling assumption (East US retail price &times; ${pricingRecord.secondary_region_multiplier || '0.95'}). It is <strong>not</strong> real Azure West US retail pricing.</div>
+    ${pricingRecord.stale ? '<div class="muted"><strong>Pricing is stale.</strong> Recalculate Azure pricing after architecture changes.</div>' : ''}
+    <div class="muted">Meter, Unit of Measure, and Unit Price are editable per row — edit a cell and click <strong>Save</strong> to apply a manual price override for that service.</div>
+    <div style="overflow:auto"><table>
+      <thead><tr><th>Service</th><th>SKU/Tier</th><th>Region</th><th>Qty</th><th>Monthly Usage</th><th>Meter</th><th>Unit of Measure</th><th>Unit Price</th><th>Monthly Cost</th><th>Yearly Cost</th><th>Pricing Source</th><th>Pricing Status</th><th>Actions</th></tr></thead>
+      <tbody>${pricedRows}</tbody>
+    </table></div>`;
+}
+
+async function savePricingRow(index){
+  if(!architectureRecord?.architecture) return;
+  const row = document.querySelector(`#pricingPanel tr[data-index="${index}"]`);
+  const service = architectureRecord.architecture.services[index];
+  if(!row || !service) return;
+  const btn = row.querySelector('td:last-child button');
+  const meterName = row.querySelector('[data-pfield="meter_name"]').value || null;
+  const unitOfMeasure = row.querySelector('[data-pfield="unit_of_measure"]').value || null;
+  const unitPriceInput = row.querySelector('[data-pfield="unit_price"]').value;
+  const unitPrice = unitPriceInput === '' ? null : Number(unitPriceInput);
+  const err = document.getElementById('pricingError');
+  err.classList.remove('visible');
+  if(unitPrice === null || Number.isNaN(unitPrice) || !unitOfMeasure){
+    err.textContent = 'Unit Price and Unit of Measure are required to save a manual price override.';
+    err.classList.add('visible');
+    return;
+  }
+  if(btn){ btn.disabled = true; btn.textContent = 'Saving…'; }
+  try{
+    const meter = {
+      meterName,
+      unitOfMeasure,
+      retailPrice: unitPrice,
+      unitPrice: unitPrice,
+      currencyCode: pricingRecord?.currency || 'USD',
+      skuName: [service.sku, service.tier].filter(Boolean).join(' / ') || null,
+      serviceName: service.azure_service,
+      armRegionName: service.region,
+    };
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/pricing/${encodeURIComponent(service.service_id)}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({meter})});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    pricingRecord = data;
+    await loadForecast(dealInput.deal_id);
+    await loadCommercialIntelligence(dealInput.deal_id);
+    await loadBusinessCase(dealInput.deal_id);
+    renderPricing();
+    renderForecast();
+    renderCommercialIntelligence();
+    renderBusinessCase();
+    flashUpdate('pricingPanel');
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = 'Save'; }
+  }
+}
+
+async function priceArchitecture(){
+  if(!architectureRecord?.architecture) return;
+  const btn = document.getElementById('priceArchitectureBtn');
+  const err = document.getElementById('pricingError');
+  btn.disabled = true;
+  btn.textContent = 'Pricing…';
+  err.classList.remove('visible');
+  try{
+    // Snapshot-first: local pricing snapshot is tried before the live Azure
+    // Retail Prices API (refresh:false). Pricing continues to work even when
+    // the live API is unavailable, as long as a local snapshot exists.
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/price-architecture`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({refresh:false})});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    pricingRecord = data;
+    await loadForecast(dealInput.deal_id);
+    await loadCommercialIntelligence(dealInput.deal_id);
+    await loadBusinessCase(dealInput.deal_id);
+    renderArchitecture();
+    renderPricing();
+    renderForecast();
+    renderCommercialIntelligence();
+    renderBusinessCase();
+    flashUpdate('pricingPanel');
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }finally{
+    btn.textContent = 'Calculate Azure Pricing';
+    btn.disabled = false;
+  }
+}
+
+async function saveArchitectureEdits(){
+  if(!architectureRecord?.architecture) return;
+  const arch = JSON.parse(JSON.stringify(architectureRecord.architecture));
+  document.querySelectorAll('#architecturePanel tr[data-index]').forEach(row => {
+    const svc = arch.services[Number(row.dataset.index)];
+    if(!svc) return;
+    row.querySelectorAll('input[data-field], select[data-field]').forEach(input => {
+      const field = input.dataset.field;
+      svc[field] = input.type === 'number' ? Number(input.value) : (input.value || null);
+    });
+  });
+  const err = document.getElementById('architectureError');
+  err.classList.remove('visible');
+  try{
+    const res = await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/architecture`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({architecture: arch})});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    architectureRecord = data;
+    await loadPricing(dealInput.deal_id);
+    await loadForecast(dealInput.deal_id);
+    await loadCommercialIntelligence(dealInput.deal_id);
+    await loadBusinessCase(dealInput.deal_id);
+    renderArchitecture();
+    renderPricing();
+    renderForecast();
+    renderCommercialIntelligence();
+    renderBusinessCase();
+    flashUpdate('architecturePanel');
+  }catch(e){
+    err.textContent = e.message;
+    err.classList.add('visible');
+  }
+}
+
+function titleize(value){
+  return dash(value).replaceAll('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function regionLabel(value){
+  const labels = {eastus:'East US', eastus2:'East US 2', westus2:'West US 2', centralus:'Central US', westeurope:'West Europe', northeurope:'North Europe', southeastasia:'Southeast Asia'};
+  return value ? (labels[value] || value) : '—';
+}
+function whole(v){
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return '—';
+  return Number(v).toLocaleString();
+}
+function tb(v){
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return '—';
+  return `${Number(v).toLocaleString(undefined, {maximumFractionDigits:1})} TB`;
+}
+function growth(v){
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return '—';
+  return `${(Number(v) * 100).toFixed(Number(v * 100) % 1 ? 1 : 0)}%`;
+}
+function assumption(label, value){
+  return `<div class="assumption"><label class="label">${esc(label)}</label><input value="${esc(dash(value))}" disabled/></div>`;
+}
+const profileChoices = {
+  industry:['financial_services','retail','healthcare','manufacturing','technology','other'],
+  enterprise_size:['SMALL','MID_MARKET','ENTERPRISE','LARGE_ENTERPRISE'],
+  geographic_scope:['single_region','multi_region','global'],
+  workload_type:['transactional','analytics','data_platform','web_application','integration','ai_application','mixed'],
+  availability_target:['99%','99.9%','99.99%','99.999%'],
+  primary_region:['eastus','eastus2','westus2','centralus','westeurope','northeurope','southeastasia'],
+  secondary_region:['','eastus','eastus2','westus2','centralus','westeurope','northeurope','southeastasia'],
+  security_tier:['standard','enhanced','enterprise'],
+  retention_requirements:['30_days','90_days','1_year','3_years','7_years'],
+  backup_requirements:['none','standard','enhanced','geo_redundant']
+};
+const profileBooleanFields = new Set(['dr_required','container_platform_required','data_platform_required','analytics_required','integration_platform_required','ai_workloads_required','centralized_logging_required','siem_required','private_networking_required','waf_required','secrets_management_required']);
+const profileNumberFields = new Set(['employee_count','expected_users','concurrent_users','monthly_transactions','requests_per_second','data_volume_tb','monthly_data_growth','number_of_regions','environment_count','year_2_growth_rate','year_3_growth_rate']);
+function profileControl(k,p){
+  const value=p[k]; const choices=profileChoices[k];
+  if(choices) return `<select data-profile-field="${esc(k)}">${choices.map(v=>`<option value="${esc(v)}" ${String(v)===String(value??'')?'selected':''}>${esc(v||'None')}</option>`).join('')}</select>`;
+  if(profileBooleanFields.has(k)) return `<input data-profile-field="${esc(k)}" type="checkbox" ${value?'checked':''}/>`;
+  return `<input data-profile-field="${esc(k)}" type="${profileNumberFields.has(k)?'number':'text'}" ${profileNumberFields.has(k)?'min="0"':''} value="${esc(value ?? '')}"/>`;
+}
+function renderAssumptions(){
+  const panel = document.getElementById('assumptions');
+  if(!consumptionProfile){
+    panel.innerHTML = `<div class="empty" style="grid-column:1/-1"><strong>No workload profile is available for this deal.</strong><div class="muted">Consumption profiles are currently available for a representative subset of commercial deals.</div></div>`;
+    return;
+  }
+  const p = consumptionProfile;
+  if(editingAssumptions){
+    const fields = ['industry','enterprise_size','employee_count','geographic_scope','workload_type','expected_users','concurrent_users','monthly_transactions','requests_per_second','data_volume_tb','monthly_data_growth','retention_requirements','backup_requirements','availability_target','dr_required','primary_region','secondary_region','number_of_regions','environment_count','container_platform_required','data_platform_required','analytics_required','integration_platform_required','ai_workloads_required','security_tier','centralized_logging_required','siem_required','private_networking_required','waf_required','secrets_management_required','year_2_growth_rate','year_3_growth_rate'];
+    panel.innerHTML = fields.map(k => `<div class="assumption"><label class="label">${esc(k.replaceAll('_',' '))}</label>${profileControl(k,p)}<div class="muted">${esc(p.provenance?.[k]?.source || 'SYSTEM_DEFAULT')}</div></div>`).join('') + `<div class="muted" style="grid-column:1/-1">Edit values and save. Architecture, pricing, and forecast will become stale until regenerated.</div>`;
+    document.getElementById('editAssumptionsBtn').style.display='none'; document.getElementById('saveAssumptionsBtn').style.display='inline-block';
+    return;
+  }
+  document.getElementById('editAssumptionsBtn').style.display='inline-block'; document.getElementById('saveAssumptionsBtn').style.display='none';
+  panel.innerHTML = [
+    assumption('Workload Type', titleize(p.workload_type)),
+    assumption('Expected Users', whole(p.expected_users)),
+    assumption('Monthly Transactions', whole(p.monthly_transactions)),
+    assumption('Data Volume', tb(p.data_volume_tb)),
+    assumption('Availability Target', p.availability_target),
+    assumption('DR Required', p.dr_required ? 'Yes' : 'No'),
+    assumption('Environment Count', p.environment_count),
+    assumption('Primary Region', regionLabel(p.primary_region)),
+    assumption('Secondary Region', regionLabel(p.secondary_region)),
+    assumption('Year 2 Growth', growth(p.year_2_growth_rate)),
+    assumption('Year 3 Growth', growth(p.year_3_growth_rate)),
+    assumption('Confidence', p.confidence)
+  ].join('');
+}
+function renderInferredRequirements(){
+  const panel=document.getElementById('inferredRequirements');
+  const rows=window.enterpriseProfile?.requirements || [];
+  panel.className=rows.length ? '' : 'empty';
+  panel.innerHTML=rows.length ? `<table><thead><tr><th>Requirement</th><th>Source</th><th>Confidence</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.requirement)}</td><td>${esc(r.source)}</td><td>${esc(r.confidence)}</td></tr>`).join('')}</tbody></table>` : 'No inferred requirements available.';
+}
+function toggleAssumptions(value){ editingAssumptions=value; renderAssumptions(); }
+async function saveAssumptions(){
+  const updates={}; document.querySelectorAll('[data-profile-field]').forEach(i => { const k=i.dataset.profileField; updates[k]=i.type==='checkbox'?i.checked:(i.type==='number'?Number(i.value):i.value); });
+  const res=await fetch(`${API}/api/consumption-analysis/${encodeURIComponent(dealInput.deal_id)}/profile`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:updates})}); const data=await res.json();
+  if(!res.ok){ alert(data.message || data.error); return; } consumptionProfile=data.consumption_profile; editingAssumptions=false; await loadArchitecture(dealInput.deal_id); render(); flashUpdate('assumptions');
+}
+
+init().catch(err => {
+  document.getElementById('loading').textContent = `Unable to load consumption analysis: ${err.message}`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Commercial Analysis — Deal Desk</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#f3f2f1; --bg2:#fff; --bg3:#faf9f8; --border:#edebe9; --border2:#d2d0ce;
+  --text:#201f1e; --text-dim:#484644; --text-muted:#68655f; --accent:#0078d4; --accent2:#106ebe;
+  --accent-bg:#eff6fc; --green:#107c10; --green-bg:#dff6dd; --yellow:#ca5010; --yellow-bg:#fff4ce;
+  --red:#a4262c; --red-bg:#fde7e9; --purple:#5c2d91; --purple-bg:#f3f2f8;
+  --accent-ink:#005a9e; --green-ink:#0b6a0b; --yellow-ink:#8a3c06; --red-ink:#a4262c; --purple-ink:#4b2482;
+  --mono:'Cascadia Mono','Consolas','Courier New',monospace; --sans:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --radius:4px; --shadow-sm:0 1.6px 3.6px rgba(0,0,0,.13),0 .3px .9px rgba(0,0,0,.11);
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh}
+.header{height:48px;background:var(--accent);border-bottom:1px solid var(--accent2);display:flex;align-items:center;padding:0 20px;gap:16px;box-shadow:0 2px 8px rgba(0,120,212,.24);position:sticky;top:0;z-index:10}
+.header-logo{font-size:18px;font-weight:800;color:#fff}.header-logo span{color:#c7e0f4}
+.header-link{margin-left:auto;color:#deecf9;text-decoration:none;font-size:12px;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:var(--radius);background:rgba(255,255,255,.12)}
+.shell{max-width:1440px;margin:0 auto;padding:20px 24px 40px}
+.topbar{display:grid;grid-template-columns:1fr minmax(320px,440px);gap:16px;margin-bottom:16px}
+.hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px 20px}
+.eyebrow,.label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.title{font-size:28px;font-weight:700;letter-spacing:0;margin-top:4px}.subtitle{color:var(--text-dim);margin-top:2px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.badge{font-family:var(--mono);font-size:11px;font-weight:700;border:1px solid var(--border2);border-radius:100px;padding:3px 9px;background:var(--bg2);color:var(--text-dim)}
+.badge.green{background:var(--green-bg);color:var(--green);border-color:#badfba}.badge.red{background:var(--red-bg);color:var(--red);border-color:#efb8bd}.badge.blue{background:var(--accent-bg);color:var(--accent);border-color:#c7e0f4}.badge.yellow{background:var(--yellow-bg);color:var(--yellow);border-color:#f7d78a}
+.selector{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:14px}
+select,input{width:100%;border:1px solid var(--border2);background:#fff;color:var(--text);border-radius:var(--radius);padding:8px 10px;font-family:var(--sans);font-size:13px}
+.selector-meta{font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.6}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+.kpi{padding:16px;border-top:3px solid var(--accent);background:var(--accent-bg)}.kpi .label{color:var(--accent-ink)}
+.kpi:nth-child(2){border-top-color:var(--yellow);background:var(--yellow-bg)}.kpi:nth-child(2) .label{color:var(--yellow-ink)}
+.kpi:nth-child(3){border-top-color:var(--green);background:var(--green-bg)}.kpi:nth-child(3) .label{color:var(--green-ink)}
+.kpi:nth-child(4){border-top-color:var(--purple);background:var(--purple-bg)}.kpi:nth-child(4) .label{color:var(--purple-ink)}
+.kpi:nth-child(5){border-top-color:#00a4ef;background:#e8f5fd}.kpi:nth-child(5) .label{color:var(--accent-ink)}
+.kpi-value{font-family:var(--mono);font-size:26px;font-weight:800;margin-top:5px;color:var(--text)}.kpi-sub{font-size:12px;color:var(--text-dim)}
+.section{margin-top:16px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.section-title{font-size:16px;font-weight:700}
+.section-ribbon{position:relative;margin-left:-10px;margin-bottom:0;padding:11px 16px 11px 26px;background:linear-gradient(90deg,#0b5394,var(--accent2) 45%,var(--accent));border-radius:var(--radius) var(--radius) 0 0;box-shadow:var(--shadow-sm)}
+.section-ribbon::before{content:'';position:absolute;left:0;bottom:-9px;border-top:9px solid #083b6b;border-left:10px solid transparent}
+.section-ribbon .section-title{color:#fff;font-family:var(--mono);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.btn.secondary.ribbon-btn{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.65)}.btn.secondary.ribbon-btn:hover{background:rgba(255,255,255,.28)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stack{display:grid;gap:16px;align-content:start}.stack>.section{margin-top:0}
+.health-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.health{padding:12px}.health .status{font-family:var(--mono);font-weight:800;font-size:13px;margin-top:6px}
+.health.healthy{background:var(--green-bg);border-color:#badfba}.health.healthy .label{color:var(--green-ink)}
+.health.attention{background:var(--yellow-bg);border-color:#f7d78a}.health.attention .label{color:var(--yellow-ink)}
+.health.risk{background:var(--red-bg);border-color:#efb8bd}.health.risk .label{color:var(--red-ink)}
+.status.healthy{color:var(--green-ink)}.status.attention{color:var(--yellow-ink)}.status.risk{color:var(--red-ink)}.status.notmodeled{color:var(--text-muted)}
+.scenario{padding:16px;border-top:3px solid var(--border2)}.scenario.customer_ask{border-top-color:var(--yellow);background:var(--yellow-bg)}.scenario.customer_ask .scenario-title{color:var(--yellow-ink)}
+.scenario.working_scenario,.scenario.recommended_test{border-top-color:var(--accent)}.scenario.working_scenario,.scenario.recommended_test{background:var(--accent-bg)}.scenario.working_scenario .scenario-title,.scenario.recommended_test .scenario-title{color:var(--accent-ink)}
+.scenario.commercial_floor_test{border-top-color:var(--red);background:var(--red-bg)}.scenario.commercial_floor_test .scenario-title{color:var(--red-ink)}
+.scenario .metric-row{border-bottom-color:rgba(0,0,0,.07)}
+.scenario-title{font-family:var(--mono);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.metric-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding:7px 0;font-size:13.5px}.metric-row span:first-child{color:var(--text-dim)}.metric-row span:last-child{font-family:var(--mono);font-weight:700;text-align:right;color:var(--text)}
+table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border)}th,td{padding:9px 11px;border-bottom:1px solid var(--border);text-align:right;font-size:13px}th:first-child,td:first-child{text-align:left}th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);background:var(--bg3)}
+.scenario-table th.scen-head{font-size:13.5px;padding-top:12px;padding-bottom:12px}.scen-sub{font-family:var(--sans);font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-dim);margin-top:3px}
+.scenario-table td{font-family:var(--mono);font-weight:600}.scenario-table td:first-child{font-family:var(--sans);font-weight:600;color:var(--text-dim)}
+.scenario-table th.scen-col-customer_ask,.scenario-table td.scen-col-customer_ask{background:var(--red-bg)}
+.scenario-table th.scen-col-recommended_test,.scenario-table td.scen-col-recommended_test{background:var(--accent-bg)}
+.scenario-table th.scen-col-commercial_floor_test,.scenario-table td.scen-col-commercial_floor_test{background:var(--green-bg)}
+.scenario-table td.scen-diff{font-weight:800}
+.section-collapse summary{cursor:pointer;list-style:none;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.section-collapse summary::-webkit-details-marker{display:none}.section-collapse summary::after{content:'Show';margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent)}
+.section-collapse details[open] summary::after{content:'Hide'}.section-collapse .collapse-body{padding:0 16px 16px;border-top:1px solid var(--border);padding-top:12px}
+.panel{padding:16px}.workbench{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:10px;align-items:end}.btn{border:none;border-radius:var(--radius);background:var(--accent);color:#fff;padding:9px 14px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}.btn:disabled{opacity:.55;cursor:not-allowed}.btn.secondary{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.delta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.delta{background:var(--bg3);border:1px solid var(--border);padding:10px;border-radius:var(--radius)}.delta strong{font-family:var(--mono);display:block;margin-top:3px}
+.note{border:1px solid var(--border);background:var(--bg3);padding:10px;border-radius:var(--radius);margin-top:8px}.note-role{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:800;text-transform:uppercase}.note-text{font-size:13px;color:var(--text-dim);margin-top:4px}
+.product-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}.bar{height:5px;background:var(--accent-bg);border-radius:100px;overflow:hidden;margin-top:5px}.bar div{height:100%;background:var(--accent)}
+.future{border:1px dashed var(--border2);background:var(--bg3);padding:18px;color:var(--text-dim)}.trace-box{display:none;white-space:pre-wrap;background:#111827;color:#e5e7eb;border-radius:var(--radius);padding:12px;font-family:var(--mono);font-size:11px;max-height:320px;overflow:auto}.trace-box.visible{display:block}.package-output{display:grid;grid-template-columns:minmax(320px,0.9fr) minmax(360px,1.1fr);gap:12px;align-items:start;margin-top:14px}.package-output #packagePanel{margin-top:0}.package-output #docViewer{margin-top:0;max-height:560px;min-height:360px;background:#fff;color:var(--text);border:1px solid var(--border2);box-shadow:var(--shadow-sm);font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.7;padding:22px 26px}
+.policy-status{padding:16px;border-left:4px solid var(--accent)}.policy-status.REQUIRES_APPROVAL{border-left-color:var(--yellow);background:var(--yellow-bg)}.policy-status.REQUIRES_APPROVAL .policy-big{color:var(--yellow-ink)}
+.policy-status.REQUIRES_REVIEW{border-left-color:var(--accent);background:var(--accent-bg)}.policy-status.REQUIRES_REVIEW .policy-big{color:var(--accent-ink)}
+.policy-status.BLOCKED{border-left-color:var(--red);background:var(--red-bg)}.policy-status.BLOCKED .policy-big{color:var(--red-ink)}
+.policy-status.WITHIN_POLICY{border-left-color:var(--green);background:var(--green-bg)}.policy-status.WITHIN_POLICY .policy-big{color:var(--green-ink)}
+.policy-status .policy-count{background:rgba(255,255,255,.75)}
+.policy-big{font-family:var(--mono);font-size:22px;font-weight:800;margin-top:3px}.policy-counts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.policy-count{background:var(--bg3);border:1px solid var(--border);padding:8px;border-radius:var(--radius)}.policy-count strong{display:block;font-family:var(--mono);font-size:16px}
+.check-row,.approval-row,.exception-row{border:1px solid var(--border);background:var(--bg3);border-radius:var(--radius);padding:10px;margin-top:8px}.check-top,.approval-top,.exception-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.check-name,.approval-name,.exception-name{font-weight:700}.reason-list{margin:6px 0 0 18px;color:var(--text-dim);font-size:13px}.status-pill{font-family:var(--mono);font-size:11px;font-weight:800;border-radius:100px;padding:3px 9px;border:1px solid var(--border2)}.status-pill.PASS{background:var(--green-bg);color:var(--green)}.status-pill.REVIEW{background:var(--accent-bg);color:var(--accent)}.status-pill.EXCEPTION{background:var(--yellow-bg);color:var(--yellow)}.status-pill.BLOCK{background:var(--red-bg);color:var(--red)}.status-pill.NOT_MODELED{background:var(--bg2);color:var(--text-muted)}
+.strategy-shell{border-top:3px solid var(--purple)}.strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.strategy-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px}.strategy-card h4{font-size:13px;margin-bottom:8px}.strategy-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.strategy-list{margin:8px 0 0 18px;color:var(--text-dim);font-size:13px}.strategy-error{display:none;color:var(--red);margin-top:10px}.strategy-error.visible{display:block}.strategy-muted{color:var(--text-muted);font-size:12px;margin-top:6px}.evidence-group{border:1px solid var(--border);background:#fff;border-radius:var(--radius);margin-top:8px;overflow:hidden}.evidence-group summary{cursor:pointer;list-style:none;padding:9px 10px;font-weight:700;display:flex;justify-content:space-between;gap:8px}.evidence-group summary::-webkit-details-marker{display:none}.evidence-group summary::after{content:'View';font-family:var(--mono);font-size:10px;color:var(--accent)}.evidence-group[open] summary::after{content:'Hide'}.evidence-body{border-top:1px solid var(--border);padding:10px;color:var(--text-dim);font-size:13px}.evidence-item{padding:8px 0;border-bottom:1px solid var(--border)}.evidence-item:last-child{border-bottom:none}.evidence-item strong{color:var(--text)}
+.strategy-hero{background:linear-gradient(135deg,#4b2482,#5c2d91 55%,#6d3aa8);border:1px solid #3d1d6b;border-radius:var(--radius);padding:16px 18px;color:#fff}.strategy-hero .headline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.strategy-verdict{font-size:24px;font-weight:800;color:#fff;letter-spacing:.02em}
+.strategy-hero .strategy-summary{color:#ece5f7}.strategy-hero .strategy-muted{color:#ddd1f0}.strategy-hero .term-chip{background:#fff;border-color:rgba(255,255,255,.35);color:var(--text)}.strategy-hero .term-chip span{color:var(--purple-ink)}
+.term-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.term-chip{background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:13px;white-space:nowrap}.term-chip span{color:var(--text-muted);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
+.strategy-summary{margin-top:12px;max-width:78ch;line-height:1.55;color:var(--text-dim)}
+.plan-step{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}.plan-step:last-child{border-bottom:none}.plan-num{flex:0 0 22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}.talk-track{color:var(--text-muted);font-style:italic;margin-top:3px;font-size:12.5px}
+.comp-shell{border-top:3px solid #00a4ef}
+.comp-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+.comp-kpi{background:var(--bg3);border:1px solid var(--border);padding:10px;border-radius:var(--radius)}
+.comp-kpi strong{font-family:var(--mono);display:block;font-size:18px;margin-top:3px;color:var(--text)}
+.comp-kpi:nth-child(1){background:var(--accent-bg);border-color:#c7e0f4}.comp-kpi:nth-child(1) .label{color:var(--accent-ink)}
+.comp-kpi:nth-child(2){background:var(--purple-bg);border-color:#d9cdee}.comp-kpi:nth-child(2) .label{color:var(--purple-ink)}
+.comp-kpi:nth-child(3){background:var(--purple-bg);border-color:#d9cdee}.comp-kpi:nth-child(3) .label{color:var(--purple-ink)}
+.comp-kpi:nth-child(4){background:var(--green-bg);border-color:#badfba}.comp-kpi:nth-child(4) .label{color:var(--green-ink)}
+.comp-kpi:nth-child(5){background:#e8f5fd;border-color:#bfe3f8}.comp-kpi:nth-child(5) .label{color:var(--accent-ink)}
+.comp-kpi:nth-child(6){background:var(--yellow-bg);border-color:#f7d78a}.comp-kpi:nth-child(6) .label{color:var(--yellow-ink)}
+.comp-shell .section-title{color:var(--accent-ink)}
+.subhead{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);border-left:3px solid var(--accent);padding-left:8px}
+.delta.won{background:var(--green-bg);border-color:#badfba}.delta.won>.label{color:var(--green-ink)}
+.delta.lost{background:var(--red-bg);border-color:#efb8bd}.delta.lost>.label{color:var(--red-ink)}
+tr.comp-WON td{background:#f3faf1}tr.comp-LOST td{background:#fdf5f6}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.range-viz{position:relative;height:84px;margin:26px 30px 0}
+.range-track{position:absolute;top:40px;left:0;right:0;height:6px;background:var(--accent-bg);border-radius:100px}
+.range-band{position:absolute;top:40px;height:6px;background:#c7e0f4;border-radius:100px}
+.range-iqr{position:absolute;top:40px;height:6px;background:var(--accent)}
+.range-mark{position:absolute;top:34px;width:2px;height:18px;background:var(--text-dim)}
+.range-mark span{position:absolute;top:20px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--text-muted);white-space:nowrap;text-align:center;line-height:1.3}
+.range-ask{position:absolute;top:28px;width:3px;height:30px;background:var(--red)}
+.range-ask span{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10px;font-weight:800;color:var(--red);white-space:nowrap}
+.comp-expand{cursor:pointer}
+.comp-expand:hover td{background:var(--bg3)}
+.comp-row-detail td{text-align:left;background:var(--bg3);font-size:12px}
+.loading{padding:28px;text-align:center;color:var(--text-muted)}
+@media(max-width:1000px){.topbar,.grid-2,.strategy-grid,.package-output{grid-template-columns:1fr}.kpi-grid,.health-grid,.grid-3,.workbench,.delta-grid{grid-template-columns:1fr 1fr}}@media(max-width:640px){.kpi-grid,.health-grid,.grid-3,.workbench,.delta-grid{grid-template-columns:1fr}.shell{padding:14px}.title{font-size:22px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-logo">Nexus <span>/</span> Commercial Analysis</div>
+  <a class="header-link" href="/">Deal Desk</a>
+</header>
+<main class="shell">
+  <div id="loading" class="card loading">Loading commercial analysis…</div>
+  <div id="app" style="display:none">
+    <div class="topbar">
+      <section class="hero">
+        <div class="eyebrow">Commercial Analysis</div>
+        <div class="title" id="accountName">—</div>
+        <div class="subtitle" id="opportunityName">—</div>
+        <div class="badges" id="heroBadges"></div>
+      </section>
+      <section class="selector">
+        <label class="label" for="dealSelect">Commercial-analysis-ready deal</label>
+        <select id="dealSelect" onchange="loadDeal(this.value)"></select>
+        <div class="selector-meta" id="selectorMeta">Proposal-stage opportunities plus golden demo deal.</div>
+      </section>
+    </div>
+
+    <section class="kpi-grid" id="kpis"></section>
+
+    <section class="section">
+      <div class="section-head"><div class="section-title">Commercial Health</div></div>
+      <div class="health-grid" id="healthGrid"></div>
+    </section>
+
+    <section class="section">
+      <div class="grid-2" id="actionStack"></div>
+    </section>
+
+    <section class="section card section-collapse">
+      <details>
+        <summary>
+          <span class="section-title">Required Approvals &amp; Commercial Policy</span>
+          <span class="badge yellow" id="approvalCount">0</span>
+          <span id="policySummaryBadge"></span>
+        </summary>
+        <div class="collapse-body">
+          <div class="grid-2">
+            <div>
+              <div class="section-title" style="margin-bottom:8px">Required Approvals</div>
+              <div id="approvalPanel"></div>
+            </div>
+            <div class="card policy-status" id="policyStatusCard">
+              <div class="label">Commercial Policy</div>
+              <div class="policy-big" id="policyOverall">—</div>
+              <div class="policy-counts" id="policyCounts"></div>
+              <div id="policyCheckSummary" style="margin-top:10px"></div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section">
+      <div class="section-head section-ribbon">
+        <div class="section-title">Financial Scenario Comparison</div>
+        <button class="btn secondary ribbon-btn" onclick="toggleTrace()">View calculation</button>
+      </div>
+      <div style="overflow:auto"><table id="scenarioTable" class="scenario-table"></table></div>
+      <pre class="trace-box" id="traceBox"></pre>
+      <pre class="trace-box" id="policyTraceBox"></pre>
+    </section>
+
+    <section class="section card panel">
+      <div class="section-title">Scenario Workbench</div>
+      <div class="workbench" style="margin-top:12px">
+        <div><label class="label">Discount</label><input id="wbDiscount" type="number" step="0.1" min="0" max="100"/></div>
+        <div><label class="label">Contract Term</label><input id="wbTerm" type="number" step="1" min="1"/></div>
+        <div><label class="label">Consumption Commitment</label><input id="wbCommitment" type="number" step="1000" min="0"/></div>
+        <div><label class="label">Billing Frequency</label><select id="wbBilling"><option>Annual</option><option>Upfront annual invoice</option><option>Quarterly</option></select></div>
+        <button class="btn" id="recalcBtn" onclick="recalculate()">Recalculate Scenario</button>
+      </div>
+      <div class="delta-grid" id="impactGrid"></div>
+    </section>
+
+    <section class="section grid-2">
+      <div class="card panel">
+        <div class="section-title">Azure Consumption Commitment</div>
+        <div id="commitmentPanel" style="margin-top:10px"></div>
+        <canvas id="commitmentChart" height="110" style="margin-top:12px"></canvas>
+      </div>
+      <div class="card panel">
+        <div class="section-title">Product Portfolio</div>
+        <div id="productPanel" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <section class="section grid-2">
+      <div class="card panel">
+        <div class="section-title">Commercial Context</div>
+        <div id="contextPanel" style="margin-top:10px"></div>
+      </div>
+      <div class="card panel">
+        <div class="section-title">Financial Guardrails</div>
+        <div id="guardrailPanel" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <section class="section card section-collapse">
+      <details>
+        <summary><span class="section-title">Policy Exceptions Detail</span><span class="badge" id="exceptionCount">0</span></summary>
+        <div class="collapse-body">
+          <div style="text-align:right;margin-bottom:8px"><button class="btn secondary" onclick="togglePolicyTrace()">View policy logic</button></div>
+          <div id="exceptionPanel"></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section card section-collapse">
+      <details>
+        <summary><span class="section-title">Account Team Notes</span><span class="badge" id="notesCount">0</span></summary>
+        <div class="collapse-body"><div id="notesPanel"></div></div>
+      </details>
+    </section>
+
+    <section class="section card panel comp-shell">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Comparable Deal Intelligence</div>
+          <div class="strategy-muted">Deterministic retrieval and benchmarks over historical comparable deals. Historical evidence, not policy.</div>
+        </div>
+        <div class="badges" id="compConfidence"></div>
+      </div>
+      <div id="compPanel" class="strategy-muted">Loading comparable deals…</div>
+    </section>
+
+    <section class="section card panel strategy-shell" id="strategySection">
+      <div class="section-head">
+        <div>
+          <div class="section-title">AI Commercial Strategy</div>
+          <div class="strategy-muted">LLM proposal with deterministic financial and policy validation.</div>
+        </div>
+        <div class="strategy-actions">
+          <button class="btn" id="strategyBtn" onclick="analyzeStrategy()">Analyze Deal</button>
+          <button class="btn secondary" id="applyStrategyBtn" onclick="applyStrategyToWorkbench()" disabled>Apply to Working Scenario</button>
+        </div>
+      </div>
+      <div class="strategy-error" id="strategyError"></div>
+      <div id="strategyPanel" class="strategy-muted">Run analysis after reviewing or editing the working scenario.</div>
+    </section>
+
+    <section class="section card panel" id="dealBuilderSection" style="border-top:3px solid var(--green)">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Deal Builder</div>
+          <div class="strategy-muted">Turn the validated working scenario into a structured deal package. Deterministic validation; synthetic demonstration documents only.</div>
+        </div>
+        <div class="strategy-actions">
+          <button class="btn" id="buildDealBtn" onclick="openDealBuilder()">Build Deal</button>
+        </div>
+      </div>
+      <div id="builderPanel" style="display:none">
+        <div class="workbench" style="margin-top:12px">
+          <div><label class="label">Discount %</label><input id="dbDiscount" type="number" step="0.1" min="0" max="100" onchange="dealBuilderDirty()"/></div>
+          <div><label class="label">Contract Term (months)</label><input id="dbTerm" type="number" step="1" min="1" onchange="dealBuilderDirty()"/></div>
+          <div><label class="label">Commitment</label><input id="dbCommitment" type="number" step="1000" min="0" onchange="dealBuilderDirty()"/></div>
+          <div><label class="label">Billing Frequency</label><select id="dbBilling" onchange="dealBuilderDirty()"><option>Annual</option><option>Upfront annual invoice</option><option>Quarterly</option></select></div>
+          <button class="btn" id="dbValidateBtn" onclick="validateDealBuilder()">Validate Deal</button>
+        </div>
+        <div class="workbench" style="margin-top:10px;grid-template-columns:1fr 1fr auto">
+          <div><label class="label">Payment Terms</label><input id="dbPayment" type="text" onchange="dealBuilderDirty()"/></div>
+          <div><label class="label">Price Protection (optional)</label><input id="dbPriceProtection" type="text" placeholder="e.g. price lock for committed term" onchange="dealBuilderDirty()"/></div>
+          <div></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div>
+            <div class="label">Commercial Concessions</div>
+            <div id="dbConcessions" style="margin-top:6px"></div>
+          </div>
+          <div>
+            <div class="label">Special Terms (one per line)</div>
+            <textarea id="dbSpecialTerms" rows="4" style="width:100%;border:1px solid var(--border2);border-radius:var(--radius);padding:8px;font-family:var(--sans);font-size:13px;margin-top:6px"></textarea>
+          </div>
+        </div>
+        <div id="dbValidationPanel" style="margin-top:14px"></div>
+        <div class="strategy-actions" style="margin-top:12px">
+          <label class="strategy-muted" style="display:flex;align-items:center;gap:6px;margin-top:0">
+            <input id="dbUseAi" type="checkbox" style="width:auto"/>
+            Use AI for agreement prose
+          </label>
+          <button class="btn" id="dbGenerateBtn" onclick="generateDealPackage()" disabled>Generate Deal Package</button>
+          <span class="strategy-muted" id="dbGenerateHint">Validate the deal before generating the package.</span>
+        </div>
+      </div>
+      <div class="package-output">
+        <div id="packagePanel"></div>
+        <pre class="trace-box" id="docViewer"></pre>
+      </div>
+    </section>
+  </div>
+</main>
+<script>
+const API = window.location.origin;
+let currentDealId = null;
+let dealInput = null;
+let analysis = null;
+let workingScenario = null;
+let policyComparison = null;
+let activePolicy = null;
+let commitmentChart = null;
+let strategyResult = null;
+let comparablesData = null;
+let comparableBenchmarks = null;
+
+function placeActionSections(){
+  const stack = document.getElementById('actionStack');
+  const strategy = document.getElementById('strategySection');
+  const builder = document.getElementById('dealBuilderSection');
+  if(stack && strategy && builder){
+    stack.appendChild(strategy);
+    stack.appendChild(builder);
+  }
+}
+document.addEventListener('DOMContentLoaded', placeActionSections);
+
+const money = v => {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return 'Not modeled';
+  const n = Number(v), a = Math.abs(n);
+  if (a >= 1_000_000) return (n < 0 ? '-' : '') + '$' + (a/1_000_000).toFixed(a >= 10_000_000 ? 1 : 2) + 'M';
+  if (a >= 1_000) return (n < 0 ? '-' : '') + '$' + Math.round(a/1_000) + 'K';
+  return '$' + Math.round(n).toLocaleString();
+};
+const pct = v => v === null || v === undefined ? 'Not modeled' : `${Number(v).toFixed(Number(v)%1?1:0)}%`;
+const num = v => v === null || v === undefined ? 'Not modeled' : Number(v).toFixed(2);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function init(){
+  const res = await fetch(`${API}/api/commercial-analysis/deals`);
+  const data = await res.json();
+  const sel = document.getElementById('dealSelect');
+  sel.innerHTML = data.deals.map(d => `<option value="${esc(d.deal_id)}">${esc(d.account)} — ${esc(d.opportunity)} (${esc(d.stage)})</option>`).join('');
+  currentDealId = data.default_deal_id || data.deals[0]?.deal_id;
+  sel.value = currentDealId;
+  await loadDeal(currentDealId);
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+async function loadDeal(dealId){
+  currentDealId = dealId;
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(dealId)}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || data.error);
+  dealInput = data.deal_input;
+  analysis = data.financial_analysis;
+  workingScenario = analysis.scenarios.recommended_test;
+  strategyResult = null;
+  builderValidation = null;
+  currentPackage = null;
+  const builderPanel = document.getElementById('builderPanel');
+  if(builderPanel){ builderPanel.style.display = 'none'; document.getElementById('packagePanel').innerHTML = ''; document.getElementById('docViewer').classList.remove('visible'); }
+  await Promise.all([loadPolicyComparison('customer_ask'), loadComparables()]);
+  renderAll();
+}
+
+function renderAll(){
+  renderHeader(); renderKpis(); renderHealth(); renderScenarios(); renderWorkbench();
+  renderPolicy(); renderCommitment(); renderProducts(); renderContext(); renderGuardrails(); renderNotes(); renderImpact(); renderExceptions(); renderComparables(); renderStrategy();
+}
+
+async function loadComparables(){
+  comparablesData = null; comparableBenchmarks = null;
+  try{
+    const [c, b] = await Promise.all([
+      fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/comparables?limit=10`),
+      fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/comparables/benchmarks`)
+    ]);
+    comparablesData = c.ok ? await c.json() : null;
+    comparableBenchmarks = b.ok ? await b.json() : null;
+  }catch(err){ comparablesData = null; comparableBenchmarks = null; }
+}
+
+function policyPayloads(){
+  const ask = dealInput.negotiation_context.customer_requested_commercial_terms || {};
+  const cm = dealInput.consumption_commitment || {};
+  return [
+    {name:'customer_ask', discount_pct: analysis.scenarios.customer_ask.baseline.discount_pct, contract_term_months: analysis.scenarios.customer_ask.baseline.contract_term_months, commitment_amount: ask.requested_total_commitment || cm.commitment_amount, payment_terms: ask.requested_payment_terms, price_protection: ask.requested_price_protection},
+    {name:'recommended_test', discount_pct: analysis.scenarios.recommended_test.baseline.discount_pct, contract_term_months: analysis.scenarios.recommended_test.baseline.contract_term_months, commitment_amount: analysis.scenarios.recommended_test.commitment.commitment_amount, payment_terms: dealInput.commercial.payment_terms},
+    {name:'commercial_floor_test', discount_pct: analysis.scenarios.commercial_floor_test.baseline.discount_pct, contract_term_months: analysis.scenarios.commercial_floor_test.baseline.contract_term_months, commitment_amount: analysis.scenarios.commercial_floor_test.commitment.commitment_amount, payment_terms: dealInput.commercial.payment_terms}
+  ];
+}
+
+async function loadPolicyComparison(activeName='customer_ask'){
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/policy/compare`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({scenarios: policyPayloads()})});
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.message || data.error);
+  policyComparison = data;
+  const activePayload = policyPayloads().find(s => s.name === activeName) || policyPayloads()[0];
+  const p = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/policy`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(activePayload)});
+  activePolicy = await p.json();
+}
+
+function renderHeader(){
+  const a = dealInput.account, o = dealInput.opportunity, c = dealInput.competitive_context;
+  document.getElementById('accountName').textContent = a.name;
+  document.getElementById('opportunityName').textContent = o.name;
+  document.getElementById('heroBadges').innerHTML = [
+    `<span class="badge blue">${esc(o.stage)}</span>`,
+    a.strategic_account ? '<span class="badge green">Strategic Account</span>' : '',
+    c.competitive_deal ? '<span class="badge yellow">Competitive Deal</span>' : '',
+    a.existing_customer ? '<span class="badge blue">Existing Customer</span>' : '',
+    `<span class="badge">${esc(a.industry)}</span>`,
+    `<span class="badge">${esc(a.region)}</span>`,
+    c.primary_competitor ? `<span class="badge red">${esc(c.primary_competitor)}</span>` : ''
+  ].filter(Boolean).join('');
+  document.getElementById('selectorMeta').textContent = `${dealInput.deal_id} · ${o.stage} · ${a.name}`;
+}
+
+function renderKpis(){
+  const b = analysis.baseline, ask = analysis.scenarios.customer_ask, cm = dealInput.consumption_commitment;
+  const items = [
+    ['List Value', money(b.list_value), 'Current list basis'],
+    ['Customer Ask', pct(ask.baseline.discount_pct), 'Requested discount'],
+    ['Customer TCV', money(ask.baseline.tcv), 'Customer ask scenario'],
+    ['Term', `${b.contract_term_months} Months`, 'Commercial term'],
+    ['Commitment', money(cm.commitment_amount), 'Synthetic consumption commitment']
+  ];
+  document.getElementById('kpis').innerHTML = items.map(i => `<div class="card kpi"><div class="label">${i[0]}</div><div class="kpi-value">${i[1]}</div><div class="kpi-sub">${i[2]}</div></div>`).join('');
+}
+
+function healthStatus(label, status, cls){
+  return `<div class="card health ${cls}"><div class="label">${label}</div><div class="status ${cls}">${status}</div></div>`;
+}
+function renderHealth(){
+  const ask = analysis.scenarios.customer_ask;
+  const flags = new Set(ask.flags);
+  const comp = dealInput.competitive_context;
+  document.getElementById('healthGrid').innerHTML = [
+    healthStatus('Discount Position', flags.has('DISCOUNT_ABOVE_EXCEPTION_GUIDANCE') ? 'Risk' : flags.has('DISCOUNT_ABOVE_STANDARD') ? 'Attention' : 'Healthy', flags.has('DISCOUNT_ABOVE_EXCEPTION_GUIDANCE') ? 'risk' : flags.has('DISCOUNT_ABOVE_STANDARD') ? 'attention' : 'healthy'),
+    healthStatus('Financial Return', ask.baseline.npv > 0 ? 'Healthy' : 'Risk', ask.baseline.npv > 0 ? 'healthy' : 'risk'),
+    healthStatus('Consumption Coverage', flags.has('COMMITMENT_UNDER_COVERED') ? 'Risk' : 'Healthy', flags.has('COMMITMENT_UNDER_COVERED') ? 'risk' : 'healthy'),
+    healthStatus('Deal Term', ask.baseline.contract_term_months >= 24 ? 'Healthy' : 'Attention', ask.baseline.contract_term_months >= 24 ? 'healthy' : 'attention'),
+    healthStatus('Competitive Pressure', comp.competitive_deal ? 'Attention' : 'Healthy', comp.competitive_deal ? 'attention' : 'healthy'),
+    healthStatus('Gross Margin', 'Not modeled', 'notmodeled')
+  ].join('');
+}
+
+function scenarioLabel(key){ return key === 'customer_ask' ? 'Customer Ask' : key === 'recommended_test' ? 'Working Scenario' : key === 'commercial_floor_test' ? 'Commercial Floor Test' : key; }
+function renderScenarios(){
+  const scenarios = analysis.scenarios;
+  const order = ['customer_ask', 'recommended_test', 'commercial_floor_test'].filter(k => scenarios[k]);
+  const meta = {
+    customer_ask: {sub: 'Current customer request', ink: 'var(--red-ink)'},
+    recommended_test: {sub: 'Editable working scenario', ink: 'var(--accent-ink)'},
+    commercial_floor_test: {sub: 'Guardrail stress test', ink: 'var(--green-ink)'},
+  };
+  const rows = [
+    ['Discount', s => pct(s.baseline.discount_pct)], ['TCV', s => money(s.baseline.tcv)], ['ACV', s => money(s.baseline.acv)],
+    ['NPV', s => money(s.baseline.npv)], ['ROI', s => pct(s.baseline.roi_3yr_pct)], ['Payback', s => `${s.baseline.payback_months} mo`],
+    ['Commitment', s => money(s.commitment.commitment_amount)], ['Coverage', s => pct((s.commitment.coverage_ratio || 0) * 100)], ['Gross Margin', s => s.baseline.gross_margin_pct === null ? 'Not modeled' : pct(s.baseline.gross_margin_pct)],
+    ['Policy', (_s, key) => policyPill(policyFor(key)?.overall_status)], ['Required Approvals', (_s, key) => String(policyFor(key)?.required_approval_count ?? '—')]
+  ];
+  const head = `<thead><tr><th>Metric</th>${order.map(k =>
+    `<th class="scen-head scen-col-${k}"><span style="color:${meta[k].ink}">${scenarioLabel(k)}</span><div class="scen-sub">${meta[k].sub}</div></th>`).join('')}</tr></thead>`;
+  const body = rows.map(r => {
+    const refValue = r[1](scenarios.customer_ask, 'customer_ask');
+    return `<tr><td>${r[0]}</td>${order.map(k => {
+      const value = r[1](scenarios[k], k);
+      const differs = k !== 'customer_ask' && value !== refValue;
+      return `<td class="scen-col-${k}${differs ? ' scen-diff' : ''}"${differs ? ` style="color:${meta[k].ink}"` : ''}>${value}</td>`;
+    }).join('')}</tr>`;
+  }).join('');
+  document.getElementById('scenarioTable').innerHTML = head + `<tbody>${body}</tbody>`;
+}
+function policyPill(status){
+  if(!status) return '—';
+  const cls = status === 'BLOCKED' ? 'red' : status === 'WITHIN_POLICY' ? 'green' : status === 'REQUIRES_APPROVAL' ? 'yellow' : 'blue';
+  return `<span class="badge ${cls}">${status.replaceAll('_',' ')}</span>`;
+}
+function metric(k,v){ return `<div class="metric-row"><span>${k}</span><span>${v}</span></div>`; }
+function policyFor(key){ return (policyComparison?.scenario_policy_comparison || []).find(p => p.scenario === key); }
+
+function renderPolicy(){
+  if(!activePolicy) return;
+  const card = document.getElementById('policyStatusCard');
+  card.className = `card policy-status ${activePolicy.overall_status}`;
+  const apCount = document.getElementById('approvalCount');
+  apCount.textContent = `${activePolicy.required_approvals.length} approval${activePolicy.required_approvals.length === 1 ? '' : 's'}`;
+  apCount.className = activePolicy.required_approvals.length ? 'badge yellow' : 'badge green';
+  document.getElementById('policySummaryBadge').innerHTML = policyPill(activePolicy.overall_status);
+  document.getElementById('policyOverall').textContent = activePolicy.overall_status.replaceAll('_',' ');
+  const s = activePolicy.summary;
+  document.getElementById('policyCounts').innerHTML = [
+    ['Passed',s.passed],['Reviews',s.reviews],['Exceptions',s.exceptions],['Blocks',s.blocks],['Not Modeled',s.not_modeled]
+  ].map(([k,v])=>`<div class="policy-count"><span class="label">${k}</span><strong>${v}</strong></div>`).join('');
+  const cats = ['Pricing','Financial Return','Payment Terms','Commitment','Contract Term','Legal Terms'];
+  const checks = cats.map(cat => {
+    const rows = activePolicy.policy_checks.filter(c => c.category === cat);
+    const top = rows.sort((a,b)=>statusRank(b.status)-statusRank(a.status))[0];
+    return top ? `<div class="check-row"><div class="check-top"><div class="check-name">${cat}</div><span class="status-pill ${top.status}">${top.status.replace('_',' ')}</span></div><div class="kpi-sub">${esc(top.message)}</div></div>` : '';
+  }).join('');
+  document.getElementById('approvalPanel').innerHTML = activePolicy.required_approvals.length
+    ? activePolicy.required_approvals.map((a,i)=>`<div class="approval-row"><div class="approval-top"><div class="approval-name">${i+1}. ${esc(a.function)} — ${esc(a.level)}</div><span class="badge yellow">Required</span></div><ul class="reason-list">${a.reasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`).join('')
+    : '<div class="badge green">No approvals required</div>';
+  document.getElementById('policyCheckSummary').innerHTML = checks;
+}
+function statusRank(s){ return {PASS:0,NOT_APPLICABLE:0,NOT_MODELED:0,REVIEW:1,EXCEPTION:2,BLOCK:3}[s] ?? 0; }
+
+function renderWorkbench(){
+  const b = workingScenario.baseline;
+  document.getElementById('wbDiscount').value = b.discount_pct;
+  document.getElementById('wbTerm').value = b.contract_term_months;
+  document.getElementById('wbCommitment').value = Math.round(workingScenario.commitment.commitment_amount);
+  document.getElementById('wbBilling').value = dealInput.commercial.billing_frequency || 'Annual';
+}
+function currentWorkbenchPayload(name='recommended_test'){
+  return {
+    name,
+    discount_pct: Number(document.getElementById('wbDiscount').value),
+    contract_term_months: Number(document.getElementById('wbTerm').value),
+    commitment_amount: Number(document.getElementById('wbCommitment').value),
+    billing_frequency: document.getElementById('wbBilling').value
+  };
+}
+async function recalculate(){
+  const payload = currentWorkbenchPayload('recommended_test');
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/scenario`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  const data = await res.json();
+  if(!res.ok){ alert(data.message || data.error); return; }
+  analysis.scenarios.recommended_test = data;
+  workingScenario = data;
+  await loadPolicyComparison('recommended_test');
+  renderScenarios(); renderHealth(); renderPolicy(); renderCommitment(); renderGuardrails(); renderImpact(); renderExceptions();
+}
+function renderImpact(){
+  const ask = analysis.scenarios.customer_ask, work = analysis.scenarios.recommended_test;
+  const items = [
+    ['TCV', money(work.baseline.tcv - ask.baseline.tcv)],
+    ['NPV', money(work.baseline.npv - ask.baseline.npv)],
+    ['Discount', `${(work.baseline.discount_pct - ask.baseline.discount_pct).toFixed(1)} pts`],
+    ['Commitment', money(work.commitment.commitment_amount - ask.commitment.commitment_amount)]
+  ];
+  document.getElementById('impactGrid').innerHTML = items.map(i => `<div class="delta"><div class="label">${i[0]}</div><strong>${i[1]}</strong></div>`).join('');
+}
+
+function renderCommitment(){
+  const c = analysis.scenarios.recommended_test.commitment;
+  document.getElementById('commitmentPanel').innerHTML = [
+    metric('Total Commitment', money(c.commitment_amount)), metric('Expected Consumption', money(c.expected_consumption)),
+    metric('Coverage', pct((c.coverage_ratio || 0) * 100)), metric('Expected Overage', money(c.expected_overage)),
+    metric('Expected Shortfall', money(c.expected_shortfall)), metric('Commitment Period', `${dealInput.consumption_commitment.commitment_period_months} months`)
+  ].join('') + '<div class="kpi-sub" style="margin-top:8px">Synthetic Azure-consumption-style commercial commitment.</div>';
+  const ctx = document.getElementById('commitmentChart');
+  if(commitmentChart) commitmentChart.destroy();
+  commitmentChart = new Chart(ctx, {type:'bar', data:{labels:['Year 1','Year 2','Year 3'], datasets:[
+    {label:'Target', data:c.annual_targets, backgroundColor:'#0078d4'},
+    {label:'Expected', data:c.expected_annual_consumption, backgroundColor:'#107c10'}
+  ]}, options:{plugins:{legend:{display:true}}, scales:{y:{ticks:{callback:v=>money(v)}}}}});
+}
+function renderProducts(){
+  const total = dealInput.products.reduce((s,p)=>s+(p.list_value||0),0);
+  document.getElementById('productPanel').innerHTML = dealInput.products.map(p => {
+    const share = total ? (p.list_value/total*100) : 0;
+    return `<div class="product-row"><div><strong>${esc(p.product)}</strong><div class="kpi-sub">${esc(p.sku)}</div><div class="bar"><div style="width:${share}%"></div></div></div><strong>${money(p.list_value)}</strong></div>`;
+  }).join('');
+}
+function renderContext(){
+  const cc = dealInput.competitive_context, sc = dealInput.strategic_context;
+  document.getElementById('contextPanel').innerHTML = `
+    <div class="label">Customer Asks</div><ul style="margin:8px 0 14px 18px">${dealInput.customer_asks.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+    ${metric('Primary Competitor', esc(cc.primary_competitor))}
+    ${metric('Competitive Deal', cc.competitive_deal ? 'Yes' : 'No')}
+    ${metric('Switching Risk', esc(cc.customer_switching_risk))}
+    ${metric('Strategic Account', dealInput.account.strategic_account ? 'Yes' : 'No')}
+    ${metric('Expansion Potential', esc(sc.expansion_potential))}
+    ${metric('Executive Sponsorship', sc.executive_sponsorship ? 'Yes' : 'No')}
+    ${metric('Reference Potential', sc.reference_customer_potential ? 'Yes' : 'No')}`;
+}
+function renderGuardrails(){
+  const s = analysis.scenarios.customer_ask;
+  const flags = s.flags.length ? s.flags.map(f=>`<span class="badge ${f.includes('DISCOUNT')?'yellow':f.includes('UNDER')?'red':'blue'}">${esc(f)}</span>`).join('') : '<span class="badge green">No active financial flags</span>';
+  document.getElementById('guardrailPanel').innerHTML = `
+    ${metric('Discount', pct(s.baseline.discount_pct))}
+    ${metric('Financial Return', s.baseline.npv > 0 ? 'Positive NPV' : 'Negative NPV')}
+    ${metric('Commitment Coverage', pct((s.commitment.coverage_ratio||0)*100))}
+    ${metric('Gross Margin', 'Not modeled')}
+    <div class="badges" style="margin-top:12px">${flags}</div>`;
+}
+function renderNotes(){
+  const notes = dealInput.negotiation_context.negotiation_notes || [];
+  document.getElementById('notesCount').textContent = notes.length;
+  document.getElementById('notesPanel').innerHTML = notes.map(n => `<div class="note"><div class="note-role">${esc(n.author_role)}</div><div class="note-text">${esc(n.note)}</div></div>`).join('');
+}
+function renderExceptions(){
+  if(!activePolicy) return;
+  const exCount = document.getElementById('exceptionCount');
+  exCount.textContent = activePolicy.exceptions.length;
+  exCount.className = activePolicy.exceptions.length ? 'badge yellow' : 'badge green';
+  document.getElementById('exceptionPanel').innerHTML = activePolicy.exceptions.length ? activePolicy.exceptions.map(ex => `
+    <div class="exception-row">
+      <div class="exception-top"><div class="exception-name">${esc(ex.exception_type)}</div><span class="status-pill EXCEPTION">${esc(ex.resolution_status)}</span></div>
+      ${metric('Actual', formatPolicyValue(ex.actual_value))}
+      ${metric('Threshold', formatPolicyValue(ex.threshold))}
+      ${metric('Required Approval', ex.required_approver ? `${esc(ex.required_approver.function)} — ${esc(ex.required_approver.level)}` : 'None')}
+      ${metric('Documentation', ex.documentation_required ? 'Required' : 'Not required')}
+      ${ex.remediation ? `<div class="kpi-sub" style="margin-top:8px"><strong>Return to Policy:</strong> ${esc(ex.remediation.action)}</div>` : ''}
+    </div>`).join('') : '<div class="badge green">No open policy exceptions</div>';
+}
+function formatPolicyValue(v){ return v === null || v === undefined ? 'Not modeled' : typeof v === 'number' && Math.abs(v) > 999 ? money(v) : String(v); }
+
+const NOT_ENOUGH = '<span class="strategy-muted">Not enough comparable data</span>';
+const outcomePill = o => `<span class="status-pill ${o === 'WON' ? 'PASS' : o === 'LOST' ? 'BLOCK' : 'NOT_MODELED'}">${esc(o || '—')}</span>`;
+const confidenceBadge = c => !c ? '' : `<span class="badge ${c.level === 'HIGH' ? 'green' : c.level === 'MEDIUM' ? 'blue' : c.level === 'LOW' ? 'yellow' : 'red'}">${esc(c.level.replaceAll('_',' '))} Confidence</span>`;
+const positionBadge = p => !p || p.status !== 'OK' ? '' : `<span class="badge ${p.position === 'WITHIN_RANGE' || p.position === 'BELOW_RANGE' ? 'green' : p.position === 'ABOVE_MEDIAN' ? 'yellow' : 'red'}">Ask ${esc(p.position.replaceAll('_',' '))}</span>`;
+
+function discountRangeViz(d){
+  if(!d || d.status !== 'OK') return NOT_ENOUGH;
+  const ask = d.customer_ask_discount_pct;
+  const maxVal = Math.max(d.max, ask ?? 0) * 1.15 || 1;
+  const x = v => `${(v / maxVal * 100).toFixed(1)}%`;
+  const mark = (v, label) => `<div class="range-mark" style="left:${x(v)}"><span>${label}<br>${pct(v)}</span></div>`;
+  return `<div class="range-viz">
+    <div class="range-track"></div>
+    <div class="range-band" style="left:${x(d.min)};width:calc(${x(d.max)} - ${x(d.min)})"></div>
+    <div class="range-iqr" style="left:${x(d.p25)};width:calc(${x(d.p75)} - ${x(d.p25)})"></div>
+    ${mark(d.min, 'Min')}${mark(d.median, 'Median')}${mark(d.p75, 'P75')}${mark(d.max, 'Max')}
+    ${ask !== null && ask !== undefined ? `<div class="range-ask" style="left:${x(ask)}"><span>Ask ${pct(ask)}</span></div>` : ''}
+  </div>`;
+}
+
+function wonLostBlock(label, seg, cls){
+  if(!seg || seg.count === 0) return `<div class="delta ${cls || ''}"><div class="label">${label}</div>${NOT_ENOUGH}</div>`;
+  const d = seg.discount || {};
+  return `<div class="delta ${cls || ''}"><div class="label">${label} (${seg.count})</div>
+    ${metric('Median Discount', d.status === 'OK' ? pct(d.median) : 'Not enough data')}
+    ${metric('Median TCV', seg.median_tcv?.status === 'OK' ? money(seg.median_tcv.value) : 'Not enough data')}
+    ${metric('Median Commitment', seg.median_commitment?.status === 'OK' ? money(seg.median_commitment.value) : 'Not enough data')}
+    ${metric('Median Term', seg.median_term_months?.status === 'OK' ? `${seg.median_term_months.value} mo` : 'Not enough data')}</div>`;
+}
+
+function renderComparables(){
+  const panel = document.getElementById('compPanel');
+  const conf = document.getElementById('compConfidence');
+  if(!comparablesData || !comparableBenchmarks){
+    conf.innerHTML = '';
+    panel.innerHTML = '<div class="strategy-muted">Comparable deal intelligence is unavailable.</div>';
+    return;
+  }
+  const b = comparableBenchmarks;
+  conf.innerHTML = confidenceBadge(b.retrieval_confidence) + positionBadge(b.discount?.position);
+  const comps = comparablesData.comparables || [];
+  if(b.benchmark_status !== 'OK'){
+    panel.innerHTML = `<div class="strategy-muted" style="margin-top:8px">${esc(b.message || 'Insufficient comparable-deal sample for reliable benchmarking.')}</div>` + comparablesTable(comps);
+    return;
+  }
+  const d = b.discount, o = b.outcomes, wl = b.won_vs_lost;
+  const kpis = [
+    ['Comparable Deals', String(b.comparable_count), 'Deterministically retrieved'],
+    ['Median Discount', pct(d.median), `P25 ${pct(d.p25)}`],
+    ['P75 Discount', pct(d.p75), `Max won ${d.max_won_discount_pct === null ? 'n/a' : pct(d.max_won_discount_pct)}`],
+    ['Win Rate', o.win_rate_pct === null ? 'n/a' : pct(o.win_rate_pct), `${o.won}W / ${o.lost}L / ${o.no_decision}ND`],
+    ['Median Term', b.contract_term.median_term_months.status === 'OK' ? `${b.contract_term.median_term_months.value} mo` : 'n/a', `Current ${b.contract_term.current_term_months} mo`],
+    ['Median Commitment', b.commitment.median_commitment.status === 'OK' ? money(b.commitment.median_commitment.value) : 'Not enough data', `Current ${money(b.commitment.current_commitment)}`]
+  ];
+  const concessions = (b.concessions.frequency || []).slice(0, 5);
+  panel.innerHTML = `
+    <div class="comp-kpis">${kpis.map(k => `<div class="comp-kpi"><div class="label">${k[0]}</div><strong>${k[1]}</strong><div class="kpi-sub">${k[2]}</div></div>`).join('')}</div>
+    <div class="subhead" style="margin-top:18px">Comparable Discount Range vs Customer Ask</div>
+    ${discountRangeViz(d)}
+    <div class="comp-grid">
+      <div>
+        <div class="subhead">Won vs Lost Comparables</div>
+        <div class="delta-grid" style="grid-template-columns:1fr 1fr">${wonLostBlock('Won Deals', wl.won, 'won')}${wonLostBlock('Lost Deals', wl.lost, 'lost')}</div>
+        <div class="kpi-sub" style="margin-top:6px">${esc(wl.note || '')}</div>
+      </div>
+      <div>
+        <div class="subhead">Most Common Negotiated Concessions</div>
+        ${concessions.length ? concessions.map(c => metric(esc(c.name), `${c.count}/${b.comparable_count}`)).join('') : NOT_ENOUGH}
+        <div class="subhead" style="margin-top:12px">Historical Approval Patterns</div>
+        ${b.approval_patterns.deals_with_function_data ? (b.approval_patterns.function_frequency || []).map(a => metric(esc(a.name), `${a.count}/${b.approval_patterns.deals_with_function_data}`)).join('') : (b.approval_patterns.frequency || []).map(a => metric(esc(a.name.replaceAll('_',' ')), `${a.count}/${b.comparable_count}`)).join('')}
+        <div class="kpi-sub" style="margin-top:6px">Historical evidence only — current approvals come from the policy engine.</div>
+      </div>
+    </div>
+    <div class="subhead" style="margin-top:16px;margin-bottom:8px">Top Comparable Deals</div>
+    ${comparablesTable(comps)}`;
+}
+
+function comparablesTable(comps){
+  if(!comps.length) return '<div class="strategy-muted" style="margin-top:8px">No comparable deals passed deterministic filtering.</div>';
+  const rows = comps.map((c, i) => `
+    <tr class="comp-expand comp-${esc(c.outcome || 'NONE')}" onclick="toggleCompDetail(${i})">
+      <td>${Math.round(c.similarity_score * 100)}%</td>
+      <td style="text-align:left">${esc(c.customer || c.historical_deal_id)}</td>
+      <td style="text-align:left">${esc(c.industry)}</td>
+      <td style="text-align:left">${esc((c.products || []).join(', '))}</td>
+      <td>${money(c.tcv)}</td>
+      <td>${pct(c.final_discount_pct)}</td>
+      <td>${c.contract_term_months} mo</td>
+      <td>${money(c.commitment_amount)}</td>
+      <td style="text-align:left">${outcomePill(c.outcome)}</td>
+    </tr>
+    <tr class="comp-row-detail" id="compDetail${i}" style="display:none"><td colspan="9">
+      <strong>${esc(c.historical_deal_id)}</strong> — Why this deal?
+      <ul class="reason-list">${(c.match_reasons || []).map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+      ${metric('Product Category', esc(c.product_category || '—'))}
+      ${metric('Competitor', esc(c.competitor || 'None'))}
+      ${metric('Region / Segment', `${esc(c.region)} · ${esc(c.segment)}`)}
+      ${metric('Historical Approval Level', esc((c.approval_level || '—').replaceAll('_',' ')))}
+      ${(c.approval_functions || []).length ? metric('Approval Functions', esc(c.approval_functions.join(', '))) : ''}
+      ${metric('Concessions', esc((c.major_concessions || []).join(', ') || 'None recorded'))}
+      ${c.deal_close_date ? metric('Closed', esc(c.deal_close_date)) : ''}
+      ${c.negotiation_summary ? `<div class="kpi-sub" style="margin-top:8px">${esc(c.negotiation_summary)}</div>` : ''}
+    </td></tr>`).join('');
+  return `<div style="overflow:auto;margin-top:8px"><table>
+    <thead><tr><th>Similarity</th><th>Customer</th><th>Industry</th><th>Products</th><th>TCV</th><th>Discount</th><th>Term</th><th>Commitment</th><th>Outcome</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>
+    <div class="kpi-sub" style="margin-top:6px">Click a row for match reasons, approvals, and concessions. Synthetic demo data.</div>`;
+}
+
+function toggleCompDetail(i){
+  const row = document.getElementById(`compDetail${i}`);
+  if(row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+}
+async function analyzeStrategy(){
+  const btn = document.getElementById('strategyBtn');
+  const error = document.getElementById('strategyError');
+  const panel = document.getElementById('strategyPanel');
+  btn.disabled = true;
+  error.classList.remove('visible');
+  error.textContent = '';
+  const t0 = Date.now();
+  const stages = [
+    [0,  'Gathering deal context, financials, policy, and comparable evidence…'],
+    [8,  'Reasoning model is working through the deal economics…'],
+    [45, 'Still reasoning — deep strategy runs typically take 1–2 minutes…'],
+    [120,'Validating and repairing the proposal — almost there…']
+  ];
+  const progressTimer = setInterval(() => {
+    const s = Math.round((Date.now() - t0) / 1000);
+    const stage = stages.filter(x => s >= x[0]).pop()[1];
+    panel.innerHTML = `<div class="strategy-muted">Analyzing deal structure… <strong>${s}s</strong> — ${stage}<br>First run per deal is slow; results are cached afterwards.</div>`;
+  }, 1000);
+  panel.innerHTML = '<div class="strategy-muted">Analyzing deal structure…</div>';
+  try{
+    const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/strategy`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({working_scenario: currentWorkbenchPayload('working_scenario')})
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || data.error);
+    strategyResult = data;
+    renderStrategy();
+  }catch(err){
+    strategyResult = null;
+    error.textContent = err.message || 'Strategy analysis failed.';
+    error.classList.add('visible');
+    panel.innerHTML = '<div class="strategy-muted">Strategy analysis is unavailable.</div>';
+  }finally{
+    clearInterval(progressTimer);
+    btn.disabled = false;
+  }
+}
+function renderStrategy(){
+  const panel = document.getElementById('strategyPanel');
+  const apply = document.getElementById('applyStrategyBtn');
+  const error = document.getElementById('strategyError');
+  if(!panel || !apply) return;
+  if(!strategyResult){
+    apply.disabled = true;
+    panel.innerHTML = 'Run analysis after reviewing or editing the working scenario.';
+    return;
+  }
+  if(strategyResult.status !== 'success'){
+    apply.disabled = true;
+    error.textContent = strategyResult.message || strategyResult.error || 'Strategy analysis is unavailable.';
+    error.classList.add('visible');
+    panel.innerHTML = '<div class="strategy-muted">No validated strategy is available.</div>';
+    return;
+  }
+  error.classList.remove('visible');
+  const f = strategyResult.validated_financials?.baseline || {};
+  const p = strategyResult.validated_policy || {};
+  const s = strategyResult.proposed_structure || {};
+  apply.disabled = false;
+  const chip = (label, value) => `<div class="term-chip"><span>${label}</span><strong>${value}</strong></div>`;
+  const plan = strategyResult.negotiation_plan || [];
+  const gives = strategyResult.give_get_options || [];
+  const risks = strategyResult.commercial_risks || [];
+  const evidence = strategyResult.evidence || [];
+  const planBody = plan.map((st, i) => `<div class="plan-step"><div class="plan-num">${Number(st.step) || i + 1}</div><div><strong>${esc(st.action || '')}</strong><div class="kpi-sub">${esc(st.owner || 'Team')}</div>${st.talk_track ? `<div class="talk-track">“${esc(st.talk_track)}”</div>` : ''}</div></div>`).join('');
+  const risksBody = risks.map(r => `<div class="evidence-item"><span class="badge">${esc(r.category || '')}</span> <strong>${esc(r.risk || '')}</strong><div class="kpi-sub" style="margin-top:4px">Mitigation: ${esc(r.mitigation || '—')}</div></div>`).join('');
+  panel.innerHTML = `
+    <div class="strategy-hero">
+      <div class="headline">
+        <span class="strategy-verdict">${esc(strategyResult.recommended_position?.strategy || '—')}</span>
+        <span class="badge">${esc(strategyResult.confidence?.level || 'LOW')} Confidence</span>
+        <span class="badge ${p.overall_status === 'BLOCKED' ? 'red' : p.overall_status === 'WITHIN_POLICY' ? 'green' : 'yellow'}">${esc((p.overall_status || '—').replaceAll('_',' '))}</span>
+      </div>
+      <div class="term-chips">
+        ${chip('Discount', pct(s.discount_pct))}
+        ${chip('Term', `${esc(s.contract_term_months)} mo`)}
+        ${chip('Commitment', money(s.commitment_amount))}
+        ${chip('Billing', esc(s.billing_frequency || '—'))}
+        ${chip('Payment', esc(s.payment_terms || '—'))}
+      </div>
+      <div class="term-chips">
+        ${chip('TCV', money(f.tcv))}
+        ${chip('NPV', money(f.npv))}
+        ${chip('ROI', pct(f.roi_3yr_pct))}
+        ${chip('Payback', f.payback_months === undefined ? '—' : `${f.payback_months} mo`)}
+        ${chip('Gross Margin', 'Not modeled')}
+      </div>
+      <p class="strategy-summary">${esc(strategyResult.executive_summary || strategyResult.recommended_position?.rationale || '')}</p>
+      <div class="strategy-muted">${esc(strategyResult.confidence?.rationale || 'Gross margin is not modeled.')}</div>
+    </div>
+    ${askComparisonTable(strategyResult.customer_ask_comparison)}
+    <div style="margin-top:12px">
+      ${plan.length ? evidenceDetails('Negotiation Plan', plan.length, planBody, true) : ''}
+      ${gives.length ? evidenceDetails('Give / Get Options', gives.length, renderGiveGet(gives)) : ''}
+      ${risks.length ? evidenceDetails('Risks & Mitigations', risks.length, risksBody) : ''}
+      ${evidence.length ? evidenceDetails('Supporting Evidence', evidence.length, renderEvidence(evidence)) : ''}
+      ${strategyComparableAccordion(strategyResult.comparable_evidence)}
+    </div>`;
+}
+function askComparisonTable(rows){
+  if(!rows || !rows.length) return '';
+  return `<div style="overflow:auto;margin-top:12px"><table>
+    <thead><tr><th>Dimension</th><th>Customer Ask</th><th>Recommended</th><th style="text-align:left">Why</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${esc(r.dimension || '')}</td><td>${esc(String(r.customer_ask ?? '—'))}</td><td><strong>${esc(String(r.recommendation ?? '—'))}</strong></td><td style="text-align:left;color:var(--text-dim)">${esc(r.reason || '')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function evidenceTitle(sourceType){
+  return {
+    DEAL_INPUT: 'Deal Input Evidence',
+    FINANCIAL_ENGINE: 'Financial Engine Evidence',
+    POLICY_ENGINE: 'Policy Engine Evidence',
+    ACCOUNT_NOTE: 'Account Notes',
+    SALES_NOTE: 'Sales Notes',
+    FINANCE_NOTE: 'Finance Notes',
+    HISTORICAL_COMPARABLE: 'Historical Comparable Evidence'
+  }[sourceType] || sourceType.replaceAll('_', ' ');
+}
+function evidenceDetails(title, count, body, open=false){
+  return `<details class="evidence-group"${open ? ' open' : ''}><summary><span>${esc(title)}</span><span class="badge">${count}</span></summary><div class="evidence-body">${body}</div></details>`;
+}
+function renderEvidence(evidence){
+  if(!evidence.length) return '<div class="strategy-muted">No evidence returned.</div>';
+  const historical = evidence.filter(e => e.source_type === 'HISTORICAL_COMPARABLE');
+  const groups = [];
+  const nonHistorical = evidence.filter(e => e.source_type !== 'HISTORICAL_COMPARABLE');
+  const byType = nonHistorical.reduce((acc, e) => {
+    const key = e.source_type || 'OTHER';
+    (acc[key] ||= []).push(e);
+    return acc;
+  }, {});
+  Object.entries(byType).forEach(([sourceType, items]) => {
+    const body = items.map(e => `<div class="evidence-item"><strong>${esc(e.label || sourceType)}</strong><div>${esc(e.detail || '')}</div></div>`).join('');
+    groups.push(evidenceDetails(evidenceTitle(sourceType), items.length, body));
+  });
+  if(historical.length){
+    const body = historical.map((e, i) => `<div class="evidence-item"><strong>History ${i + 1}: ${esc(e.label || 'Comparable')}</strong><div>${esc(e.detail || '')}</div></div>`).join('');
+    groups.push(evidenceDetails('Historical Comparable Evidence', historical.length, body));
+  }
+  return groups.join('');
+}
+function strategyComparableAccordion(ev){
+  if(!ev) return '';
+  if(ev.benchmark_status !== 'OK'){
+    return evidenceDetails('Comparable Deal Intelligence', 0, `<div class="strategy-muted" style="margin-top:0">${esc(ev.message || 'Insufficient comparable-deal sample for reliable benchmarking.')}</div>`);
+  }
+  const s = ev.comparable_summary || {}, p = ev.current_position || {};
+  const body = `
+    <div class="badges">${confidenceBadge(ev.retrieval_confidence)}${positionBadge(p)}</div>
+    ${metric('Comparable Deals', String(s.count ?? '—'))}
+    ${metric('Median Discount', pct(s.median_discount_pct))}
+    ${metric('P75 Discount', pct(s.p75_discount_pct))}
+    ${metric('Customer Ask', pct(p.customer_ask_discount_pct))}
+    ${metric('Ask vs Median', p.discount_vs_median_pts === undefined ? '—' : `${p.discount_vs_median_pts > 0 ? '+' : ''}${p.discount_vs_median_pts} pts`)}
+    ${metric('Win Rate', s.win_rate_pct === null || s.win_rate_pct === undefined ? 'n/a' : pct(s.win_rate_pct))}
+    <ul class="strategy-list">${(ev.top_comparables || []).slice(0,3).map(c => `<li><strong>${esc(c.historical_deal_id)}</strong>: ${Math.round(c.similarity_score*100)}% similarity, ${esc(c.outcome)}, ${pct(c.final_discount_pct)} discount, ${c.contract_term_months}-month term</li>`).join('')}</ul>
+    <div class="strategy-muted">Deterministic comparable engine output. Historical evidence, not policy.</div>`;
+  return evidenceDetails('Comparable Deal Intelligence', s.count ?? 0, body);
+}
+function renderGiveGet(options){
+  if(!options.length) return '<div class="strategy-muted">No give/get options returned.</div>';
+  return options.map(o => {
+    const v = o.validation || {};
+    const vf = v.financial_validation?.baseline || {};
+    const vp = v.policy_validation || {};
+    return `<div class="check-row">
+      <div class="check-top"><div class="check-name">${esc(o.name || 'Option')}</div><span class="status-pill ${vp.overall_status === 'BLOCKED' ? 'BLOCK' : vp.overall_status === 'WITHIN_POLICY' ? 'PASS' : 'EXCEPTION'}">${esc((vp.overall_status || v.validation_status || '—').replaceAll('_',' '))}</span></div>
+      ${metric('Give', esc(o.give || '—'))}
+      ${metric('Get', esc(o.get || '—'))}
+      ${metric('TCV', money(vf.tcv))}
+      ${metric('NPV', money(vf.npv))}
+    </div>`;
+  }).join('');
+}
+async function applyStrategyToWorkbench(){
+  if(!strategyResult?.proposed_structure) return;
+  const s = strategyResult.proposed_structure;
+  if(s.discount_pct !== undefined) document.getElementById('wbDiscount').value = s.discount_pct;
+  if(s.contract_term_months !== undefined) document.getElementById('wbTerm').value = s.contract_term_months;
+  if(s.commitment_amount !== undefined) document.getElementById('wbCommitment').value = Math.round(Number(s.commitment_amount));
+  if(s.billing_frequency !== undefined) document.getElementById('wbBilling').value = s.billing_frequency;
+  await recalculate();
+}
+async function toggleTrace(){
+  const box = document.getElementById('traceBox');
+  if(box.classList.contains('visible')){ box.classList.remove('visible'); return; }
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/trace?scenario=recommended_test`);
+  const data = await res.json();
+  box.textContent = JSON.stringify(data, null, 2);
+  box.classList.add('visible');
+}
+async function togglePolicyTrace(){
+  const box = document.getElementById('policyTraceBox');
+  if(box.classList.contains('visible')){ box.classList.remove('visible'); return; }
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/policy/trace`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(policyPayloads()[0])});
+  const data = await res.json();
+  box.textContent = JSON.stringify(data, null, 2);
+  box.classList.add('visible');
+  box.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+// ── Deal Builder (Phase 7) ────────────────────────────────────────────────
+let builderValidation = null;
+let currentPackage = null;
+
+function builderScenario(){
+  return {
+    discount_pct: Number(document.getElementById('dbDiscount').value),
+    contract_term_months: Number(document.getElementById('dbTerm').value),
+    commitment_amount: Number(document.getElementById('dbCommitment').value),
+    billing_frequency: document.getElementById('dbBilling').value,
+    payment_terms: document.getElementById('dbPayment').value,
+    ...(document.getElementById('dbPriceProtection').value.trim() ? {price_protection: document.getElementById('dbPriceProtection').value.trim()} : {})
+  };
+}
+
+function openDealBuilder(){
+  const panel = document.getElementById('builderPanel');
+  panel.style.display = 'block';
+  const b = workingScenario.baseline;
+  document.getElementById('dbDiscount').value = b.discount_pct;
+  document.getElementById('dbTerm').value = b.contract_term_months;
+  document.getElementById('dbCommitment').value = Math.round(workingScenario.commitment.commitment_amount);
+  document.getElementById('dbBilling').value = dealInput.commercial.billing_frequency || 'Annual';
+  document.getElementById('dbPayment').value = dealInput.commercial.payment_terms || 'Net 30';
+  const options = dealInput.negotiation_context?.potential_concessions || [];
+  document.getElementById('dbConcessions').innerHTML = options.length
+    ? options.map((c,i)=>`<label style="display:block;font-size:13px;margin-top:4px"><input type="checkbox" style="width:auto" class="dbConcession" value="${esc(c)}"> ${esc(c)}</label>`).join('')
+    : '<div class="strategy-muted">No candidate concessions on this deal.</div>';
+  dealBuilderDirty();
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function dealBuilderDirty(){
+  builderValidation = null;
+  document.getElementById('dbGenerateBtn').disabled = true;
+  document.getElementById('dbGenerateHint').textContent = 'Validate the deal before generating the package.';
+  document.getElementById('dbValidationPanel').innerHTML = '';
+}
+
+function readinessBadge(status){
+  const cls = status === 'READY_TO_PACKAGE' ? 'green' : status === 'REQUIRES_APPROVAL' ? 'yellow' : 'red';
+  return `<span class="badge ${cls}">${esc(status.replaceAll('_',' '))}</span>`;
+}
+
+async function validateDealBuilder(){
+  const panel = document.getElementById('dbValidationPanel');
+  panel.innerHTML = '<div class="strategy-muted">Running deterministic validation…</div>';
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/deal-package/validate`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({scenario: builderScenario()})
+  });
+  const data = await res.json();
+  if(!res.ok){ panel.innerHTML = `<div class="strategy-error visible">${esc(data.message || data.error)}</div>`; return; }
+  builderValidation = data;
+  const b = data.financial_analysis.baseline, r = data.deal_readiness, p = data.policy_evaluation;
+  const canGenerate = r.status === 'READY_TO_PACKAGE' || r.status === 'REQUIRES_APPROVAL';
+  document.getElementById('dbGenerateBtn').disabled = !canGenerate;
+  document.getElementById('dbGenerateHint').textContent = canGenerate
+    ? (r.status === 'REQUIRES_APPROVAL' ? 'Package will be generated with REQUIRES APPROVAL clearly marked (approvals required, not obtained).' : 'Final validation passed.')
+    : 'A blocked or incomplete deal cannot generate a package.';
+  const stale = currentPackage && currentPackage.scenario_hash !== data.scenario_hash;
+  panel.innerHTML = `
+    <div class="strategy-grid">
+      <div class="strategy-card">
+        <h4>Deal Readiness</h4>
+        <div class="badges">${readinessBadge(r.status)}${stale ? '<span class="badge red">PACKAGE OUTDATED</span>' : ''}</div>
+        ${metric('Financial Validation', r.checks.financial_validation)}
+        ${metric('Commercial Policy', r.checks.commercial_policy.replaceAll('_',' '))}
+        ${metric('Required Fields', r.checks.required_fields)}
+        ${metric('Agreement Inputs', r.checks.agreement_inputs)}
+        <div class="strategy-muted">${esc(r.note)}</div>
+      </div>
+      <div class="strategy-card">
+        <h4>Validated Economics</h4>
+        ${metric('TCV', money(b.tcv))}
+        ${metric('NPV', money(b.npv))}
+        ${metric('ROI', pct(b.roi_3yr_pct))}
+        ${metric('Payback', `${b.payback_months} mo`)}
+        ${metric('Gross Margin', 'Not modeled')}
+      </div>
+      <div class="strategy-card">
+        <h4>Required Approvals</h4>
+        ${p.required_approvals.length ? p.required_approvals.map(a=>metric(esc(a.function), `${esc(a.level)} — Required`)).join('') : '<div class="badge green">No approvals required</div>'}
+      </div>
+      <div class="strategy-card">
+        <h4>Package Preview</h4>
+        <ul class="strategy-list">
+          <li>Deal Approval Brief (internal)</li>
+          <li>Commercial Term Sheet (customer)</li>
+          <li>Consumption Commitment Schedule (customer)</li>
+          <li>Excel Financial Model (existing builder)</li>
+          <li>Synthetic Draft Agreement (customer)</li>
+        </ul>
+      </div>
+    </div>`;
+}
+
+async function generateDealPackage(){
+  const btn = document.getElementById('dbGenerateBtn');
+  btn.disabled = true;
+  const concessions = Array.from(document.querySelectorAll('.dbConcession:checked')).map(c=>c.value);
+  const special = document.getElementById('dbSpecialTerms').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const useAi = !!document.getElementById('dbUseAi')?.checked;
+  const res = await fetch(`${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/deal-package`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({scenario: builderScenario(), concessions, special_terms: special, strategy: strategyResult, use_ai: useAi})
+  });
+  const data = await res.json();
+  btn.disabled = false;
+  if(!res.ok){ document.getElementById('dbValidationPanel').innerHTML += `<div class="strategy-error visible">${esc(data.message || data.error)}</div>`; return; }
+  currentPackage = data;
+  renderDealPackage();
+}
+
+function renderDealPackage(){
+  const panel = document.getElementById('packagePanel');
+  if(!currentPackage){ panel.innerHTML = ''; return; }
+  const p = currentPackage;
+  const docLabels = {
+    deal_brief: 'Deal Approval Brief (internal)',
+    commercial_term_sheet: 'Commercial Term Sheet (customer)',
+    consumption_commitment_schedule: 'Consumption Commitment Schedule (customer)',
+    financial_model: 'Excel Financial Model',
+    synthetic_agreement: 'Synthetic Draft Agreement (customer)'
+  };
+  panel.innerHTML = `
+    <div class="check-row">
+      <div class="check-top">
+        <div class="check-name">Deal Package ${esc(p.package_id)}</div>
+        <div class="badges">${readinessBadge(p.deal_readiness.status)}<span class="badge blue">Version ${esc(p.package_version)}</span></div>
+      </div>
+      <div class="kpi-sub">Generated ${esc(p.generated_at)} · ${esc(p.disclaimer)}</div>
+      ${p.documents.map(d => d === 'financial_model'
+        ? metric(docLabels[d], `<a href="${API}/api/commercial-analysis/${encodeURIComponent(currentDealId)}/deal-package/${encodeURIComponent(p.package_id)}/excel">Download .xlsx</a>`)
+        : metric(docLabels[d] || d, `<a href="#" onclick="viewPackageDoc('${esc(d)}');return false">View</a>`)).join('')}
+      <div class="kpi-sub" style="margin-top:8px">References: ${p.reference_links.map(r=>`<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.label)}</a>`).join(' · ')}</div>
+    </div>`;
+}
+
+function viewPackageDoc(docId){
+  const box = document.getElementById('docViewer');
+  const doc = currentPackage?.document_contents?.[docId];
+  if(!doc) return;
+  box.textContent = doc.text || JSON.stringify(doc, null, 2);
+  box.classList.add('visible');
+}
+
+init().catch(err => { document.getElementById('loading').textContent = err.message; });
+</script>
+</body>
+</html>

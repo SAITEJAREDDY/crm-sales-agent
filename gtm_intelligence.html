@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GTM Intelligence — Nexus Solutions</title>
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg:#f3f2f1; --panel:#ffffff; --muted:#3b3a39; --text:#201f1e; --line:#edebe9; --line2:#d2d0ce;
+  --accent:#0078d4; --accent2:#106ebe; --soft:#eff6fc; --blue:#0078d4; --red:#a4262c;
+  --yellow:#ca5010; --green:#107c10; --purple:#5c2d91; --teal:#038387;
+  --orange:#d83b01; --orange2:#a33a00; --orangeSoft:#fff4ce;
+  --accent-ink:#005a9e; --green-ink:#0b6a0b; --yellow-ink:#8a3c06; --red-ink:#a4262c; --purple-ink:#4b2482; --orange-ink:#9a3d00;
+  --mono:'Cascadia Mono','Consolas','Courier New',monospace; --sans:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+body { background:var(--bg); color:var(--text); font-family:var(--sans); height:100vh; overflow:hidden; }
+.shell { display:grid; grid-template-rows:52px 1fr; height:100vh; }
+.top { background:var(--blue); color:white; display:flex; align-items:center; gap:16px; padding:0 22px; border-bottom:1px solid var(--accent2); box-shadow:0 2px 8px rgba(0,120,212,.24); }
+.brand { font-size:18px; font-weight:800; letter-spacing:0; color:white; }
+.brand span { color:#c7e0f4; font-weight:800; }
+.top-sub { font-size:12px; color:#deecf9; font-weight:600; }
+.top a { margin-left:auto; color:white; text-decoration:none; border:1px solid rgba(255,255,255,.45); background:rgba(255,255,255,.12); padding:6px 12px; border-radius:4px; font-size:12px; font-weight:700; }
+.top a:hover { border-color:#fff; background:rgba(255,255,255,.2); }
+.layout { display:grid; grid-template-columns:390px 1fr; min-height:0; }
+.left { border-right:1px solid var(--line2); background:#faf9f8; overflow-y:auto; padding:18px; }
+.right { overflow-y:auto; padding:22px 26px 34px; }
+.eyebrow { font-size:11px; color:var(--accent); letter-spacing:.06em; text-transform:uppercase; font-weight:700; }
+h1 { font-size:23px; line-height:1.2; margin:3px 0 6px; }
+.hint { color:var(--muted); font-size:13px; line-height:1.45; }
+.portfolio { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; margin:16px 0; }
+.metric { background:var(--panel); border:1px solid var(--line2); border-left:5px solid var(--accent); border-radius:4px; padding:12px; cursor:pointer; text-align:left; transition:background .12s,border-color .12s,box-shadow .12s,transform .12s; }
+.metric:hover, .metric.active { border-color:var(--accent); background:#fff; box-shadow:0 3.2px 7.2px rgba(0,0,0,.14),0 .6px 1.8px rgba(0,0,0,.12); transform:translateY(-1px); }
+.metric.active { outline:2px solid rgba(0,120,212,.2); }
+.metric.need-action { border-color:#f3b3b8; border-left-color:var(--red); background:#fde7e9; }
+.metric.expansion { border-color:#bad80a; border-left-color:var(--green); background:#dff6dd; }
+.metric.renewal { border-color:#f7d47c; border-left-color:var(--yellow); background:#fff4ce; }
+.metric.total { border-color:#9ccbee; border-left-color:var(--blue); background:var(--soft); }
+.metric.need-action.active, .metric.need-action:hover { background:#fde7e9; }
+.metric.expansion.active, .metric.expansion:hover { background:#dff6dd; }
+.metric.renewal.active, .metric.renewal:hover { background:#fff4ce; }
+.metric.total.active, .metric.total:hover { background:#eff6fc; }
+.metric label { display:block; color:#323130; font-size:10px; text-transform:uppercase; margin-bottom:4px; font-weight:700; }
+.metric.total label { color:var(--accent-ink); }
+.metric.need-action label { color:var(--red-ink); }
+.metric.expansion label { color:var(--green-ink); }
+.metric.renewal label { color:var(--yellow-ink); }
+.metric.total strong, .metric.need-action strong, .metric.expansion strong, .metric.renewal strong { color:var(--text); }
+.metric strong { font-size:22px; font-weight:800; }
+.segments { background:var(--panel); border:1px solid var(--line2); border-radius:4px; padding:12px; margin-bottom:16px; }
+.seg-row { display:grid; grid-template-columns:1fr auto; gap:10px; font-size:12px; padding:7px 0; border-bottom:1px solid var(--line); }
+.seg-row.clickable { cursor:pointer; border-radius:3px; padding-left:7px; padding-right:7px; }
+.seg-row.clickable:hover, .seg-row.clickable.active { background:var(--soft); color:var(--accent2); }
+.seg-row.clickable { border-left:4px solid transparent; }
+.seg-row.seg-hh { border-left-color:var(--green); }
+.seg-row.seg-hl { border-left-color:var(--yellow); }
+.seg-row.seg-lh { border-left-color:var(--purple); }
+.seg-row.seg-ll { border-left-color:var(--red); }
+.seg-row.seg-hh:hover, .seg-row.seg-hh.active { background:#dff6dd; color:#0b6a0b; }
+.seg-row.seg-hl:hover, .seg-row.seg-hl.active { background:#fff4ce; color:#8a2f00; }
+.seg-row.seg-lh:hover, .seg-row.seg-lh.active { background:#f3f2f8; color:#5c2d91; }
+.seg-row.seg-ll:hover, .seg-row.seg-ll.active { background:#fde7e9; color:#a4262c; }
+.seg-row:last-child { border-bottom:0; }
+.section-title { font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:.06em; font-weight:800; margin:18px 0 9px; border-bottom:1px solid var(--line2); padding-bottom:6px; }
+.actions { display:flex; flex-direction:column; gap:10px; }
+.card { background:var(--panel); border:1px solid var(--line2); border-left:6px solid var(--accent); border-radius:4px; padding:13px; cursor:pointer; transition:.12s; position:relative; overflow:hidden; }
+.card:hover, .card.active { border-color:var(--accent); box-shadow:0 3.2px 7.2px rgba(0,0,0,.16),0 .6px 1.8px rgba(0,0,0,.12); transform:translateY(-1px); }
+.card.active { outline:2px solid rgba(0,120,212,.24); background:#fdfefe; }
+.card.priority-high { border-left-color:var(--red); background:#fdf1f2; }
+.card.priority-medium { border-left-color:var(--yellow); background:#fff9e6; }
+.card.priority-low { border-left-color:var(--green); background:#effaed; }
+.card.priority-high:hover, .card.priority-high.active { background:#fde7e9; }
+.card.priority-medium:hover, .card.priority-medium.active { background:#fff4ce; }
+.card.priority-low:hover, .card.priority-low.active { background:#dff6dd; }
+.card.priority-high.active { outline-color:rgba(164,38,44,.26); border-color:var(--red); }
+.card.priority-medium.active { outline-color:rgba(202,80,16,.28); border-color:var(--yellow); }
+.card.priority-low.active { outline-color:rgba(16,124,16,.24); border-color:var(--green); }
+.card::after { content:""; position:absolute; top:12px; right:10px; width:8px; height:8px; border-radius:50%; background:var(--accent); opacity:.75; }
+.card.priority-high::after { background:var(--red); }
+.card.priority-medium::after { background:var(--yellow); }
+.card.priority-low::after { background:var(--green); }
+.card.active::before { content:"Selected"; position:absolute; top:7px; right:28px; font-size:9px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#fff; background:var(--accent); border-radius:999px; padding:2px 7px; }
+.card.priority-high.active::before { background:var(--red); }
+.card.priority-medium.active::before { background:var(--yellow); }
+.card.priority-low.active::before { background:var(--green); }
+.card-head { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:8px; }
+.acct { font-weight:700; line-height:1.2; }
+.badge { font-size:10px; border-radius:999px; padding:3px 7px; white-space:nowrap; font-weight:700; }
+.high { background:#fde7e9; color:var(--red); }
+.medium { background:#fff4ce; color:var(--yellow); }
+.low { background:#dff6dd; color:var(--green); }
+.signal { color:#323130; font-size:12px; line-height:1.4; margin-bottom:8px; }
+.rec { font-size:12px; line-height:1.4; }
+.confidence { font-size:11px; color:var(--accent); margin-top:8px; font-weight:600; }
+.hero { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin-bottom:16px; }
+.hero h2 { font-size:25px; line-height:1.2; margin-top:2px; }
+.context { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; margin:12px 0 18px; }
+.ctx { background:var(--panel); border:1px solid var(--line2); border-left:5px solid var(--accent); border-radius:4px; padding:10px; min-height:70px; }
+.ctx label { display:block; font-size:9px; color:#323130; text-transform:uppercase; margin-bottom:5px; font-weight:800; }
+.ctx strong { font-size:17px; font-weight:700; color:var(--text); }
+.ctx.health { border-color:#badfba; border-left-color:var(--green); background:#dff6dd; }
+.ctx.renewal { border-color:#f7d78a; border-left-color:var(--yellow); background:#fff4ce; }
+.ctx.consumption { border-color:#badfba; border-left-color:var(--green); background:#dff6dd; }
+.ctx.training { border-color:#c7e0f4; border-left-color:var(--blue); background:#eff6fc; }
+.ctx.segment { border-color:#d9cdee; border-left-color:var(--purple); background:#f3f2f8; }
+.ctx.intervention { border-color:#f7c69a; border-left-color:var(--orange); background:#fdf0e5; }
+.ctx.health label, .ctx.consumption label { color:var(--green-ink); }
+.ctx.renewal label { color:var(--yellow-ink); }
+.ctx.training label { color:var(--accent-ink); }
+.ctx.segment label { color:var(--purple-ink); }
+.ctx.intervention label { color:var(--orange-ink); }
+.ctx.intervention strong { color:var(--orange-ink); }
+.panel { background:var(--panel); border:1px solid var(--line2); border-radius:4px; padding:16px; margin-bottom:14px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+.panel h3 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; font-weight:800; color:var(--accent-ink); border-left:3px solid var(--accent); padding-left:8px; border-bottom:1px solid var(--line2); padding-bottom:8px; }
+.why { font-size:14px; line-height:1.55; color:#1e293b; }
+.analysis-tools { display:grid; grid-template-columns:minmax(220px,.85fr) minmax(300px,1fr); gap:14px; align-items:start; }
+.account-chat { border:1px solid var(--line2); border-radius:4px; padding:12px; background:#faf9f8; }
+.chat-answer { min-height:42px; color:#1e293b; font-size:13px; line-height:1.45; margin-bottom:10px; }
+.chat-row { display:flex; gap:8px; align-items:flex-start; }
+.chat-row textarea { min-height:44px; resize:vertical; margin-top:0; }
+.journey-chart { display:grid; grid-template-columns:minmax(540px,1fr) 430px; gap:18px; align-items:stretch; position:relative; }
+.journey-graph { position:relative; }
+.journey-chart svg { width:100%; height:300px; display:block; background:#ffffff; border:1px solid var(--line2); border-radius:4px; }
+.chart-axis { stroke:#edebe9; stroke-width:1; }
+.chart-label { fill:#605e5c; font-family:var(--mono); font-size:10px; }
+.chart-line { fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.intervention-line { stroke:var(--red); stroke-width:2.2; stroke-dasharray:5 5; opacity:.95; }
+.chart-dot { stroke:#fff; stroke-width:2; cursor:crosshair; }
+.chart-dot:hover { r:6; }
+.legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:9px; }
+.legend-row { display:flex; align-items:center; gap:8px; font-size:11px; color:#323130; font-weight:600; }
+.legend-swatch { width:22px; height:3px; border-radius:99px; display:inline-block; }
+.intervention-note { display:flex; align-items:center; gap:8px; font-size:10px; color:var(--muted); margin-top:8px; font-weight:600; }
+.intervention-note span { width:24px; height:0; border-top:2.2px dashed var(--red); display:inline-block; }
+.volume-bars { min-height:300px; background:#ffffff; border:1px solid var(--line2); border-radius:4px; padding:12px; display:flex; flex-direction:column; gap:12px; }
+.bar-title { font-size:10px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; font-weight:700; }
+.bar-block { flex:1; min-height:0; display:flex; flex-direction:column; border:1px solid var(--line2); border-radius:4px; padding:10px; background:white; }
+.bar-plot { flex:1; display:grid; grid-template-columns:repeat(7,1fr); gap:7px; align-items:end; border-bottom:1px solid var(--line); padding-bottom:6px; }
+.bar-wrap { height:100%; display:flex; align-items:flex-end; justify-content:center; position:relative; }
+.bar-wrap.has-intervention::before { content:""; position:absolute; top:0; bottom:0; left:50%; border-left:2.2px dashed var(--red); transform:translateX(-50%); z-index:2; }
+.bar { width:100%; max-width:28px; min-height:4px; border-radius:2px 2px 0 0; background:#8a8886; cursor:crosshair; transition:filter .12s, transform .12s; position:relative; z-index:1; }
+.bar:hover { filter:brightness(.92); transform:translateY(-1px); }
+.bar-months { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; font-family:var(--mono); font-size:10px; color:#323130; text-align:center; padding-top:5px; }
+.bar-total { font-size:10px; color:#323130; margin-top:5px; font-weight:600; }
+.journey-summary { margin-top:12px; color:var(--muted); font-size:13px; line-height:1.45; }
+.chart-tooltip { position:absolute; display:none; pointer-events:none; z-index:5; min-width:150px; background:#323130; color:white; border-radius:3px; padding:8px 9px; box-shadow:0 8px 16px rgba(0,0,0,.2); font-family:var(--mono); font-size:11px; line-height:1.35; }
+.chart-tooltip b { display:block; color:#c7e0f4; margin-bottom:2px; }
+.event-strip { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+.event-chip { font-size:11px; color:#323130; background:#faf9f8; border:1px solid var(--line2); border-radius:999px; padding:5px 8px; }
+.event-chip.good { background:#dff6dd; border-color:#bad80a; color:#107c10; }
+.event-chip.bad { background:#fde7e9; border-color:#f3b3b8; color:#a4262c; }
+.event-chip.neutral { background:#f3f2f1; border-color:#d2d0ce; color:#605e5c; }
+.intervention { display:grid; grid-template-columns:1.35fr .8fr; gap:14px; }
+.kv { display:grid; grid-template-columns:150px 1fr; gap:7px 12px; font-size:13px; }
+.kv span:nth-child(odd) { color:var(--muted); font-family:var(--mono); font-size:10px; text-transform:uppercase; }
+.history-item { border-top:1px solid var(--line); padding:10px 0; font-size:13px; }
+.history-item:first-of-type { border-top:0; }
+.feedback { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+button { border:0; border-radius:4px; padding:8px 11px; font-size:12px; cursor:pointer; font-weight:600; }
+.portfolio button.metric { border-width:1px 1px 1px 5px; border-style:solid; border-radius:4px; padding:12px; font-family:var(--sans); font-weight:400; }
+.portfolio button.metric label { font-family:var(--sans); }
+.portfolio button.metric strong { font-family:var(--sans); }
+.primary { background:var(--accent); color:white; }
+.primary:hover { background:var(--accent2); }
+.outline { background:white; color:var(--accent); border:1px solid var(--accent); }
+.outline:hover { background:var(--soft); }
+.reject { background:#fde7e9; color:var(--red); border:1px solid #f3b3b8; }
+textarea, select { width:100%; border:1px solid var(--line2); border-radius:4px; padding:9px; font-family:var(--sans); margin-top:8px; background:#fff; }
+textarea:focus, select:focus { outline:2px solid rgba(0,120,212,.25); border-color:var(--accent); }
+.toast { color:var(--accent); font-size:11px; min-height:16px; margin-top:8px; font-weight:600; }
+.empty { color:var(--muted); padding:36px; text-align:center; }
+@media (max-width:1100px) {
+  .layout { grid-template-columns:1fr; }
+  .left { max-height:48vh; border-right:0; border-bottom:1px solid var(--line); }
+  .context, .journey, .intervention { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">Nexus <span>/</span> GTM Intelligence</div>
+    <div class="top-sub">Prioritize → Target → Activate → Measure → Optimize</div>
+    <a href="/">Deal Desk</a>
+  </header>
+  <div class="layout">
+    <aside class="left">
+      <div class="eyebrow">Portfolio</div>
+      <h1>What needs attention?</h1>
+      <p class="hint">July current state with January-July trajectory. This workflow is intervention-centric, separate from deal analysis and dashboards.</p>
+      <div class="portfolio" id="portfolioMetrics"></div>
+      <div class="segments" id="segmentBox"></div>
+      <div class="section-title">Priority Actions</div>
+      <div class="actions" id="priorityList"><div class="empty">Loading GTM interventions...</div></div>
+    </aside>
+    <main class="right" id="detail"><div class="empty">Select an account intervention from the priority list.</div></main>
+  </div>
+</div>
+<script>
+let gtmSummary = null;
+let accountRows = [];
+let activeAccount = null;
+let activeAi = null;
+let activePlan = null;
+let activeTrendAnalysis = null;
+let activeFilter = {type:'all', value:'all'};
+let activeChatAnswer = '';
+let activeChatLoading = false;
+let activePlanInputs = '';
+
+const money = n => '$' + Math.round(Number(n || 0)).toLocaleString();
+const pct = n => `${Math.round(Number(n || 0))}%`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function priorityFor(row) {
+  const h = Number(row.health_score || 0), cov = Number(row.coverage_pct || 0), cons = Number(row.consumption || 0);
+  const js = row.journey_summary || {};
+  const healthDelta = Number(js.health_delta || 0);
+  const activeDelta = Number(js.active_user_delta || 0);
+  const consumptionDelta = Number(js.consumption_delta || 0);
+  const concentrationRisk = row.july_segment === 'High Consumption / Low Training' && cov < 25 && cons > 900000;
+  const conversionFailure = row.july_segment === 'Low Consumption / High Training' && activeDelta <= 0 && consumptionDelta < 10000;
+  if (h < 30 || healthDelta < -12 || activeDelta < -15 || consumptionDelta < -100000 || concentrationRisk || conversionFailure) return 'High';
+  if (h < 45 || healthDelta < -6 || activeDelta < 0 || consumptionDelta < 0 || row.july_segment === 'Low Consumption / Low Training' || (row.july_segment === 'High Consumption / Low Training' && cov < 35)) return 'Medium';
+  return 'Low';
+}
+
+function priorityReason(row) {
+  const js = row.journey_summary || {};
+  if (Number(row.health_score || 0) < 30) return 'severe low July health';
+  if (Number(js.health_delta || 0) < -12) return 'sharp health deterioration';
+  if (Number(js.active_user_delta || 0) < -15) return 'major active-user drop';
+  if (Number(js.consumption_delta || 0) < -100000) return 'major consumption drop';
+  if (row.july_segment === 'Low Consumption / High Training') return 'possible training-to-adoption gap';
+  if (row.july_segment === 'High Consumption / Low Training') return 'possible adoption concentration risk';
+  if (row.july_segment === 'Low Consumption / Low Training') return 'low adoption base';
+  return 'monitor current trajectory';
+}
+
+function interventionFor(row, detail) {
+  const latest = (detail?.monthly_observations || [])[6] || row;
+  const summary = detail?.journey_summary || row.journey_summary || {};
+  const segment = latest.segment || row.july_segment || '';
+  const coverageDelta = Number(summary.coverage_delta || 0);
+  const consumptionDelta = Number(summary.consumption_delta || 0);
+  const activeDelta = Number(summary.active_user_delta || 0);
+  const prior = detail?.recommendations || [];
+  const rejectedTraining = prior.some(r => r.seller_response === 'Rejected' && /training|certification|enablement/i.test(r.recommended_action || ''));
+  const modifiedTechnical = prior.some(r => r.seller_response === 'Modified' && /technical|blocker|architecture/i.test(r.seller_response_reason + ' ' + r.outcome));
+  if (/Low Consumption \/ High Training/.test(segment) || (coverageDelta > 20 && consumptionDelta < 25000) || modifiedTechnical || rejectedTraining) {
+    return {family:'Adoption', action:'Technical adoption review', persona:'Solutions Architect / Platform Owner', objective:'Identify why trained users are not converting skills into production adoption.', confidence:82};
+  }
+  if (/High Consumption \/ Low Training/.test(segment)) {
+    return {family:'Enablement', action:'Persona-specific enablement and champion development', persona:'Data Engineer / Platform Owner', objective:'Broaden adoption and reduce usage concentration around a small trained group.', confidence:84};
+  }
+  if (/Low Consumption \/ Low Training/.test(segment)) {
+    return {family:'Partner', action:'Account investigation with foundational enablement sequence', persona:'CSM / Partner Lead', objective:'Diagnose account health, unblock the first workload, and attach a practical enablement plan.', confidence:76};
+  }
+  if (consumptionDelta > 100000 && activeDelta > 4) {
+    return {family:'Commercial', action:'Expansion conversation with advanced capability workshop', persona:'Economic Buyer / Champion', objective:'Convert sustained adoption signals into a qualified expansion motion.', confidence:79};
+  }
+  return {family:'Commercial', action:'Executive alignment and renewal/expansion review', persona:'Economic Buyer', objective:'Confirm the next commercial milestone and keep the account plan current.', confidence:72};
+}
+
+function signalFor(row) {
+  const js = row.journey_summary || {};
+  if ((row.july_segment || '').includes('High Consumption / Low Training')) return 'High consumption with low enablement coverage';
+  if ((row.july_segment || '').includes('Low Consumption / High Training')) return 'Training is not converting into consumption';
+  if ((row.july_segment || '').includes('Low Consumption / Low Training')) return 'Low adoption and low enablement coverage';
+  if (Number(js.consumption_delta || 0) > 100000) return 'Expansion signal from consumption and active-user growth';
+  return 'Account requires next-step GTM alignment';
+}
+
+async function init() {
+  const [summaryRes, accountsRes] = await Promise.all([
+    fetch('/api/gtm-feedback/history'),
+    fetch('/api/gtm-feedback/history/accounts')
+  ]);
+  gtmSummary = await summaryRes.json();
+  accountRows = (await accountsRes.json()).accounts || [];
+  renderPortfolio();
+  renderPriorities();
+  if (accountRows[0]) openAccount(accountRows[0].account_slug);
+}
+
+function renderPortfolio() {
+  const p = gtmSummary.portfolio || {};
+  const segs = p.segment_counts_july || {};
+  const needAction = accountRows.filter(isNeedAction).length;
+  const expansion = accountRows.filter(isExpansionSignal).length;
+  const renewal = accountRows.filter(isRenewalRisk).length;
+  document.getElementById('portfolioMetrics').innerHTML = [
+    ['Total accounts', p.accounts || 0, 'all', 'all', 'total'],
+    ['Need action', needAction, 'status', 'need_action', 'need-action'],
+    ['Expansion signals', expansion, 'status', 'expansion', 'expansion'],
+    ['Renewal risks', renewal, 'status', 'renewal', 'renewal']
+  ].map(([l,v,type,value,tone]) => `<button class="metric ${tone} ${activeFilter.type === type && activeFilter.value === value ? 'active' : ''}" onclick="setFilter('${type}','${value}')"><label>${l}</label><strong>${v}</strong></button>`).join('');
+  document.getElementById('segmentBox').innerHTML = `<div class="section-title" style="margin-top:0;">July Segments</div>` +
+    ['High Consumption / High Training','High Consumption / Low Training','Low Consumption / High Training','Low Consumption / Low Training']
+      .map(s => `<div class="seg-row clickable ${segmentClass(s)} ${activeFilter.type === 'segment' && activeFilter.value === s ? 'active' : ''}" onclick="setFilter('segment','${esc(s)}')"><span>${esc(s)}</span><b>${segs[s] || 0}</b></div>`).join('');
+}
+
+function segmentClass(segment) {
+  return {
+    'High Consumption / High Training': 'seg-hh',
+    'High Consumption / Low Training': 'seg-hl',
+    'Low Consumption / High Training': 'seg-lh',
+    'Low Consumption / Low Training': 'seg-ll'
+  }[segment] || '';
+}
+
+function renderPriorities() {
+  const rows = filteredRows();
+  const ranked = [...rows].sort((a,b) => {
+    const score = r => ({High:3, Medium:2, Low:1}[priorityFor(r)] * 1000000 + Number(r.consumption || 0) + Math.max(0, 80 - Number(r.health_score || 0)) * 5000);
+    return score(b) - score(a);
+  }).slice(0, 35);
+  const title = filterTitle();
+  document.getElementById('priorityList').innerHTML = `<div class="hint" style="font-family:var(--mono);font-size:11px;">Showing ${ranked.length} of ${rows.length} accounts for ${esc(title)}</div>` + ranked.map(row => {
+    const pri = priorityFor(row), rec = interventionFor(row);
+    return `<div class="card priority-${pri.toLowerCase()}" id="card-${esc(row.account_slug)}" onclick="openAccount('${esc(row.account_slug)}')">
+      <div class="card-head"><div class="acct">${esc(row.account_name)}</div><span class="badge ${pri.toLowerCase()}">${pri} Action</span></div>
+      <div class="signal">${esc(signalFor(row))}</div>
+      <div class="rec"><b>${esc(rec.family)}:</b> ${esc(rec.action)}</div>
+      <div class="confidence">Priority driver: ${esc(priorityReason(row))} · ${esc(row.july_segment)}</div>
+    </div>`;
+  }).join('') || `<div class="empty">No accounts match ${esc(title)}.</div>`;
+}
+
+function setFilter(type, value) {
+  activeFilter = {type, value};
+  renderPortfolio();
+  renderPriorities();
+}
+
+function filteredRows() {
+  if (activeFilter.type === 'segment') return accountRows.filter(a => a.july_segment === activeFilter.value);
+  if (activeFilter.value === 'need_action') return accountRows.filter(isNeedAction);
+  if (activeFilter.value === 'expansion') return accountRows.filter(isExpansionSignal);
+  if (activeFilter.value === 'renewal') return accountRows.filter(isRenewalRisk);
+  return accountRows;
+}
+
+function filterTitle() {
+  if (activeFilter.type === 'segment') return activeFilter.value;
+  return ({all:'all accounts', need_action:'need action', expansion:'expansion signals', renewal:'renewal risks'}[activeFilter.value] || 'current filter');
+}
+
+function isNeedAction(row) {
+  return priorityFor(row) === 'High';
+}
+
+function isExpansionSignal(row) {
+  const js = row.journey_summary || {};
+  return (row.journey_type || '').includes('expansion') || Number(js.consumption_delta || 0) > 100000 || (Number(js.active_user_delta || 0) > 8 && row.july_segment === 'High Consumption / High Training');
+}
+
+function isRenewalRisk(row) {
+  const js = row.journey_summary || {};
+  return /renewal_risk/.test(row.journey_type || '') && (
+    Number(row.health_score || 0) < 30
+    || Number(js.health_delta || 0) < -10
+    || Number(js.active_user_delta || 0) < -12
+    || Number(js.consumption_delta || 0) < -100000
+  );
+}
+
+async function openAccount(slug) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById(`card-${slug}`);
+  if (card) card.classList.add('active');
+  const res = await fetch('/api/gtm-feedback/history/accounts/' + encodeURIComponent(slug));
+  activeAccount = await res.json();
+  activeAi = null;
+  activePlan = null;
+  activeTrendAnalysis = null;
+  activeChatAnswer = '';
+  activeChatLoading = false;
+  activePlanInputs = '';
+  renderDetail(activeAccount);
+}
+
+function normalizeAi(ai) {
+  const rawConfidence = Number(ai.confidence ?? 0.72);
+  return {
+    family: ai.intervention_family || 'Adoption',
+    action: ai.recommended_intervention || 'Targeted account intervention',
+    persona: ai.target_persona || 'Account team',
+    objective: ai.objective || 'Move the account to the next measurable adoption or commercial outcome.',
+    confidence: rawConfidence <= 1 ? rawConfidence * 100 : rawConfidence
+  };
+}
+
+function renderDetail(a, ai=activeAi, loadingAi=false, aiError='', plan=activePlan, loadingPlan=false, planError='', trendAnalysis=activeTrendAnalysis, loadingTrend=false, trendError='') {
+  const months = a.monthly_observations || [];
+  const jan = months[0] || {}, jul = months[6] || {};
+  const summary = a.journey_summary || {};
+  const fallbackRec = interventionFor({july_segment:jul.segment, journey_summary:summary, consumption:jul.cloud_platform_consumption, health_score:jul.account_health_score, coverage_pct:jul.enablement_coverage_pct}, a);
+  const rec = ai ? normalizeAi(ai) : fallbackRec;
+  const pri = ai?.priority || priorityFor({health_score:jul.account_health_score, coverage_pct:jul.enablement_coverage_pct, consumption:jul.cloud_platform_consumption, journey_summary:summary, july_segment:jul.segment});
+  document.getElementById('detail').innerHTML = `
+    <div class="hero">
+      <div><div class="eyebrow">Account Intervention</div><h2>${esc(a.account_name)}</h2><p class="hint">${esc(a.primary_rep || 'Field team')} · ${esc(a.primary_product || 'Portfolio account')}</p></div>
+      <span class="badge ${pri.toLowerCase()}">${pri} Priority</span>
+    </div>
+    <div class="context">
+      <div class="ctx health"><label>Health</label><strong>${esc(jul.account_health_score)}</strong><div class="hint">${esc(jul.account_health_status)}</div></div>
+      <div class="ctx renewal"><label>Renewal</label><strong>${esc(jul.days_to_renewal)}d</strong><div class="hint">July timing</div></div>
+      <div class="ctx consumption"><label>Consumption</label><strong>${money(jul.cloud_platform_consumption)}</strong><div class="hint">${money(summary.consumption_delta)} since Jan</div></div>
+      <div class="ctx training"><label>Training</label><strong>${esc(jul.enablement_coverage_pct)}%</strong><div class="hint">${esc(summary.coverage_delta)} pts</div></div>
+      <div class="ctx segment"><label>Segment</label><strong style="font-size:12px;">${esc(jul.segment)}</strong></div>
+      <div class="ctx intervention"><label>Intervention</label><strong>${esc(ai ? rec.family : 'Not generated')}</strong><div class="hint">${ai ? esc(Math.round(rec.confidence)) + '% confidence' : 'Click Generate Intervention'}</div></div>
+    </div>
+    <div class="panel"><h3>Account Trend Analysis</h3>${renderTrendAnalysis(trendAnalysis, loadingTrend, trendError)}</div>
+    <div class="panel"><h3>Account Journey</h3>${journeyViz(months, a.recommendations || [])}</div>
+    <div class="intervention">
+      <div class="panel"><h3>Recommended Next Intervention</h3>
+        <div class="feedback" style="margin-top:0;margin-bottom:12px;">
+          <button class="primary" onclick="generateIntervention()" ${loadingAi ? 'disabled' : ''}>Generate Intervention</button>
+          <button class="outline" onclick="generatePlan()" ${loadingPlan || !ai || !trendAnalysis ? 'disabled' : ''} title="${ai && trendAnalysis ? 'Generate plan from the current analysis and intervention' : 'Generate analysis and intervention first'}">Generate Detailed Plan</button>
+        </div>
+        ${(!ai || !trendAnalysis) && !loadingAi ? '<p class="hint" style="margin-bottom:10px;">Generate Analysis and Generate Intervention first. The detailed plan uses both as required context.</p>' : ''}
+        ${loadingAi ? '<p class="hint" style="margin-bottom:10px;">Analyzing January-July trend, prior interventions, seller feedback, and July account state...</p>' : ''}
+        ${aiError ? `<p class="hint" style="margin-bottom:10px;color:var(--red);">LLM analysis unavailable: ${esc(aiError)}. Showing fallback recommendation.</p>` : ''}
+        ${ai?.analysis_source ? `<p class="hint" style="margin-bottom:10px;">Analysis source: ${esc(ai.analysis_source === 'llm' ? 'LLM trend analysis' : 'fallback rules')} ${ai.model ? '· ' + esc(ai.model) : ''}</p>` : ''}
+        ${ai || loadingAi || aiError ? `
+        <div class="kv">
+          <span>Recommended</span><b>${esc(rec.action)}</b>
+          <span>Family</span><b>${esc(rec.family)}</b>
+          <span>Target</span><b>${esc(rec.persona)}</b>
+          <span>Why now</span><b>${esc(ai?.why_now || whyNow(jul, summary, a))}</b>
+          <span>Objective</span><b>${esc(rec.objective)}</b>
+          <span>Confidence</span><b>${esc(Math.round(rec.confidence))}%</b>
+          <span>Evidence</span><b>${esc((ai?.evidence || []).join(' · ') || 'Current state plus January-July trend')}</b>
+          <span>Avoid</span><b>${esc(ai?.avoid_repeating || 'Avoid repeating prior recommendations without seller-context adjustments.')}</b>
+        </div>` : ''}
+        ${ai ? `<div class="feedback">
+          <button class="primary" onclick="submitFeedback('Accepted')">Accept</button>
+          <button class="outline" onclick="showModify()">Modify</button>
+          <button class="reject" onclick="showReject()">Reject</button>
+        </div>` : ''}
+        <div id="feedbackForm"></div><div class="toast" id="feedbackToast"></div>
+      </div>
+      <div class="panel"><h3>Plan Inputs</h3>${renderPlanInputs()}</div>
+    </div>
+    <div class="panel"><h3>Detailed Intervention Plan</h3>${renderPlan(plan, loadingPlan, planError)}</div>
+    <div class="panel"><h3>Previous Interventions</h3>${historyItems(a)}</div>`;
+}
+
+async function generateIntervention() {
+  if (!activeAccount) return;
+  renderDetail(activeAccount, activeAi, true);
+  try {
+    const res = await fetch('/api/gtm-feedback/analyze/' + encodeURIComponent(activeAccount.account_slug), {method:'POST'});
+    activeAi = await res.json();
+    renderDetail(activeAccount, activeAi);
+  } catch (err) {
+    renderDetail(activeAccount, null, false, err.message);
+  }
+}
+
+async function generateTrendAnalysis() {
+  if (!activeAccount) return;
+  renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis, true);
+  try {
+    const res = await fetch('/api/gtm-feedback/trend-analysis/' + encodeURIComponent(activeAccount.account_slug), {method:'POST'});
+    activeTrendAnalysis = await res.json();
+    renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis);
+  } catch (err) {
+    renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', null, false, err.message);
+  }
+}
+
+function renderTrendAnalysis(analysis, loading=false, error='') {
+  const analysisHtml = renderTrendAnalysisBody(analysis, loading, error);
+  return `<div class="analysis-tools">
+    <div>${analysisHtml}</div>
+    ${renderAccountChat()}
+  </div>`;
+}
+
+function renderTrendAnalysisBody(analysis, loading=false, error='') {
+  if (loading) return '<p class="hint">Analyzing health/training trend lines, active users, consumption bars, sudden drops, rebounds, and intervention timing...</p>';
+  if (error) return `<p class="hint" style="color:var(--red);">Trend analysis unavailable: ${esc(error)}</p>`;
+  if (!analysis) return `<button class="primary" onclick="generateTrendAnalysis()">Generate Analysis</button><p class="hint" style="margin-top:10px;">Ask the LLM to explain why this account needs attention using the trend lines, active users, consumption movement, drops, rebounds, and historical intervention markers.</p>`;
+  if (analysis.error) return `<p class="hint" style="color:var(--red);">${esc(analysis.error)}</p>`;
+  const bullets = (analysis.key_observations || []).map(b => `<li>${esc(b)}</li>`).join('');
+  return `<button class="outline" onclick="generateTrendAnalysis()">Regenerate Analysis</button>
+    <p class="hint" style="margin-top:10px;">Analysis source: ${esc(analysis.analysis_source === 'llm' ? 'LLM trend analysis' : 'fallback analysis')} ${analysis.model ? '· ' + esc(analysis.model) : ''}</p>
+    <p class="why" style="margin-top:10px;">${esc(analysis.summary || '')}</p>
+    <div class="kv" style="margin-top:12px;">
+      <span>Attention Reason</span><b>${esc(analysis.attention_reason || '')}</b>
+      <span>Drop / Rebound</span><b>${esc(analysis.drop_rebound_explanation || '')}</b>
+      <span>Likely Constraint</span><b>${esc(analysis.likely_constraint || '')}</b>
+      <span>Intervention Read</span><b>${esc(analysis.intervention_read || '')}</b>
+    </div>
+    ${bullets ? `<ul class="hint" style="margin-top:12px;padding-left:18px;">${bullets}</ul>` : ''}`;
+}
+
+function renderAccountChat() {
+  return `<div class="account-chat">
+    <div class="section-title" style="margin-top:0;">Ask About This Account</div>
+    <div class="chat-answer" id="accountChatAnswer">${activeChatLoading ? 'Thinking through account context...' : esc(activeChatAnswer || 'Ask a specific question about the trend, intervention timing, adoption, renewal risk, or what changed between months.')}</div>
+    <div class="chat-row">
+      <textarea id="accountChatInput" rows="2" placeholder="Example: Why did consumption recover after May?"></textarea>
+      <button class="primary" onclick="askAccountQuestion()" ${activeChatLoading ? 'disabled' : ''}>Ask</button>
+    </div>
+  </div>`;
+}
+
+async function askAccountQuestion() {
+  if (!activeAccount) return;
+  const input = document.getElementById('accountChatInput');
+  const question = (input?.value || '').trim();
+  if (!question) return;
+  activeChatLoading = true;
+  renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis);
+  try {
+    const res = await fetch('/api/gtm-feedback/chat/' + encodeURIComponent(activeAccount.account_slug), {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question})
+    });
+    const data = await res.json();
+    activeChatAnswer = data.answer || data.error || 'No answer returned.';
+  } catch (err) {
+    activeChatAnswer = 'Chat unavailable: ' + err.message;
+  } finally {
+    activeChatLoading = false;
+    renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis);
+  }
+}
+
+async function generatePlan() {
+  if (!activeAccount) return;
+  syncPlanInputs();
+  if (!activeTrendAnalysis) {
+    activePlan = {error: 'Generate account trend analysis before generating a detailed plan.'};
+    renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis);
+    return;
+  }
+  if (!activeAi) {
+    activePlan = {error: 'Generate an intervention before generating a detailed plan.'};
+    renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis);
+    return;
+  }
+  renderDetail(activeAccount, activeAi, false, '', activePlan, true);
+  try {
+    const res = await fetch('/api/gtm-feedback/plan/' + encodeURIComponent(activeAccount.account_slug), {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({intervention: activeAi, trend_analysis: activeTrendAnalysis, plan_inputs: activePlanInputs})
+    });
+    activePlan = await res.json();
+    renderDetail(activeAccount, activeAi, false, '', activePlan);
+  } catch (err) {
+    renderDetail(activeAccount, activeAi, false, '', null, false, err.message);
+  }
+}
+
+function syncPlanInputs() {
+  const input = document.getElementById('planInputsText');
+  if (input) activePlanInputs = input.value;
+}
+
+function setPlanInput(text) {
+  activePlanInputs = text;
+  renderDetail(activeAccount, activeAi, false, '', activePlan, false, '', activeTrendAnalysis);
+}
+
+function renderPlanInputs() {
+  return `<p class="hint" style="margin-bottom:10px;">Add seller constraints or direction before generating the detailed plan. These inputs are passed to the LLM with the trend analysis and intervention.</p>
+    <textarea id="planInputsText" rows="6" oninput="activePlanInputs=this.value" placeholder="Example: Customer only has 2 weeks before steering committee. Partner owns delivery. Avoid adding more training until architecture blockers are reviewed.">${esc(activePlanInputs)}</textarea>
+    <div class="feedback" style="margin-top:10px;">
+      <button class="outline" onclick="setPlanInput('Run an architecture workshop first, then sequence enablement only for the personas tied to the active workload.')">Architecture first</button>
+      <button class="outline" onclick="setPlanInput('Keep scope small: one workload, one owner, two-week timeline, and measurable active-user movement.')">Small scope</button>
+      <button class="outline" onclick="setPlanInput('Partner owns execution. Create a partner-led plan with AE/CSM inspection points and customer sponsor alignment.')">Partner-led</button>
+    </div>
+    <p class="hint" style="margin-top:10px;">Regenerate the detailed plan after changing inputs to modify the plan.</p>`;
+}
+
+function renderPlan(plan, loading=false, error='') {
+  if (loading) return '<p class="hint">Generating a detailed plan from account context, January-July trend, previous interventions, seller feedback, and July state...</p>';
+  if (error) return `<p class="hint" style="color:var(--red);">Plan generation unavailable: ${esc(error)}</p>`;
+  if (!plan) return '<p class="hint">Generate Analysis and Generate Intervention first. The detailed plan will use both plus full account context and past trend.</p>';
+  if (plan.error) return `<p class="hint" style="color:var(--red);">${esc(plan.error)}</p>`;
+  const actions = (plan.action_plan || []).map((a, i) => `<div class="history-item"><b>${i+1}. ${esc(a.step || a.title || 'Action')}</b><div>${esc(a.owner || 'Owner TBD')} · ${esc(a.timing || 'Timing TBD')}</div><p class="hint">${esc(a.details || a.description || '')}</p></div>`).join('');
+  const measures = (plan.success_measures || []).map(m => `<div class="seg-row"><span>${esc(m.metric || m)}</span><b>${esc(m.target || '')}</b></div>`).join('');
+  return `
+    <p class="hint" style="margin-bottom:10px;">Analysis source: ${esc(plan.analysis_source === 'llm' ? 'LLM detailed plan' : 'fallback plan')} ${plan.model ? '· ' + esc(plan.model) : ''}</p>
+    <div class="kv" style="margin-bottom:10px;">
+      <span>Plan Goal</span><b>${esc(plan.plan_goal || '')}</b>
+      <span>Sequence</span><b>${esc(plan.sequence_rationale || '')}</b>
+      <span>Risks</span><b>${esc((plan.risks_to_watch || []).join(' · '))}</b>
+    </div>
+    ${actions || '<p class="hint">No action steps returned.</p>'}
+    <div class="segments" style="margin-top:10px;margin-bottom:0;"><div class="section-title" style="margin-top:0;">Success Measures</div>${measures || '<p class="hint">No measures returned.</p>'}</div>
+  `;
+}
+
+function direction(curr, prev, tolerance=0) {
+  if (prev === null || prev === undefined) return 'flat';
+  const diff = Number(curr || 0) - Number(prev || 0);
+  if (Math.abs(diff) <= tolerance) return 'flat';
+  return diff > 0 ? 'up' : 'down';
+}
+
+function journeyViz(months, recommendations=[]) {
+  if (!months.length) return '<p class="hint">No monthly journey data available.</p>';
+  const jan = months[0] || {}, jul = months[months.length - 1] || {};
+  const series = [
+    {label:'Health', key:'account_health_score', color:'#107c10'},
+    {label:'Training', key:'enablement_coverage_pct', color:'#0078d4'}
+  ];
+  const w = 760, h = 300, padL = 48, padR = 20, padT = 26, padB = 42;
+  const xFor = i => padL + i * ((w - padL - padR) / Math.max(1, months.length - 1));
+  const yForValue = v => padT + (1 - Math.max(0, Math.min(100, Number(v || 0))) / 100) * (h - padT - padB);
+  const pointsFor = s => {
+    const vals = months.map(m => Number(m[s.key] || 0));
+    return vals.map((v, i) => [xFor(i), yForValue(v), v]);
+  };
+  const grid = [0, 25, 50, 75, 100].map(v => {
+    const y = yForValue(v);
+    return `<line class="chart-axis" x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}"></line><text class="chart-label" x="${padL-10}" y="${y+3}" text-anchor="end">${v}</text>`;
+  }).join('');
+  const monthLabels = months.map((m, i) => `<text class="chart-label" x="${xFor(i)}" y="${h-14}" text-anchor="middle">${esc((m.month_label || '').slice(0,3))}</text>`).join('');
+  const interventionMarkers = interventionMarkerSvg(months, recommendations, xFor, padT, h - padB);
+  const lines = series.map(s => {
+    const pts = pointsFor(s);
+    const path = pts.map((p, i) => `${i ? 'L' : 'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+    const dots = pts.map((p, i) => {
+      const prev = i ? pts[i-1][2] : p[2];
+      const change = p[2] - prev;
+      return `<circle class="chart-dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="${s.color}"
+        onmousemove="showChartTip(event, '${esc(months[i].month_label)}', '${esc(s.label)}', '${esc(formatSeriesValue(s.key, p[2]))}', '${esc(formatSeriesDelta(s.key, change))}')"
+        onmouseleave="hideChartTip()"></circle>`;
+    }).join('');
+    return `<path class="chart-line" d="${path}" stroke="${s.color}"></path>${dots}`;
+  }).join('');
+  const legend = series.map(s => `<div class="legend-row"><span class="legend-swatch" style="background:${s.color}"></span>${esc(s.label)}</div>`).join('');
+  const summary = `Jan to Jul: health ${jan.account_health_score} to ${jul.account_health_score}, training ${jan.enablement_coverage_pct}% to ${jul.enablement_coverage_pct}%, active users ${jan.active_users} to ${jul.active_users}, consumption ${money(jan.cloud_platform_consumption)} to ${money(jul.cloud_platform_consumption)}.`;
+  return `<div class="journey-chart">
+    <div>
+      <div class="journey-graph">
+        <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="January to July account trend chart">
+          ${grid}
+          <line class="chart-axis" x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}"></line>
+          ${monthLabels}
+          ${interventionMarkers}
+          ${lines}
+        </svg>
+      </div>
+      <div class="legend">${legend}</div>
+      <div class="intervention-note"><span></span>Dashed marker shows historical intervention/recommendation timing. Health and Training use a shared 0-100 scale.</div>
+    </div>
+    ${volumeBars(months, recommendations)}
+    <div class="chart-tooltip" id="chartTooltip"></div>
+  </div>
+  <div class="journey-summary">${esc(summary)}</div>
+  <div class="event-strip">${journeyEvents(months, recommendations)}</div>`;
+}
+
+function recommendationMonthIndex(rec, months) {
+  const raw = String(rec.date || '');
+  const match = raw.match(/2026-(\d{2})/);
+  if (!match) return -1;
+  const monthNum = Number(match[1]);
+  return months.findIndex(m => String(m.month || '').endsWith(`-${String(monthNum).padStart(2, '0')}`));
+}
+
+function interventionMarkerSvg(months, recommendations, xFor, yTop, yBottom) {
+  return (recommendations || []).map((rec, recIdx) => {
+    const idx = recommendationMonthIndex(rec, months);
+    if (idx < 0) return '';
+    const x = xFor(idx);
+    const source = rec.seller_response ? `${rec.seller_response} intervention` : 'Recommended intervention';
+    const tip = `${rec.date}: ${source}; ${rec.execution_status || ''}`;
+    return `<g onmousemove="showChartTip(event, '${esc(months[idx].month_label)}', 'Intervention', '${esc(rec.recommended_action || rec.trigger || 'Recommendation')}', '${esc(tip)}')" onmouseleave="hideChartTip()">
+      <line class="intervention-line" x1="${x.toFixed(1)}" y1="${yTop}" x2="${x.toFixed(1)}" y2="${yBottom}"></line>
+    </g>`;
+  }).join('');
+}
+
+function volumeBars(months, recommendations=[]) {
+  return `<div class="volume-bars">
+    ${barBlock(months, recommendations, {
+      title:'Active Users',
+      key:'active_users',
+      formatter:n => Math.round(n),
+      deltaFormatter:n => `${n > 0 ? '+' : ''}${Math.round(n)} vs prior month`,
+      colorFn: activeUserBarColor
+    })}
+    ${barBlock(months, recommendations, {
+      title:'Consumption',
+      key:'cloud_platform_consumption',
+      formatter:n => money(n),
+      deltaFormatter:n => formatSeriesDelta('cloud_platform_consumption', n),
+      colorFn: consumptionBarColor
+    })}
+  </div>`;
+}
+
+function barBlock(months, recommendations, cfg) {
+  const vals = months.map(m => Number(m[cfg.key] || 0));
+  const max = Math.max(...vals, 1);
+  const recsByIdx = {};
+  (recommendations || []).forEach(r => {
+    const idx = recommendationMonthIndex(r, months);
+    if (idx >= 0) (recsByIdx[idx] ||= []).push(r);
+  });
+  const bars = months.map((m, i) => {
+    const h = Math.max(6, (vals[i] / max) * 94);
+    const prior = i ? vals[i - 1] : vals[i];
+    const delta = vals[i] - prior;
+    const intensity = vals[i] / max;
+    const barColor = cfg.colorFn(intensity);
+    const recs = recsByIdx[i] || [];
+    const recTip = recs.map(r => `${r.date}: ${r.seller_response ? r.seller_response + ' intervention' : 'Recommended intervention'} - ${r.recommended_action || r.trigger || 'recommendation'}`).join(' | ');
+    return `<div class="bar-wrap ${recs.length ? 'has-intervention' : ''}"
+      ${recs.length ? `onmousemove="showChartTip(event, '${esc(m.month_label)}', 'Intervention History', '${esc(recs.length + ' intervention' + (recs.length > 1 ? 's' : ''))}', '${esc(recTip)}')" onmouseleave="hideChartTip()"` : ''}>
+      <div class="bar" style="height:${h}px;background:${barColor}"
+        onmousemove="showChartTip(event, '${esc(m.month_label)}', '${esc(cfg.title)}', '${esc(cfg.formatter(vals[i]))}', '${esc(cfg.deltaFormatter(delta))}')"
+        onmouseleave="hideChartTip()"></div>
+    </div>`;
+  }).join('');
+  const labels = months.map(m => `<span>${esc((m.month_label || '').slice(0,3))}</span>`).join('');
+  return `<div class="bar-block">
+    <div class="bar-title">${esc(cfg.title)}</div>
+    <div class="bar-plot" style="position:relative;">
+      ${bars}
+    </div>
+    <div class="bar-months">${labels}</div>
+    <div class="bar-total">${esc(cfg.formatter(vals[0]))} -> ${esc(cfg.formatter(vals[vals.length - 1]))}</div>
+  </div>`;
+}
+
+function consumptionBarColor(intensity) {
+  if (intensity >= .8) return '#107c10';
+  if (intensity >= .55) return '#4f9f45';
+  return '#9fd89b';
+}
+
+function activeUserBarColor(intensity) {
+  if (intensity >= .8) return '#0078d4';
+  if (intensity >= .55) return '#3a96dd';
+  return '#9ccbee';
+}
+
+function formatSeriesValue(key, value) {
+  if (key === 'cloud_platform_consumption') return money(value);
+  if (key === 'enablement_coverage_pct') return `${Math.round(value)}%`;
+  if (key === 'account_health_score') return `${Math.round(value)} pts`;
+  return Math.round(value);
+}
+
+function formatSeriesDelta(key, value) {
+  const sign = value > 0 ? '+' : '';
+  if (key === 'cloud_platform_consumption') return `${sign}${money(value).replace('$', '$')}`;
+  if (key === 'enablement_coverage_pct') return `${sign}${Math.round(value)} pts vs prior month`;
+  if (key === 'account_health_score') return `${sign}${Math.round(value)} pts vs prior month`;
+  return `${sign}${Math.round(value)} vs prior month`;
+}
+
+function showChartTip(evt, month, label, value, delta) {
+  const chart = evt.currentTarget.closest('.journey-chart');
+  const tip = chart?.querySelector('.chart-tooltip') || document.getElementById('chartTooltip');
+  if (!tip) return;
+  const box = (chart || evt.currentTarget.closest('.journey-graph')).getBoundingClientRect();
+  tip.innerHTML = `<b>${esc(month)}</b>${esc(label)}: ${esc(value)}<br/><span style="color:#cbd5e1">${esc(delta)}</span>`;
+  tip.style.display = 'block';
+  tip.style.left = Math.min(evt.clientX - box.left + 12, box.width - 165) + 'px';
+  tip.style.top = Math.max(8, evt.clientY - box.top - 48) + 'px';
+}
+
+function hideChartTip() {
+  const tip = document.getElementById('chartTooltip');
+  if (tip) tip.style.display = 'none';
+}
+
+function journeyEvents(months, recommendations=[]) {
+  const jan = months[0] || {}, jul = months[months.length - 1] || {};
+  const phrase = (dir, up, down, flat) => dir === 'up' ? up : dir === 'down' ? down : flat;
+  const tone = dir => dir === 'up' ? 'good' : dir === 'down' ? 'bad' : 'neutral';
+  const healthDir = direction(jul.account_health_score, jan.account_health_score, 1);
+  const trainingDir = direction(jul.enablement_coverage_pct, jan.enablement_coverage_pct, 1);
+  const activeDir = direction(jul.active_users, jan.active_users, 0);
+  const consumptionDir = direction(jul.cloud_platform_consumption, jan.cloud_platform_consumption, 5000);
+  const events = [
+    {tone: tone(trainingDir), text: `Training ${phrase(trainingDir, 'increased', 'decreased', 'held flat')} from ${jan.enablement_coverage_pct}% to ${jul.enablement_coverage_pct}%`},
+    {tone: tone(activeDir), text: `Active users ${phrase(activeDir, 'increased', 'decreased', 'held flat')} from ${jan.active_users} to ${jul.active_users}`},
+    {tone: tone(consumptionDir), text: `Consumption ${phrase(consumptionDir, 'increased', 'decreased', 'held flat')} from ${money(jan.cloud_platform_consumption)} to ${money(jul.cloud_platform_consumption)}`},
+    {tone: tone(healthDir), text: `Health ${phrase(healthDir, 'improved', 'declined', 'stayed neutral')} from ${jan.account_health_score} to ${jul.account_health_score}`}
+  ];
+  recommendations.slice(0, 2).forEach(r => {
+    const response = String(r.seller_response || '').toLowerCase();
+    const eventTone = response === 'accepted' ? 'good' : response === 'rejected' ? 'bad' : 'neutral';
+    events.push({tone: eventTone, text: `${r.date}: seller ${response} recommendation; ${String(r.execution_status || '').toLowerCase()}`});
+  });
+  return events.map(e => `<span class="event-chip ${e.tone}">${esc(e.text)}</span>`).join('');
+}
+
+function historyItems(a) {
+  const recs = a.recommendations || [];
+  if (!recs.length) return '<p class="hint">No AI recommendation was generated in this historical period. This account is useful as a non-intervention comparison.</p>';
+  return recs.map(r => `<div class="history-item">
+    <b>${esc(r.date)} · ${esc(r.seller_response)} · ${esc(r.execution_status)}</b>
+    <div>${esc(r.recommended_action)}</div>
+    <p class="hint">${esc(r.outcome)} Seller context: ${esc(r.seller_response_reason)}</p>
+  </div>`).join('');
+}
+
+function whyText(a, rec) {
+  const months = a.monthly_observations || [], jan = months[0] || {}, jul = months[6] || {}, s = a.journey_summary || {};
+  if (rec.family === 'Adoption') return `Training coverage changed by ${s.coverage_delta} points from January to July, but consumption changed by only ${money(s.consumption_delta)}. The next step should test technical blockers, implementation quality, use-case fit, and workload activation before prescribing more training.`;
+  return `The account moved from ${jan.segment} in January to ${jul.segment} in July. Consumption changed by ${money(s.consumption_delta)}, active users changed by ${s.active_user_delta}, health changed by ${s.health_delta} points, and renewal is ${jul.days_to_renewal} days away.`;
+}
+
+function whyNow(jul, summary, a) {
+  if (Number(jul.days_to_renewal || 999) <= 90) return 'Renewal is approaching and the account has visible July risk signals.';
+  if (Number(summary.consumption_delta || 0) > 100000) return 'Consumption and active-user movement create a timely expansion or adoption-protection window.';
+  if (Number(summary.health_delta || 0) < -5) return 'Trajectory is deteriorating, so the team should intervene before the next account review.';
+  return 'July signals and prior seller feedback indicate the account needs a specific next action now.';
+}
+
+function showModify() {
+  document.getElementById('feedbackForm').innerHTML = `
+    <select id="modType"><option>Adoption</option><option>Enablement</option><option>Commercial</option><option>Partner</option></select>
+    <textarea id="modReason" rows="3" placeholder="Describe timing, persona, scope, or sequence changes..."></textarea>
+    <button class="primary" onclick="submitFeedback('Modified')">Save Modification</button>`;
+}
+function showReject() {
+  document.getElementById('feedbackForm').innerHTML = `
+    <select id="rejReason"><option>Wrong timing</option><option>Wrong persona</option><option>Customer already has a plan</option><option>Technical blocker is more important</option><option>Commercial priority is more urgent</option><option>Partner owns the engagement</option><option>Customer declined</option><option>Recommendation not relevant</option><option>Other</option></select>
+    <textarea id="rejNotes" rows="3" placeholder="Add rationale for future AI context..."></textarea>
+    <button class="reject" onclick="submitFeedback('Rejected')">Save Rejection</button>`;
+}
+async function submitFeedback(action) {
+  const modReason = document.getElementById('modReason');
+  const modType = document.getElementById('modType');
+  const rejReason = document.getElementById('rejReason');
+  const rejNotes = document.getElementById('rejNotes');
+  const reason = action === 'Modified'
+    ? `${modType?.value || 'Modified'}: ${modReason?.value || ''}`
+    : action === 'Rejected'
+      ? `${rejReason?.value || 'Rejected'}: ${rejNotes?.value || ''}`
+      : 'Seller accepted the recommended intervention.';
+  const res = await fetch('/api/gtm-feedback/feedback', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      account_slug: activeAccount.account_slug,
+      account_name: activeAccount.account_name,
+      deal_id: activeAccount.deal_id,
+      deal_name: activeAccount.deal_name,
+      feedback_action: action,
+      reason
+    })
+  });
+  document.getElementById('feedbackToast').textContent = res.ok ? `${action} saved to future AI context.` : 'Could not save feedback.';
+}
+
+init().catch(err => {
+  document.getElementById('priorityList').innerHTML = `<div class="empty">Could not load GTM Intelligence: ${esc(err.message)}</div>`;
+});
+</script>
+</body>
+</html>

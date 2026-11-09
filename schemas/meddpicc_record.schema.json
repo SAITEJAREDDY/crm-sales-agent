@@ -1,0 +1,335 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MEDDPICCRecord",
+  "type": "object",
+  "description": "Per-opportunity sales qualification assessment.",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "CRM opportunity identifier."
+    },
+    "deal_name": {
+      "type": "string",
+      "description": "Deal display name."
+    },
+    "company": {
+      "type": "string",
+      "description": "Account display name."
+    },
+    "stage": {
+      "type": "string",
+      "description": "CRM opportunity stage."
+    },
+    "amount": {
+      "type": "number",
+      "description": "Opportunity amount.",
+      "x-unit": "currency units"
+    },
+    "probability": {
+      "type": "number",
+      "description": "Closing probability.",
+      "minimum": 0,
+      "maximum": 100,
+      "x-unit": "percent"
+    },
+    "assigned_rep": {
+      "type": "string",
+      "description": "Representative supplied by the operator."
+    },
+    "overall_score": {
+      "type": "string",
+      "description": "Overall qualification label; interpreted by the scoring code."
+    },
+    "overall_reason": {
+      "type": "string",
+      "description": "Reason for the qualification label."
+    },
+    "next_priority": {
+      "type": "string",
+      "description": "Next qualification action."
+    },
+    "scored_at": {
+      "type": "string",
+      "description": "Scoring timestamp in ISO 8601 form."
+    },
+    "elements": {
+      "type": "object",
+      "description": "The eight qualification dimensions.",
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "economic_buyer": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "decision_criteria": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "decision_process": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "paper_process": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "identify_pain": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "champion": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        },
+        "competition": {
+          "type": "object",
+          "description": "Evidence assessment for one MEDDPICC qualification dimension.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Qualification state.",
+              "enum": [
+                "confirmed",
+                "partial",
+                "at_risk",
+                "unknown"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "description": "Evidence supporting this qualification state."
+            },
+            "source_note": {
+              "type": "string",
+              "description": "Reference to the supporting note supplied at runtime."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Missing qualification evidence or an unresolved question."
+            }
+          }
+        }
+      }
+    },
+    "flags": {
+      "type": "object",
+      "description": "Computed qualification risks.",
+      "properties": {
+        "missing_economic_buyer": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        },
+        "missing_champion": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        },
+        "unquantified_pain": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        },
+        "competitor_unknown": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        },
+        "paper_process_unknown": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        },
+        "deal_overdue": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        },
+        "stalled": {
+          "type": "boolean",
+          "description": "Whether this qualification risk is present."
+        }
+      }
+    },
+    "notes_analysed": {
+      "type": "array",
+      "description": "Identifiers of source notes used in the assessment.",
+      "items": {
+        "type": "string",
+        "description": "Text supplied by the data owner or generated by the workflow."
+      }
+    }
+  },
+  "required": [
+    "deal_id",
+    "deal_name",
+    "company",
+    "elements",
+    "flags"
+  ]
+}

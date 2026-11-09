@@ -1,0 +1,433 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CommercialFinancialAnalysis",
+  "type": "object",
+  "description": "Deterministic commercial scenario evaluation.",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "Identifier of the evaluated deal."
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency code of monetary results."
+    },
+    "baseline": {
+      "type": "object",
+      "description": "Financial engine results; amounts use the enclosing currency.",
+      "properties": {
+        "list_value": {
+          "type": "number",
+          "description": "Undiscounted value of the contract.",
+          "x-unit": "currency units"
+        },
+        "discount_pct": {
+          "type": "number",
+          "description": "Discount applied in this calculation.",
+          "x-unit": "percent"
+        },
+        "net_contract_value": {
+          "type": "number",
+          "description": "Full-term value after discount.",
+          "x-unit": "currency units"
+        },
+        "contract_term_months": {
+          "type": "integer",
+          "description": "Duration used to annualize contract value.",
+          "minimum": 1,
+          "x-unit": "months"
+        },
+        "arr": {
+          "type": "number",
+          "description": "Annual recurring revenue.",
+          "x-unit": "currency units"
+        },
+        "acv": {
+          "type": "number",
+          "description": "Annual contract value.",
+          "x-unit": "currency units"
+        },
+        "tcv": {
+          "type": "number",
+          "description": "Total discounted contract value.",
+          "x-unit": "currency units"
+        },
+        "npv": {
+          "type": "number",
+          "description": "Present value of modeled net cash flows.",
+          "x-unit": "currency units"
+        },
+        "roi_3yr_pct": {
+          "type": "number",
+          "description": "Modeled three-year return on investment.",
+          "x-unit": "percent"
+        },
+        "payback_months": {
+          "type": "number",
+          "description": "Modeled time to recover the investment.",
+          "x-unit": "months"
+        },
+        "gross_margin_pct": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Gross margin is null because the current financial model does not calculate it.",
+          "x-unit": "percent"
+        },
+        "gross_profit": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Gross profit is null because the current financial model does not calculate it.",
+          "x-unit": "currency units"
+        }
+      }
+    },
+    "scenarios": {
+      "type": "object",
+      "description": "Scenario-name keyed financial evaluations.",
+      "additionalProperties": {
+        "type": "object",
+        "description": "A named deterministic financial evaluation.",
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "description": "Scenario name."
+          },
+          "deal_id": {
+            "type": "string",
+            "description": "Associated opportunity identifier."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code of monetary results."
+          },
+          "baseline": {
+            "type": "object",
+            "description": "Financial engine results; amounts use the enclosing currency.",
+            "properties": {
+              "list_value": {
+                "type": "number",
+                "description": "Undiscounted value of the contract.",
+                "x-unit": "currency units"
+              },
+              "discount_pct": {
+                "type": "number",
+                "description": "Discount applied in this calculation.",
+                "x-unit": "percent"
+              },
+              "net_contract_value": {
+                "type": "number",
+                "description": "Full-term value after discount.",
+                "x-unit": "currency units"
+              },
+              "contract_term_months": {
+                "type": "integer",
+                "description": "Duration used to annualize contract value.",
+                "minimum": 1,
+                "x-unit": "months"
+              },
+              "arr": {
+                "type": "number",
+                "description": "Annual recurring revenue.",
+                "x-unit": "currency units"
+              },
+              "acv": {
+                "type": "number",
+                "description": "Annual contract value.",
+                "x-unit": "currency units"
+              },
+              "tcv": {
+                "type": "number",
+                "description": "Total discounted contract value.",
+                "x-unit": "currency units"
+              },
+              "npv": {
+                "type": "number",
+                "description": "Present value of modeled net cash flows.",
+                "x-unit": "currency units"
+              },
+              "roi_3yr_pct": {
+                "type": "number",
+                "description": "Modeled three-year return on investment.",
+                "x-unit": "percent"
+              },
+              "payback_months": {
+                "type": "number",
+                "description": "Modeled time to recover the investment.",
+                "x-unit": "months"
+              },
+              "gross_margin_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Gross margin is null because the current financial model does not calculate it.",
+                "x-unit": "percent"
+              },
+              "gross_profit": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Gross profit is null because the current financial model does not calculate it.",
+                "x-unit": "currency units"
+              }
+            }
+          },
+          "model_outputs": {
+            "type": "object",
+            "description": "Additional outputs from the underlying financial model.",
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "Calculation function that produced the outputs."
+              },
+              "net_3yr_usd": {
+                "type": "number",
+                "description": "Cumulative three-year net modeled benefit.",
+                "x-unit": "currency units"
+              },
+              "year1_net_usd": {
+                "type": "number",
+                "description": "First-year net modeled benefit.",
+                "x-unit": "currency units"
+              },
+              "total_impl_cost": {
+                "type": "number",
+                "description": "Total implementation cost.",
+                "x-unit": "currency units"
+              },
+              "y1_consumption": {
+                "type": "number",
+                "description": "First-year consumption.",
+                "x-unit": "currency units"
+              },
+              "y2_consumption": {
+                "type": "number",
+                "description": "Second-year consumption.",
+                "x-unit": "currency units"
+              },
+              "y3_consumption": {
+                "type": "number",
+                "description": "Third-year consumption.",
+                "x-unit": "currency units"
+              },
+              "net_annual_price_after_existing_tier": {
+                "type": "number",
+                "description": "Annual net price after the existing purchasing tier.",
+                "x-unit": "currency units"
+              },
+              "three_year_commit_option_total": {
+                "type": "number",
+                "description": "Total for the three-year commitment option.",
+                "x-unit": "currency units"
+              },
+              "edp_rate_pct": {
+                "type": "number",
+                "description": "Existing enterprise purchasing discount.",
+                "x-unit": "percent"
+              },
+              "confidence_bands": {
+                "type": "object",
+                "description": "Underlying model confidence bands.",
+                "properties": {}
+              }
+            }
+          },
+          "commitment": {
+            "type": "object",
+            "description": "Commitment economics over the modeled horizon.",
+            "properties": {
+              "commitment_amount": {
+                "type": "number",
+                "description": "Total committed consumption amount.",
+                "x-unit": "currency units"
+              },
+              "expected_consumption": {
+                "type": "number",
+                "description": "Total expected consumption over the modeled horizon.",
+                "x-unit": "currency units"
+              },
+              "coverage_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Expected consumption divided by commitment; null for zero commitment.",
+                "x-unit": "ratio"
+              },
+              "expected_overage": {
+                "type": "number",
+                "description": "Positive difference between expected consumption and commitment.",
+                "x-unit": "currency units"
+              },
+              "expected_shortfall": {
+                "type": "number",
+                "description": "Positive difference between commitment and expected consumption.",
+                "x-unit": "currency units"
+              },
+              "annual_targets": {
+                "type": "array",
+                "description": "Normalized annual commitment targets.",
+                "items": {
+                  "type": "number",
+                  "description": "Commitment target for the corresponding year.",
+                  "x-unit": "currency units"
+                }
+              },
+              "expected_annual_consumption": {
+                "type": "array",
+                "description": "Projected consumption by year.",
+                "items": {
+                  "type": "number",
+                  "description": "Consumption projected for the corresponding year.",
+                  "x-unit": "currency units"
+                }
+              },
+              "attainment_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Expected consumption divided by commitment, multiplied by 100; null for zero commitment.",
+                "x-unit": "percent"
+              },
+              "target_schedule_basis": {
+                "type": "string",
+                "description": "Method used to normalize annual targets."
+              },
+              "expected_consumption_basis": {
+                "type": "string",
+                "description": "Input source used to project consumption."
+              },
+              "schema_note": {
+                "type": "string",
+                "description": "Explanation of the modeling scope and limitations."
+              }
+            }
+          },
+          "thresholds": {
+            "type": "object",
+            "description": "Configured financial thresholds.",
+            "properties": {}
+          },
+          "flags": {
+            "type": "array",
+            "description": "Financial limitations and threshold warnings.",
+            "items": {
+              "type": "string",
+              "description": "Text supplied by the data owner or generated by the workflow."
+            }
+          },
+          "trace": {
+            "type": "object",
+            "description": "Calculation provenance and inputs.",
+            "properties": {}
+          }
+        }
+      }
+    },
+    "commitment": {
+      "type": "object",
+      "description": "Commitment economics over the modeled horizon.",
+      "properties": {
+        "commitment_amount": {
+          "type": "number",
+          "description": "Total committed consumption amount.",
+          "x-unit": "currency units"
+        },
+        "expected_consumption": {
+          "type": "number",
+          "description": "Total expected consumption over the modeled horizon.",
+          "x-unit": "currency units"
+        },
+        "coverage_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Expected consumption divided by commitment; null for zero commitment.",
+          "x-unit": "ratio"
+        },
+        "expected_overage": {
+          "type": "number",
+          "description": "Positive difference between expected consumption and commitment.",
+          "x-unit": "currency units"
+        },
+        "expected_shortfall": {
+          "type": "number",
+          "description": "Positive difference between commitment and expected consumption.",
+          "x-unit": "currency units"
+        },
+        "annual_targets": {
+          "type": "array",
+          "description": "Normalized annual commitment targets.",
+          "items": {
+            "type": "number",
+            "description": "Commitment target for the corresponding year.",
+            "x-unit": "currency units"
+          }
+        },
+        "expected_annual_consumption": {
+          "type": "array",
+          "description": "Projected consumption by year.",
+          "items": {
+            "type": "number",
+            "description": "Consumption projected for the corresponding year.",
+            "x-unit": "currency units"
+          }
+        },
+        "attainment_pct": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Expected consumption divided by commitment, multiplied by 100; null for zero commitment.",
+          "x-unit": "percent"
+        },
+        "target_schedule_basis": {
+          "type": "string",
+          "description": "Method used to normalize annual targets."
+        },
+        "expected_consumption_basis": {
+          "type": "string",
+          "description": "Input source used to project consumption."
+        },
+        "schema_note": {
+          "type": "string",
+          "description": "Explanation of the modeling scope and limitations."
+        }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "description": "Thresholds used by this evaluation; supplied by rule configuration.",
+      "properties": {}
+    },
+    "flags": {
+      "type": "array",
+      "description": "Financial-model flags and limitations.",
+      "items": {
+        "type": "string",
+        "description": "Text supplied by the data owner or generated by the workflow."
+      }
+    },
+    "trace": {
+      "type": "object",
+      "description": "Input provenance and calculation trace.",
+      "properties": {}
+    }
+  },
+  "required": [
+    "deal_id",
+    "currency",
+    "baseline",
+    "scenarios",
+    "commitment",
+    "thresholds",
+    "flags"
+  ]
+}

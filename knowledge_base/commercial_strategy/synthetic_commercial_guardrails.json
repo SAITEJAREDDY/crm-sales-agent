@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "dataset_name": "Synthetic Demo Commercial Policy",
+    "provenance": "synthetic_demo_data",
+    "effective_for_demo_date": "2026-08-22",
+    "disclaimer": "Synthetic demonstration guidance only. Not Microsoft internal policy, not Microsoft historical deal data, and not legal or pricing advice."
+  },
+  "guardrails": [
+    {
+      "id": "GR-DISCOUNT",
+      "area": "discounting",
+      "standard_position": "0-10% recurring discount may be handled in standard deal desk review when economics remain positive.",
+      "negotiable_range": "10-18% with documented give/get such as term, commitment, or signature timing.",
+      "exception_condition": "18-25% recurring discount or discount without corresponding commercial return.",
+      "escalation_condition": "Above 25% recurring discount or combined discount plus credits materially below target margin.",
+      "approval_requirement": "Finance for 18-25%; Finance plus Sales Leadership above 25%.",
+      "possible_mitigation": "Use migration credits, staged ramp, or workload expansion instead of recurring discount."
+    },
+    {
+      "id": "GR-PAYMENT",
+      "area": "payment_terms",
+      "standard_position": "Net 30.",
+      "negotiable_range": "Net 45 or annual upfront with standard billing language.",
+      "exception_condition": "Net 60-90 or back-loaded payment schedule.",
+      "escalation_condition": "Beyond Net 90 or payment terms that create material collection risk.",
+      "approval_requirement": "Finance, with Legal for non-standard billing language.",
+      "possible_mitigation": "Tie extended terms to earlier signature, higher commitment, or reduced credits."
+    },
+    {
+      "id": "GR-COMMITMENT",
+      "area": "commercial_commitment",
+      "standard_position": "Commitment should align with expected consumption and implementation capacity.",
+      "negotiable_range": "Year-1 commitment may ramp down to 65-80% of annualized target with catch-up in later years.",
+      "exception_condition": "Year-1 below 65% of target without adoption plan.",
+      "escalation_condition": "Low commitment combined with high discount or long price protection.",
+      "approval_requirement": "Commercial Deal Making and Sales Leadership.",
+      "possible_mitigation": "Use workload milestones, minimum consumption floors, or expansion options."
+    },
+    {
+      "id": "GR-RAMP",
+      "area": "ramp_structures",
+      "standard_position": "Flat annual commitment or modest 80/100/120 ramp.",
+      "negotiable_range": "70/100/130 ramp when deployment timing justifies it.",
+      "exception_condition": "Year-1 materially back-loaded or no minimum consumption floor.",
+      "escalation_condition": "Ramp defers most economics past renewal or cancellation points.",
+      "approval_requirement": "Finance and Commercial Deal Making.",
+      "possible_mitigation": "Add workload activation dates and executive sponsor checkpoints."
+    },
+    {
+      "id": "GR-CREDITS",
+      "area": "credits_investments",
+      "standard_position": "Targeted migration or enablement investment up to 5% of annual deal value.",
+      "negotiable_range": "5-10% when tied to deployment plan and measurable consumption activation.",
+      "exception_condition": "Credits above 10% or credits not connected to adoption milestones.",
+      "escalation_condition": "Credits plus discount create double concession on same economics.",
+      "approval_requirement": "Business Planning and Finance.",
+      "possible_mitigation": "Make credits milestone-based and non-recurring."
+    },
+    {
+      "id": "GR-PRICE-PROTECTION",
+      "area": "price_protection",
+      "standard_position": "Price lock during committed term only.",
+      "negotiable_range": "Cap increases during term when commitment and scope are fixed.",
+      "exception_condition": "Price protection beyond agreement term or across uncommitted growth.",
+      "escalation_condition": "Multi-year price protection combined with low commitment flexibility.",
+      "approval_requirement": "Finance and Legal.",
+      "possible_mitigation": "Limit protection to named workloads and committed quantities."
+    },
+    {
+      "id": "GR-DURATION",
+      "area": "agreement_duration",
+      "standard_position": "12 or 36 months depending on offer motion.",
+      "negotiable_range": "24 months when renewal timing or budget cycle requires it.",
+      "exception_condition": "Short term with enterprise discount or long term without consumption commitment.",
+      "escalation_condition": "Termination flexibility undermines committed economics.",
+      "approval_requirement": "Sales Leadership and Legal.",
+      "possible_mitigation": "Use renewal options rather than broad early termination rights."
+    },
+    {
+      "id": "GR-NONSTANDARD",
+      "area": "non_standard_commercial_terms",
+      "standard_position": "Use standard commercial order form and approved business terms.",
+      "negotiable_range": "Limited operational terms that do not alter liability, revenue recognition, or billing control.",
+      "exception_condition": "Custom cancellation, benchmarking, most-favored pricing, or unilateral scope-reduction rights.",
+      "escalation_condition": "Term changes affect legal risk, revenue recognition, or future pricing control.",
+      "approval_requirement": "Legal, Finance, and Commercial Deal Making.",
+      "possible_mitigation": "Replace broad custom terms with objective service, adoption, or renewal milestones."
+    }
+  ]
+}

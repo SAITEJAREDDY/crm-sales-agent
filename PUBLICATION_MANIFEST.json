@@ -1,0 +1,651 @@
+{
+  "format_version": 1,
+  "scope": "Scripts, interfaces, schema and field definitions, reusable rules, and setup documentation. No datasets or populated records.",
+  "excluded": [
+    "credentials",
+    "account_and_deal_records",
+    "synthetic_example_records",
+    "generated_outputs",
+    "runtime_databases",
+    "vector_stores",
+    "logs",
+    "backups",
+    "presentations",
+    "fixture_datasets"
+  ],
+  "allowed_files": [
+    ".env.example",
+    ".gitignore",
+    "PUBLICATION_MANIFEST.json",
+    "README.md",
+    "azure_pricing.py",
+    "commercial_analysis.html",
+    "company_profile_generator.py",
+    "consumption_analysis.html",
+    "dashboard.html",
+    "deal_desk.py",
+    "docs/ARCHITECTURE.md",
+    "docs/DATA_DICTIONARY.md",
+    "docs/PUBLICATION_NOTES.md",
+    "docs/RULES.md",
+    "docs/RUNTIME_INPUTS.md",
+    "docs/SCHEMAS.md",
+    "docs/SCOPE.md",
+    "docs/SETUP.md",
+    "enablement_agent.py",
+    "financial_model_generator.py",
+    "generate_customer_health_data.py",
+    "generate_enablement_data.py",
+    "generate_gtm_feedback_history.py",
+    "generate_resource_estimates.py",
+    "gtm_intelligence.html",
+    "index.html",
+    "knowledge_base/commercial_strategy/commercial_approval_hierarchy.json",
+    "knowledge_base/commercial_strategy/commercial_financial_analysis_schema.json",
+    "knowledge_base/commercial_strategy/commercial_policy_rules.json",
+    "knowledge_base/commercial_strategy/commercial_strategy_output_schema.json",
+    "knowledge_base/commercial_strategy/comparable_deal_config.json",
+    "knowledge_base/commercial_strategy/deal_input_schema.json",
+    "knowledge_base/commercial_strategy/field_mapping.json",
+    "knowledge_base/commercial_strategy/policy_evaluation_schema.json",
+    "knowledge_base/commercial_strategy/synthetic_approval_matrix.json",
+    "knowledge_base/commercial_strategy/synthetic_commercial_guardrails.json",
+    "knowledge_base/knowledge_lookup.py",
+    "knowledge_base/schemas/__init__.py",
+    "knowledge_base/schemas/enablement_schema.py",
+    "meddpicc_scorer.py",
+    "note_generator.py",
+    "phase2_kb_builder.py",
+    "push_notes_to_crm.py",
+    "requirements-dev.txt",
+    "requirements-optional.txt",
+    "requirements.txt",
+    "run.py",
+    "run_pipeline_batch.py",
+    "schemas/commercial_policy_rules.schema.json",
+    "schemas/consumption_architecture.schema.json",
+    "schemas/consumption_profile.schema.json",
+    "schemas/customer_health.schema.json",
+    "schemas/enablement.schema.json",
+    "schemas/gtm_feedback_history.schema.json",
+    "schemas/meddpicc_record.schema.json",
+    "scripts/check_runtime_inputs.py",
+    "scripts/refresh_azure_eastus_pricing.py",
+    "scripts/verify_publication.py",
+    "server.py",
+    "tools/__init__.py",
+    "tools/analyze_pipeline.py",
+    "tools/azure_enterprise_catalog.py",
+    "tools/azure_pricing_config.py",
+    "tools/azure_pricing_snapshot.py",
+    "tools/azure_retail_pricing.py",
+    "tools/azure_service_catalog.py",
+    "tools/commercial_data.py",
+    "tools/commercial_economics.py",
+    "tools/commercial_financial_analysis.py",
+    "tools/commercial_policy_engine.py",
+    "tools/commercial_strategy_agent.py",
+    "tools/commercial_validation.py",
+    "tools/comparable_deal_intelligence.py",
+    "tools/consumption_architecture_planner.py",
+    "tools/consumption_commercial_intelligence.py",
+    "tools/consumption_forecast.py",
+    "tools/consumption_profiles.py",
+    "tools/deal_package_builder.py",
+    "tools/enablement_eval.py",
+    "tools/enablement_rules.py",
+    "tools/enterprise_workload_profiler.py",
+    "tools/eval_dataset.py",
+    "tools/eval_judge.py",
+    "tools/excel_builder.py",
+    "tools/financial_inputs.py",
+    "tools/financial_model.py",
+    "tools/financial_model_runner.py",
+    "tools/generate_deck.py",
+    "tools/llm_client.py",
+    "tools/run_evals.py",
+    "update_crm_fields.py",
+    "watch_progress.py"
+  ],
+  "files": [
+    {
+      "path": ".env.example",
+      "kind": "documentation_or_setup",
+      "sha256": "c3a444fb43e9f811b0e87ed0e134fc01f7a68dc2103e326cb1f86be8b565e6b0",
+      "source_path": ".env.example"
+    },
+    {
+      "path": ".gitignore",
+      "kind": "documentation_or_setup",
+      "sha256": "e36bcbd50ce44d32beea3b5f602bfc517e5ba59f0f780fbff5cfc4ab63dade0a"
+    },
+    {
+      "path": "README.md",
+      "kind": "documentation_or_setup",
+      "sha256": "33cfccfa01bdd80b59e7bdfae55ec728758cfe1ade3f0f3b336f9b8caf4c2dcd"
+    },
+    {
+      "path": "azure_pricing.py",
+      "kind": "source",
+      "sha256": "b9423bd659a7590117dabb84e6c9f240bf2857597f59edc7699fb966960538a8",
+      "source_path": "azure_pricing.py"
+    },
+    {
+      "path": "commercial_analysis.html",
+      "kind": "source",
+      "sha256": "c56f4f93074d96d9e18d100953bdc3be1501cf4bd36d4432f72888783e7a484b",
+      "source_path": "commercial_analysis.html"
+    },
+    {
+      "path": "company_profile_generator.py",
+      "kind": "source",
+      "sha256": "7c92e10c10beb791d19b18756ebf3988ddc93a47c252e13acb8c7cfdb4652585",
+      "source_path": "company_profile_generator.py"
+    },
+    {
+      "path": "consumption_analysis.html",
+      "kind": "source",
+      "sha256": "8adb1c65abff52d7fbda9709c0ff8a862fe8472687003dc3c8b6962661fe2695",
+      "source_path": "consumption_analysis.html"
+    },
+    {
+      "path": "dashboard.html",
+      "kind": "source",
+      "sha256": "dfc5ad9e3f69912010da377e331095bd739da16d8faa9c3069c7d8406159834e",
+      "source_path": "dashboard.html"
+    },
+    {
+      "path": "deal_desk.py",
+      "kind": "source",
+      "sha256": "bc43e93fc476b7104b48dafdc84f316eea95f598a8753631be54b838e60ce163",
+      "source_path": "deal_desk.py"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "kind": "documentation_or_setup",
+      "sha256": "5f11201d04a068a3acc4cb4c0f0c597730bcc560570521cb03ae02a9b75b6d1a"
+    },
+    {
+      "path": "docs/DATA_DICTIONARY.md",
+      "kind": "documentation_or_setup",
+      "sha256": "4f890357d0552ea5e0c23589b86ba7fb7aaf9f0c17fd1abb9a76cc8e923e7385"
+    },
+    {
+      "path": "docs/PUBLICATION_NOTES.md",
+      "kind": "documentation_or_setup",
+      "sha256": "9d7090476009016dac47641fdc455009a78ecdda668bf9ac65a779ecba910a37"
+    },
+    {
+      "path": "docs/RULES.md",
+      "kind": "documentation_or_setup",
+      "sha256": "683db97c9a62a7dace08f2e91898bdc4fc8b4126fcb37d4a449ea20baa760b86"
+    },
+    {
+      "path": "docs/RUNTIME_INPUTS.md",
+      "kind": "documentation_or_setup",
+      "sha256": "1bb1d954a947283f078ee818860568d0860e1a4597fc524bfcb6716eb41980fb"
+    },
+    {
+      "path": "docs/SCHEMAS.md",
+      "kind": "documentation_or_setup",
+      "sha256": "180af6ff41e32342562285296a90ea85c98293ffe5eb29d2d174d08d3ee04577"
+    },
+    {
+      "path": "docs/SCOPE.md",
+      "kind": "documentation_or_setup",
+      "sha256": "7b422564b359f7135fd7ed22e075d09b9a29ce1e5d595f19c3c85ec61b2854b4"
+    },
+    {
+      "path": "docs/SETUP.md",
+      "kind": "documentation_or_setup",
+      "sha256": "dc6b2a7c48ae0fba85c224d159e7239d7f5a097693596cd721f739f4dc8b0d58"
+    },
+    {
+      "path": "enablement_agent.py",
+      "kind": "source",
+      "sha256": "35d14fcb985a8e49f6a9d4199c8185d90e020756efac644d47bb5863e48cfdd9",
+      "source_path": "enablement_agent.py"
+    },
+    {
+      "path": "financial_model_generator.py",
+      "kind": "source",
+      "sha256": "183c96eeb5b78b9467b394c199c270491446b82d3488319a6ddb2a682b81a246",
+      "source_path": "financial_model_generator.py"
+    },
+    {
+      "path": "generate_customer_health_data.py",
+      "kind": "source",
+      "sha256": "683e7b56c7355a107cf7378119261cdcbc75d4224f4ac8171799c20ab8a4c648",
+      "source_path": "generate_customer_health_data.py"
+    },
+    {
+      "path": "generate_enablement_data.py",
+      "kind": "source",
+      "sha256": "3698beff0bc6197af3fb8384b6b70eb0ecadf34bee0f3d6bc52231c048c7c03c",
+      "source_path": "generate_enablement_data.py"
+    },
+    {
+      "path": "generate_gtm_feedback_history.py",
+      "kind": "source",
+      "sha256": "97169508f7a9290772cdedb5a695f4c0eff4347480dfb70234c16ae7c2e14899",
+      "source_path": "generate_gtm_feedback_history.py"
+    },
+    {
+      "path": "generate_resource_estimates.py",
+      "kind": "source",
+      "sha256": "333332631f713d71ece16f23fced2bdb79fe18bf422f6002bdef7fd6a56677fc",
+      "source_path": "generate_resource_estimates.py"
+    },
+    {
+      "path": "gtm_intelligence.html",
+      "kind": "source",
+      "sha256": "8ede1ab90c5d3ac055ba8496a47935c245a8ab062f811cdefbb16409b2cb8c1a",
+      "source_path": "gtm_intelligence.html"
+    },
+    {
+      "path": "index.html",
+      "kind": "source",
+      "sha256": "6da2e563bc6054497bdbd08c2612b41881b233a99ebd87073621b1fa1c2ae4d6",
+      "source_path": "index.html"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/commercial_approval_hierarchy.json",
+      "kind": "rule_configuration",
+      "sha256": "7046af7ecb99b45a40f1e1833a9019ff5210f488bec7f4d64aef98ac5c413e59",
+      "source_path": "knowledge_base/commercial_strategy/commercial_approval_hierarchy.json"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/commercial_financial_analysis_schema.json",
+      "kind": "schema",
+      "sha256": "3d160c3680fd7f0884999d8fd8c3e73404277e98c387c2891adf2e22c7d91f0b"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/commercial_policy_rules.json",
+      "kind": "rule_configuration",
+      "sha256": "99d67db91dd34d3c9f416d666dacd77d05a336e71f509d33cb36b841c446f321",
+      "source_path": "knowledge_base/commercial_strategy/commercial_policy_rules.json"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/commercial_strategy_output_schema.json",
+      "kind": "schema",
+      "sha256": "3af3abe6ad098a72545e78c5411c9794bfa8373c065d7e93709f249ae205418a"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/comparable_deal_config.json",
+      "kind": "rule_configuration",
+      "sha256": "ae2936eaeb2be1c6a271d2c1c078841da1a5244615a5ecbb0a036727aa1131b4",
+      "source_path": "knowledge_base/commercial_strategy/comparable_deal_config.json"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/deal_input_schema.json",
+      "kind": "schema",
+      "sha256": "4a0fe889f6058f62f996979f454c66a423200af2a5c11423a651a5a9d9f6ab5c"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/field_mapping.json",
+      "kind": "rule_configuration",
+      "sha256": "86700e2bef6506da5cf1d5f17a05080be86c86310626295acf340e8423f03029",
+      "source_path": "knowledge_base/commercial_strategy/field_mapping.json"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/policy_evaluation_schema.json",
+      "kind": "schema",
+      "sha256": "62206740d71e46f1c78097890176d91d362df796a75f052ff14cb258353e1277"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/synthetic_approval_matrix.json",
+      "kind": "rule_configuration",
+      "sha256": "2e780f1191ce18243f5a4b26169c88425e308c5efd542728f4b613a84dc02845",
+      "source_path": "knowledge_base/commercial_strategy/synthetic_approval_matrix.json"
+    },
+    {
+      "path": "knowledge_base/commercial_strategy/synthetic_commercial_guardrails.json",
+      "kind": "rule_configuration",
+      "sha256": "3e336e282f1c3968f612d3cb94a65dcd4175f4cf4c48b5aca4d2d6aff1b5238f",
+      "source_path": "knowledge_base/commercial_strategy/synthetic_commercial_guardrails.json"
+    },
+    {
+      "path": "knowledge_base/knowledge_lookup.py",
+      "kind": "source",
+      "sha256": "12c8e5d1c9302a535877d9fc18d622ff3a4a913d669972053de0e2df33725261",
+      "source_path": "knowledge_base/knowledge_lookup.py"
+    },
+    {
+      "path": "knowledge_base/schemas/__init__.py",
+      "kind": "source",
+      "sha256": "a45426bf0e60035edb7b9335f0a74c7d42ab36818077d1d04b850ab195209420",
+      "source_path": "knowledge_base/schemas/__init__.py"
+    },
+    {
+      "path": "knowledge_base/schemas/enablement_schema.py",
+      "kind": "source",
+      "sha256": "edca411971501b3f505e36f638888c598a9d596580d4d0fdbc88a876dddd7644",
+      "source_path": "knowledge_base/schemas/enablement_schema.py"
+    },
+    {
+      "path": "meddpicc_scorer.py",
+      "kind": "source",
+      "sha256": "d5dd044ed5f5b808a8f6863ec4c8481e3bd65c1b3eb9638f7979c88290ded65c",
+      "source_path": "meddpicc_scorer.py"
+    },
+    {
+      "path": "note_generator.py",
+      "kind": "source",
+      "sha256": "08b5ddbd23a645049040efce80c2d766897340cc162ab027a24018154da2104f",
+      "source_path": "note_generator.py"
+    },
+    {
+      "path": "phase2_kb_builder.py",
+      "kind": "source",
+      "sha256": "32b3de2a109a3e430f1f546bc258b442d3cb196338b50f1548ad56ea99b6d5de",
+      "source_path": "phase2_kb_builder.py"
+    },
+    {
+      "path": "push_notes_to_crm.py",
+      "kind": "source",
+      "sha256": "eef5803175a1a384247703957e1edd394e786e9d76aa049c2d8a8782e5733ca3",
+      "source_path": "push_notes_to_crm.py"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "kind": "documentation_or_setup",
+      "sha256": "c3f621127870eecd541371ccaf81089f1af077c52f3d507d10739368b75187dd"
+    },
+    {
+      "path": "requirements-optional.txt",
+      "kind": "documentation_or_setup",
+      "sha256": "20e81c30f5a68daa92902136d8b85449aabf9efdc66c092f4c6fc3d24420edc2"
+    },
+    {
+      "path": "requirements.txt",
+      "kind": "documentation_or_setup",
+      "sha256": "25698b85eab5cd90e11d83709922bc227e655d2f6787f30b5c20c237e29cc520",
+      "source_path": "requirements.txt"
+    },
+    {
+      "path": "run.py",
+      "kind": "source",
+      "sha256": "65ac235179951bbcc3825c6672e09d6de795476c9cd58e9b2c70d733bb6b4809",
+      "source_path": "run.py"
+    },
+    {
+      "path": "run_pipeline_batch.py",
+      "kind": "source",
+      "sha256": "510ab86196222e36b56bb6a165eb91777f95220db73fb1e610ea56dc50aaf29e",
+      "source_path": "run_pipeline_batch.py"
+    },
+    {
+      "path": "schemas/commercial_policy_rules.schema.json",
+      "kind": "schema",
+      "sha256": "a924aa13d216f2136df072447ab2f2fdabb97fa87fd9defe05e0e251f9767302"
+    },
+    {
+      "path": "schemas/consumption_architecture.schema.json",
+      "kind": "schema",
+      "sha256": "12fac00a0b6af4d7fef29285933122c05d2188a1a90280c869ca47899591713e"
+    },
+    {
+      "path": "schemas/consumption_profile.schema.json",
+      "kind": "schema",
+      "sha256": "8c0590c320fd25315e2e141491fef1d6de799b8723b1c781282ac352c8ddfbae"
+    },
+    {
+      "path": "schemas/customer_health.schema.json",
+      "kind": "schema",
+      "sha256": "1a6d625e2c09677f3c400b2f9e39ac47fdbce988a71c089e0a69ae45c530957f"
+    },
+    {
+      "path": "schemas/enablement.schema.json",
+      "kind": "schema",
+      "sha256": "7cdd8c42d69fe61a13b7c9c00179c85716986b1238194f43b66c62e850e9bdd8"
+    },
+    {
+      "path": "schemas/gtm_feedback_history.schema.json",
+      "kind": "schema",
+      "sha256": "5f54345fe2b7f4ad992a9c58e859a6a128909ff8ce81bc675167ce938076e938"
+    },
+    {
+      "path": "schemas/meddpicc_record.schema.json",
+      "kind": "schema",
+      "sha256": "5aab0b1d203bfcadd1733291e1006abf9e2697d466696abb667d7a7b2d5bc04e"
+    },
+    {
+      "path": "scripts/check_runtime_inputs.py",
+      "kind": "source",
+      "sha256": "cea864588caebe775f70462fc421f372b9800db353e40b881865e3ed5fc7431e"
+    },
+    {
+      "path": "scripts/refresh_azure_eastus_pricing.py",
+      "kind": "source",
+      "sha256": "a6fee9fac623bd171eec4d91b8cc46b897126b5cddf41f10f5cc5c2e610b4f83",
+      "source_path": "scripts/refresh_azure_eastus_pricing.py"
+    },
+    {
+      "path": "scripts/verify_publication.py",
+      "kind": "source",
+      "sha256": "9ef8bbe6836182105e027b1317126665849111b4851caaf22d51e9cb7a4996d7"
+    },
+    {
+      "path": "server.py",
+      "kind": "source",
+      "sha256": "35f219edb35a8b7a8a1fa3ca2b6a4abe329975de95b5023c619e02f27f946bbd",
+      "source_path": "server.py"
+    },
+    {
+      "path": "tools/__init__.py",
+      "kind": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "tools/__init__.py"
+    },
+    {
+      "path": "tools/analyze_pipeline.py",
+      "kind": "source",
+      "sha256": "407d325c6ebf057897e7f137f598a4b65ca99a53d12d2b498515cb630cc7c382",
+      "source_path": "tools/analyze_pipeline.py"
+    },
+    {
+      "path": "tools/azure_enterprise_catalog.py",
+      "kind": "source",
+      "sha256": "659cf3fc3eafd4ad44a896f98a00c403f80462bad52a9995b66d806e1535883c",
+      "source_path": "tools/azure_enterprise_catalog.py"
+    },
+    {
+      "path": "tools/azure_pricing_config.py",
+      "kind": "source",
+      "sha256": "cb39d1c900a92885d8b04f92d3bdbd387198e686f3f4b94b118030e49dab166b",
+      "source_path": "tools/azure_pricing_config.py"
+    },
+    {
+      "path": "tools/azure_pricing_snapshot.py",
+      "kind": "source",
+      "sha256": "2b0302fb24e5032f09680a09d705d1b4587553752405103180d8ff29a85be60a",
+      "source_path": "tools/azure_pricing_snapshot.py"
+    },
+    {
+      "path": "tools/azure_retail_pricing.py",
+      "kind": "source",
+      "sha256": "d539cdb6bf0735ad55dbb193a95ca6273e83a0d8ce5efd353ff4a64ea0a865b1",
+      "source_path": "tools/azure_retail_pricing.py"
+    },
+    {
+      "path": "tools/azure_service_catalog.py",
+      "kind": "source",
+      "sha256": "d34987626feced206db547bd18a17baef8169ede7c77b1269123b9b6ff4619d0",
+      "source_path": "tools/azure_service_catalog.py"
+    },
+    {
+      "path": "tools/commercial_data.py",
+      "kind": "source",
+      "sha256": "10e06cbfc56805762deb284c2f2e5f73aabc5e0aaf44effd00e490aeca1a77b3",
+      "source_path": "tools/commercial_data.py"
+    },
+    {
+      "path": "tools/commercial_economics.py",
+      "kind": "source",
+      "sha256": "71715462a750606117e8b578ec1111ad79bace2ba033f671ede458d25f5ba7d8",
+      "source_path": "tools/commercial_economics.py"
+    },
+    {
+      "path": "tools/commercial_financial_analysis.py",
+      "kind": "source",
+      "sha256": "ec94ba7784d86320dd57a8d367de065b2b37fbf4f85706d6d3ffc97ca9bc0adf",
+      "source_path": "tools/commercial_financial_analysis.py"
+    },
+    {
+      "path": "tools/commercial_policy_engine.py",
+      "kind": "source",
+      "sha256": "70e37a6de83fe69c03ec715f90484838c65adf14ac677075398f8dce5fe9051a",
+      "source_path": "tools/commercial_policy_engine.py"
+    },
+    {
+      "path": "tools/commercial_strategy_agent.py",
+      "kind": "source",
+      "sha256": "2726f4701cb74f6164e19d4770e2b16393a7991cfc41bfd1d5a5405f2b26c630",
+      "source_path": "tools/commercial_strategy_agent.py"
+    },
+    {
+      "path": "tools/commercial_validation.py",
+      "kind": "source",
+      "sha256": "1c657c72c0033bfa66e02ba439d1577e5c391ca45c6b6598c1b36508e29ed720",
+      "source_path": "tools/commercial_validation.py"
+    },
+    {
+      "path": "tools/comparable_deal_intelligence.py",
+      "kind": "source",
+      "sha256": "8f72aa8ee348129818d8dcce77c4df3328e72405b54095d51f1e42479b21ce31",
+      "source_path": "tools/comparable_deal_intelligence.py"
+    },
+    {
+      "path": "tools/consumption_architecture_planner.py",
+      "kind": "source",
+      "sha256": "ad67491929b2d1eb210ba6480489bb4338c492081ebee26998ee1d7fbafc90e3",
+      "source_path": "tools/consumption_architecture_planner.py"
+    },
+    {
+      "path": "tools/consumption_commercial_intelligence.py",
+      "kind": "source",
+      "sha256": "37f4085718b2971cb16377c6bd71bce633e805f507e4a4bcea02cae0c691efa2",
+      "source_path": "tools/consumption_commercial_intelligence.py"
+    },
+    {
+      "path": "tools/consumption_forecast.py",
+      "kind": "source",
+      "sha256": "ea554f90e57b1a65f56bcdb3cc44f5cef6cefd9106b3e342c70ac96f1f8e8709",
+      "source_path": "tools/consumption_forecast.py"
+    },
+    {
+      "path": "tools/consumption_profiles.py",
+      "kind": "source",
+      "sha256": "117a51aef93fc8f7a4d5bd585e2be6c59eaf47d3e6c73f81bf1d3bd53e4f8d04",
+      "source_path": "tools/consumption_profiles.py"
+    },
+    {
+      "path": "tools/deal_package_builder.py",
+      "kind": "source",
+      "sha256": "1e1a059a0a48673ceb53c6e7e461df339f3624d7da0755d290cec0ed8be6e2c4",
+      "source_path": "tools/deal_package_builder.py"
+    },
+    {
+      "path": "tools/enablement_eval.py",
+      "kind": "source",
+      "sha256": "b49f2084e294df17d5d455638e78a4fe849de6a5542927f96f2f2d54e0334929",
+      "source_path": "tools/enablement_eval.py"
+    },
+    {
+      "path": "tools/enablement_rules.py",
+      "kind": "source",
+      "sha256": "083baa3c634dfa04d99d3dfffe657761eb705f1d137ec9f78b49c702545bd41d",
+      "source_path": "tools/enablement_rules.py"
+    },
+    {
+      "path": "tools/enterprise_workload_profiler.py",
+      "kind": "source",
+      "sha256": "c148be6535c702e246f107e8987c348c00c6e31cb87abe78d365977414a47c5a",
+      "source_path": "tools/enterprise_workload_profiler.py"
+    },
+    {
+      "path": "tools/eval_dataset.py",
+      "kind": "source",
+      "sha256": "15bcd170e2a22f01030a08defae6b22cfb4c5e409297ff202460202a1e79cae0",
+      "source_path": "tools/eval_dataset.py"
+    },
+    {
+      "path": "tools/eval_judge.py",
+      "kind": "source",
+      "sha256": "8178ea2120ced14d1534b1e95579021e67d8ca7b0d89bbff2a50a1ed4ee9a803",
+      "source_path": "tools/eval_judge.py"
+    },
+    {
+      "path": "tools/excel_builder.py",
+      "kind": "source",
+      "sha256": "5cc37efcc142be01222bb8aa21bca35a833f385423d6bf91b96017e8338e5c35",
+      "source_path": "tools/excel_builder.py"
+    },
+    {
+      "path": "tools/financial_inputs.py",
+      "kind": "source",
+      "sha256": "711f5db474c191adcfc98703c6226c0ec404b24976790cce1ffa31c76c5d32af",
+      "source_path": "tools/financial_inputs.py"
+    },
+    {
+      "path": "tools/financial_model.py",
+      "kind": "source",
+      "sha256": "7397155600a9caf5ff6ec7fc7ea79a5b9506f1dc39ee8b5c7d9e2c6fc765bfae",
+      "source_path": "tools/financial_model.py"
+    },
+    {
+      "path": "tools/financial_model_runner.py",
+      "kind": "source",
+      "sha256": "c858976e3cf109cd3c1202849f0de9a8c086451ac9168ef2ed9fdf274ae3e9cc",
+      "source_path": "tools/financial_model_runner.py"
+    },
+    {
+      "path": "tools/generate_deck.py",
+      "kind": "source",
+      "sha256": "685d6fc8e85b0fc4d34719a60c5d2fa0b828c86f15796600eb67adccdada4402",
+      "source_path": "tools/generate_deck.py"
+    },
+    {
+      "path": "tools/llm_client.py",
+      "kind": "source",
+      "sha256": "9a970ee77c626731d21838f944b95a753dc99e0db7c306da60ff8f0cd5930c7a",
+      "source_path": "tools/llm_client.py"
+    },
+    {
+      "path": "tools/run_evals.py",
+      "kind": "source",
+      "sha256": "2af14e4f7d60fbfbed9ba075f1cf1b01c847a8bd82204373f9c9ebd2fcb63bc5",
+      "source_path": "tools/run_evals.py"
+    },
+    {
+      "path": "update_crm_fields.py",
+      "kind": "source",
+      "sha256": "9fade9b546ebd459adc60c453e1ef11ca57c15f394dba64235c9ad62beab1198",
+      "source_path": "update_crm_fields.py"
+    },
+    {
+      "path": "watch_progress.py",
+      "kind": "source",
+      "sha256": "c89ab181e987eec13dd053a2600cae97ddb7234fa1c2df25ab7f999e5f577b05",
+      "source_path": "watch_progress.py"
+    }
+  ],
+  "sanitized_source_files": [
+    ".env.example",
+    "commercial_analysis.html",
+    "dashboard.html",
+    "knowledge_base/knowledge_lookup.py",
+    "knowledge_base/schemas/enablement_schema.py",
+    "phase2_kb_builder.py",
+    "server.py",
+    "tools/analyze_pipeline.py",
+    "tools/commercial_data.py",
+    "tools/commercial_financial_analysis.py",
+    "tools/commercial_policy_engine.py",
+    "tools/commercial_strategy_agent.py",
+    "tools/comparable_deal_intelligence.py",
+    "tools/consumption_commercial_intelligence.py",
+    "tools/consumption_profiles.py",
+    "tools/deal_package_builder.py"
+  ]
+}

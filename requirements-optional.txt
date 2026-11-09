@@ -1,0 +1,5 @@
+# Optional semantic retrieval and presentation generation
+chromadb
+sentence-transformers
+python-pptx
+Pillow

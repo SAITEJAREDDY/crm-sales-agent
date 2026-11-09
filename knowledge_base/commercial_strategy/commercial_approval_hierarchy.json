@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "name": "Synthetic Enterprise Commercial Approval Hierarchy",
+    "provenance": "synthetic_demo_data",
+    "disclaimer": "Synthetic approval ordering for demonstration purposes. Not Microsoft internal approval routing."
+  },
+  "approval_order": [
+    {"function": "Sales", "level": "Sales Manager", "priority": 10},
+    {"function": "Deal Desk", "level": "Senior Deal Manager", "priority": 20},
+    {"function": "Finance", "level": "Finance Manager", "priority": 25},
+    {"function": "Finance", "level": "Finance Director", "priority": 30},
+    {"function": "Legal", "level": "Commercial Counsel", "priority": 40},
+    {"function": "Executive", "level": "VP Commercial", "priority": 50}
+  ]
+}

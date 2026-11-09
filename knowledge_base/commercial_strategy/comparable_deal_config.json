@@ -1,0 +1,77 @@
+{
+  "config_version": "1.0",
+  "description": "Deterministic comparable-deal retrieval and benchmarking configuration. Weights and thresholds are synthetic demo values, not Microsoft internal policy.",
+  "similarity_weights": {
+    "industry": 0.15,
+    "segment": 0.15,
+    "product_overlap": 0.20,
+    "deal_size": 0.15,
+    "contract_term": 0.10,
+    "commitment": 0.10,
+    "competitor": 0.05,
+    "region": 0.05,
+    "strategic_account": 0.05
+  },
+  "product_families": {
+    "cloud_infrastructure": ["Azure Infrastructure", "Azure Consumption Services", "CloudCore", "CloudM"],
+    "ai_ml": ["Azure AI Services", "AI/MLI"],
+    "data_platform": ["Azure Data Platform", "DataFabric", "DataVault", "ReportingCloud", "DataF"],
+    "security": ["SecureVault", "SecurityO"],
+    "compliance_regtech": ["ComplianceAI", "ComplianceS", "RegTechP"],
+    "fraud_risk": ["FraudGuard", "RiskEngine", "FraudD", "RiskA"],
+    "wealth": ["WealthPortal", "WealthM"],
+    "treasury": ["TreasuryLink", "TreasuryM"],
+    "core_platform": ["Nexus Platform", "CoreP"],
+    "core_banking": ["CoreB", "LendingOS"],
+    "capital_markets": ["CapitalConnect"]
+  },
+  "product_similarity": {
+    "jaccard_weight": 0.5,
+    "containment_weight": 0.5
+  },
+  "industry_affinity_groups": {
+    "financial_core": ["Banking", "Financial Services", "Capital Markets", "Wealth and Asset Management"],
+    "insurance_health": ["Insurance / Healthcare"]
+  },
+  "industry_affinity_score": 0.5,
+  "segment_adjacency": [
+    ["enterprise", "mid-market"],
+    ["mid-market", "smb"]
+  ],
+  "segment_adjacency_score": 0.4,
+  "competitor_groups": {
+    "hyperscaler": ["AWS", "Google Cloud", "Microsoft Azure"],
+    "enterprise_vendor": ["Oracle Financial Services", "Oracle", "IBM"],
+    "incumbent": ["Incumbent platform"]
+  },
+  "competitor_scores": {
+    "exact": 1.0,
+    "same_group": 0.6,
+    "different_competitor": 0.25,
+    "one_missing": 0.15,
+    "both_none": 1.0
+  },
+  "numeric_similarity": {
+    "size_log_decade_span": 1.5
+  },
+  "candidate_filters": {
+    "max_size_ratio_decades": 2.0,
+    "require_commercial_anchor": true,
+    "min_similarity_score": 0.35
+  },
+  "recency": {
+    "weight": 0.05,
+    "half_life_months": 24,
+    "missing_close_date_factor": 0.5,
+    "note": "Recency is a secondary blend factor and must never overpower commercial similarity. Missing close dates receive the neutral factor."
+  },
+  "minimum_benchmark_sample": 5,
+  "minimum_segment_sample": 3,
+  "confidence_thresholds": {
+    "insufficient_below_count": 3,
+    "medium": {"min_count": 5, "min_avg_similarity": 0.50, "min_avg_product_similarity": 0.30},
+    "high": {"min_count": 8, "min_avg_similarity": 0.65, "min_avg_product_similarity": 0.50, "min_field_completeness": 0.90}
+  },
+  "critical_benchmark_fields": ["final_discount_pct", "tcv", "outcome", "contract_term_months"],
+  "term_distribution_buckets": [12, 24, 36]
+}

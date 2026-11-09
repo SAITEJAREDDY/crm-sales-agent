@@ -1,0 +1,2 @@
+# Offline schema and publication checks
+jsonschema>=4.22.0

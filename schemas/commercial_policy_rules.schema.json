@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CommercialPolicyRules",
+  "type": "object",
+  "description": "Reusable rule configuration; this is not a collection of deal records.",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Rule-set provenance and vocabulary.",
+      "properties": {}
+    },
+    "rules": {
+      "type": "array",
+      "description": "Configured deterministic policy rules.",
+      "items": {
+        "type": "object",
+        "description": "One policy rule definition.",
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "description": "Unique rule identifier."
+          },
+          "policy_id": {
+            "type": "string",
+            "description": "Policy-group identifier."
+          },
+          "category": {
+            "type": "string",
+            "description": "Policy category."
+          },
+          "input_field": {
+            "type": "string",
+            "description": "Financial or commercial input to evaluate."
+          },
+          "operator": {
+            "type": "string",
+            "description": "Comparison operator supported by the policy engine."
+          },
+          "threshold": {
+            "type": [
+              "number",
+              "string",
+              "boolean",
+              "null"
+            ],
+            "description": "Comparison boundary; its unit is declared by unit."
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of the rule threshold, such as percent, ratio, months, days, or currency."
+          },
+          "status": {
+            "type": "string",
+            "description": "Status emitted when the rule applies."
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity assigned to the outcome."
+          },
+          "message_template": {
+            "type": "string",
+            "description": "Explanation template populated with runtime values."
+          }
+        },
+        "required": [
+          "rule_id",
+          "input_field",
+          "operator"
+        ]
+      }
+    }
+  },
+  "required": [
+    "rules"
+  ]
+}

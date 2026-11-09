@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ValidatedCommercialStrategy",
+  "type": "object",
+  "description": "LLM proposal reconciled with deterministic engines.",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "Identifier of the evaluated deal."
+    },
+    "status": {
+      "type": "string",
+      "description": "Generation and validation outcome.",
+      "enum": [
+        "success",
+        "validation_failed",
+        "unavailable",
+        "error"
+      ]
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "Generation timestamp in ISO 8601 form."
+    },
+    "model": {
+      "type": "string",
+      "description": "Model used for generation."
+    },
+    "llm_provider": {
+      "type": "string",
+      "description": "Inference provider used for generation."
+    },
+    "strategy_source": {
+      "type": "string",
+      "description": "Provenance of the recommendation.",
+      "const": "llm_proposal_deterministic_validation"
+    },
+    "executive_summary": {
+      "type": "string",
+      "description": "Narrative summary of the recommended position."
+    },
+    "recommended_position": {
+      "type": "object",
+      "description": "Recommended negotiation posture.",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "description": "Negotiation posture.",
+          "enum": [
+            "ACCEPT",
+            "COUNTER",
+            "RESTRUCTURE",
+            "ESCALATE",
+            "DECLINE"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Reason for the recommended posture."
+        }
+      }
+    },
+    "proposed_structure": {
+      "type": "object",
+      "description": "Fields the commercial strategy agent may propose; the engines re-evaluate them.",
+      "properties": {
+        "discount_pct": {
+          "type": "number",
+          "description": "Proposed discount on list value.",
+          "minimum": 0,
+          "maximum": 100,
+          "x-unit": "percent"
+        },
+        "contract_term_months": {
+          "type": "integer",
+          "description": "Proposed contract duration.",
+          "minimum": 1,
+          "x-unit": "months"
+        },
+        "commitment_amount": {
+          "type": "number",
+          "description": "Proposed total consumption commitment.",
+          "x-unit": "currency units"
+        },
+        "billing_frequency": {
+          "type": "string",
+          "description": "Proposed billing cadence."
+        },
+        "payment_terms": {
+          "type": "string",
+          "description": "Proposed payment terms."
+        }
+      }
+    },
+    "validated_financials": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Financial-engine result; never replaced by an LLM estimate."
+    },
+    "validated_policy": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Policy-engine result; never replaced by an LLM decision."
+    },
+    "customer_ask_comparison": {
+      "type": "array",
+      "description": "Comparison of customer asks and recommendations.",
+      "items": {
+        "type": "object",
+        "description": "Comparison item.",
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "description": "Term or commercial dimension being compared."
+          },
+          "customer_ask": {
+            "type": "string",
+            "description": "Customer's requested position."
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended position."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for the recommendation."
+          }
+        }
+      }
+    },
+    "give_get_options": {
+      "type": "array",
+      "description": "Potential exchanges requiring engine validation.",
+      "items": {
+        "type": "object",
+        "description": "Give/get option from the seller's perspective.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Option label."
+          },
+          "give": {
+            "type": "string",
+            "description": "Seller concession to the customer."
+          },
+          "get": {
+            "type": "string",
+            "description": "Customer consideration returned to the seller."
+          },
+          "proposed_structure": {
+            "type": "object",
+            "description": "Fields the commercial strategy agent may propose; the engines re-evaluate them.",
+            "properties": {
+              "discount_pct": {
+                "type": "number",
+                "description": "Proposed discount on list value.",
+                "minimum": 0,
+                "maximum": 100,
+                "x-unit": "percent"
+              },
+              "contract_term_months": {
+                "type": "integer",
+                "description": "Proposed contract duration.",
+                "minimum": 1,
+                "x-unit": "months"
+              },
+              "commitment_amount": {
+                "type": "number",
+                "description": "Proposed total consumption commitment.",
+                "x-unit": "currency units"
+              },
+              "billing_frequency": {
+                "type": "string",
+                "description": "Proposed billing cadence."
+              },
+              "payment_terms": {
+                "type": "string",
+                "description": "Proposed payment terms."
+              }
+            }
+          }
+        }
+      }
+    },
+    "negotiation_plan": {
+      "type": "array",
+      "description": "Proposed negotiation steps.",
+      "items": {
+        "type": "object",
+        "description": "Negotiation step.",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "description": "One-based step order.",
+            "minimum": 1,
+            "x-unit": "count"
+          },
+          "action": {
+            "type": "string",
+            "description": "Proposed action."
+          },
+          "owner": {
+            "type": "string",
+            "description": "Role responsible for the action."
+          },
+          "talk_track": {
+            "type": "string",
+            "description": "Suggested negotiation language."
+          }
+        }
+      }
+    },
+    "walk_away_guidance": {
+      "type": "object",
+      "description": "Boundaries grounded in validated financial and policy outputs.",
+      "properties": {
+        "position": {
+          "type": "string",
+          "description": "Recommended boundary or escalation position."
+        },
+        "deterministic_basis": {
+          "type": "string",
+          "description": "Supporting financial or policy result."
+        }
+      }
+    },
+    "commercial_risks": {
+      "type": "array",
+      "description": "Risks and proposed mitigations.",
+      "items": {
+        "type": "object",
+        "description": "Commercial risk.",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Risk category."
+          },
+          "risk": {
+            "type": "string",
+            "description": "Risk description."
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Proposed mitigation."
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "description": "Confidence assessment and explanation.",
+      "properties": {
+        "level": {
+          "type": "string",
+          "description": "Confidence band.",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Reason for the confidence assessment and any missing evidence."
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "description": "Supporting source references.",
+      "items": {
+        "type": "object",
+        "description": "Reference to source material; no source record is included in this repository.",
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "description": "Category of source supporting the statement."
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable source label."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Supporting observation or reference supplied at runtime."
+          }
+        }
+      }
+    },
+    "required_approvals": {
+      "type": "array",
+      "description": "Approval requirements carried from policy evaluation.",
+      "items": {
+        "type": "object",
+        "description": "Required policy approval function, distinct from a completed approval.",
+        "properties": {
+          "function": {
+            "type": "string",
+            "description": "Organizational function that must review the proposal."
+          },
+          "level": {
+            "type": "string",
+            "description": "Approval authority level."
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Routing priority; lower values come first.",
+            "x-unit": "count"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this review is required."
+          },
+          "reasons": {
+            "type": "array",
+            "description": "Triggered reasons for the review.",
+            "items": {
+              "type": "string",
+              "description": "Text supplied by the data owner or generated by the workflow."
+            }
+          },
+          "source_rules": {
+            "type": "array",
+            "description": "Rule identifiers that require this approval.",
+            "items": {
+              "type": "string",
+              "description": "Text supplied by the data owner or generated by the workflow."
+            }
+          }
+        }
+      }
+    },
+    "repair_attempted": {
+      "type": "boolean",
+      "description": "Whether generation required JSON or validation repair."
+    }
+  },
+  "required": [
+    "deal_id",
+    "status",
+    "recommended_position",
+    "proposed_structure",
+    "validated_financials",
+    "validated_policy",
+    "evidence"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "name": "Commercial Analysis Field Mapping",
+    "provenance": "project_mapping",
+    "notes": "Maps existing CRM/project fields to canonical DealInput fields. Synthetic commercial fields are added only where no existing source exists."
+  },
+  "mappings": [
+    {
+      "existing_field": "meddpicc_pipeline.deal_id",
+      "deal_input_field": "deal_id / opportunity_id",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "meddpicc_pipeline.company",
+      "deal_input_field": "account.name",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "derived slug(company)",
+      "deal_input_field": "account.account_id",
+      "source_type": "derived"
+    },
+    {
+      "existing_field": "customer_health_data.customers[].account_info.segment",
+      "deal_input_field": "account.segment",
+      "source_type": "existing_when_available"
+    },
+    {
+      "existing_field": "derived from account/deal text",
+      "deal_input_field": "account.industry / account.region",
+      "source_type": "derived"
+    },
+    {
+      "existing_field": "meddpicc_pipeline.stage",
+      "deal_input_field": "opportunity.stage",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "meddpicc_pipeline.probability",
+      "deal_input_field": "opportunity.probability",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "meddpicc_pipeline.closeDate when present",
+      "deal_input_field": "opportunity.expected_close_date",
+      "source_type": "existing_when_available"
+    },
+    {
+      "existing_field": "meddpicc_pipeline.amount",
+      "deal_input_field": "commercial.proposed_net_value / ARR",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.customer_commercial_ask.requested_discount_pct",
+      "deal_input_field": "commercial.requested_discount_pct",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.current_seller_offer.offered_discount_pct",
+      "deal_input_field": "commercial.proposed_discount_pct",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.agreement_metadata.commercial_term_months",
+      "deal_input_field": "commercial.contract_term_months",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.current_seller_offer.proposed_payment_terms",
+      "deal_input_field": "commercial.payment_terms",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "resource_pipeline.product/base_category/workload_profile",
+      "deal_input_field": "products[] / consumption_commitment.eligible_spend_categories",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "enablement_data.azure_annual_consumption",
+      "deal_input_field": "consumption_commitment.current_expected_consumption",
+      "source_type": "existing"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.current_seller_offer.proposed_total_commitment",
+      "deal_input_field": "consumption_commitment.commitment_amount",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "meddpicc_pipeline.elements.competition",
+      "deal_input_field": "competitive_context",
+      "source_type": "existing_when_available"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.customer_commercial_ask",
+      "deal_input_field": "customer_asks",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "active_commercial_negotiations.negotiation_priorities",
+      "deal_input_field": "strategic_context / negotiation_context",
+      "source_type": "synthetic_demo_data"
+    },
+    {
+      "existing_field": "approval_audit.db",
+      "deal_input_field": "approval_context.prior_approval_activity",
+      "source_type": "existing_runtime"
+    }
+  ]
+}
