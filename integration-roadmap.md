@@ -6,6 +6,8 @@ Week counts are a planning assumption for a small team. Field names in the hando
 
 ## How the agents connect
 
+![Four agents sharing one deal record](images/01-agents-one-deal-record.png)
+
 ```mermaid
 flowchart LR
     CRM[("Your CRM and policies<br/>no data in this repo")] --> DR
@@ -19,6 +21,8 @@ flowchart LR
 ```
 
 ## Timeline
+
+![16-week integration plan](images/03-integration-timeline.png)
 
 | Phase | Agent | Weeks |
 | --- | --- | --- |
@@ -85,6 +89,10 @@ Do not start the next agent until the current one passes its exit check.
 - Review the accept / edit / reject mix for each agent.
 
 **Exit check:** a written readout per KPI and a decision on which agents to widen to the full pipeline.
+
+## Who does what
+
+![Who does what in each agent](images/02-who-does-what.png)
 
 ## Handoffs
 
