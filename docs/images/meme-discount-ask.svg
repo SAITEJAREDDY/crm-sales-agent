@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" width="800" height="440" role="img" aria-label="Meme: customer asks for 40 percent off with no commitment and 120 day payment terms, deal desk lists the four approvals needed">
+  <rect width="800" height="440" rx="18" fill="#14181f"/>
+  <text x="400" y="58" text-anchor="middle" font-family="Impact, 'Arial Black', Arial, sans-serif" font-size="34" fill="#ffffff" letter-spacing="1">4:58 PM. LAST DAY OF THE QUARTER.</text>
+
+  <rect x="40" y="85" width="720" height="125" rx="14" fill="#2a3140"/>
+  <text x="62" y="114" font-family="Arial, sans-serif" font-weight="700" font-size="17" fill="#8fb7ff">THE CUSTOMER</text>
+  <text x="62" y="154" font-family="Arial, sans-serif" font-size="28" fill="#ffffff">Can we get 40% off, no commitment,</text>
+  <text x="62" y="192" font-family="Arial, sans-serif" font-size="28" fill="#ffffff">and 120 day payment terms?</text>
+
+  <rect x="40" y="228" width="720" height="130" rx="14" fill="#1f3d2e"/>
+  <text x="62" y="257" font-family="Arial, sans-serif" font-weight="700" font-size="17" fill="#7be0a6">THE DEAL DESK</text>
+  <text x="62" y="297" font-family="Arial, sans-serif" font-size="28" fill="#ffffff">Sure. Here are the four teams who</text>
+  <text x="62" y="335" font-family="Arial, sans-serif" font-size="28" fill="#ffffff">have to say yes before we do.</text>
+
+  <text x="400" y="400" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#9aa4b2">Approvals used to show up at the end. Now they show up first.</text>
+</svg>
