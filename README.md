@@ -6,7 +6,7 @@ Built for a B2B team selling Azure-aligned data and cloud products. The AI propo
 
 ---
 
-## The problem in one paragraph
+## The problem
 
 Enterprise cloud deals don't fail in one place. They leak value at every stage: reps qualify from memory, discounts get negotiated without seeing the financial or approval consequences, the signed amount turns out to be unrelated to what the customer will run, and licensed users never get trained so consumption stalls and renewals wobble. Each of those problems lives in a different tool, owned by a different team, and none of them talks to the others. This project connects them into one workflow around a single thing every seller already has: **the deal**.
 
