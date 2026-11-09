@@ -103,7 +103,7 @@ In the 7-step deal workspace, the Enablement Agent is **step 6, before the Memo 
 
 ## 5. How we'll know it's working (proposed success metrics)
 
-The data in this repo is synthetic, so these are the outcomes to measure once real data is connected.
+This repository ships no data, so these are the outcomes to measure once your own data is connected.
 
 | Outcome | Metric | Direction |
 |---|---|---|
@@ -114,13 +114,13 @@ The data in this repo is synthetic, so these are the outcomes to measure once re
 | Quality | Recommendation pass rate through both gates | ↑ |
 | Efficiency | Time for an AE to go from alert to sent CTA | ↓ |
 
-Field-adoption, rollout and governance plans are documented in [`knowledge_base/field_adoption_plan.md`](../../knowledge_base/field_adoption_plan.md); architecture and roadmap in [`product_roadmap_architecture.md`](../../knowledge_base/product_roadmap_architecture.md); retrieval design in [`retrieval_knowledge_base_design.md`](../../knowledge_base/retrieval_knowledge_base_design.md).
+Trigger thresholds and evaluation gates are defined in [docs/RULES.md](../RULES.md); the data contract is in [docs/SCHEMAS.md](../SCHEMAS.md) and [docs/DATA_DICTIONARY.md](../DATA_DICTIONARY.md).
 
 ---
 
 ## 6. Honest limitations
 
-- All 380 account records, learner rosters and users counts are **generated deterministically for demonstration**. Real CRM and LMS integration is the next step.
+- This repository ships no account, learner or consumption data. You supply enablement records (see [docs/RUNTIME_INPUTS.md](../RUNTIME_INPUTS.md)) and map your own CRM and LMS fields.
 - Trigger thresholds (25%, 50%, 90 days, $50K, 70) are sensible starting points that should be tuned against real churn data.
 - "Training-to-consumption lift" shows correlation, not causation. A controlled comparison is needed before claiming impact.
 
@@ -134,7 +134,7 @@ python server.py
 
 curl -X POST http://localhost:5001/api/enablement/recommend \
   -H "Content-Type: application/json" \
-  -d '{"company_slug":"alpine_financial_services","deal_slug":"datafabric_proof_of_concept"}'
+  -d '{"company_slug":"<company_slug>","deal_slug":"<deal_slug>"}'
 ```
 
 | Route | Purpose |
